@@ -3,7 +3,7 @@
         <div class="grid w-12">
 
             <div class="col-12">
-                <Button v-if="props.order.state.toUpperCase() != 'CANCELLED'"  severity="danger" size="small" aria-label="Cancel order" @click.stop="confirmCancelOrder($event)">
+                <Button v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'"  severity="danger" size="small" aria-label="Cancel order" @click.stop="confirmCancelOrder($event)">
                     Cancel order
                 </Button>
                 <ConfirmPopup></ConfirmPopup>

@@ -70,8 +70,8 @@ const orderStateSeverity = ref<any>({
     "cancelled":"danger"
 })
 
-const updatOrdersTableRowsPerPage = () => {
-    console.log("asd")
+const updatOrdersTableRowsPerPage = (event: any) => {
+    loadOrders(event.first,event.rows)
 }
 
 const cancelOrder = (order_id: string) => {
@@ -127,14 +127,15 @@ const confirmCancelOrder = (event,display_id,order_id) => {
     });
   }
 
-const loadOrders =  () => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders`, {
+const loadOrders =  (first=0,rows=-1) => {
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?first=${first}&rows=${rows}`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     })
     .then((result)=>{
         orders.value = result.data.orders
+        ordersTableTotalRecords.value = result.data.total_records
     })
 };
 
