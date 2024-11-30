@@ -22,7 +22,7 @@
                                     <span>Prefix:</span>
                                     <InputText v-model="order_queues[index].prefix" class="mx-2" />
                                     <span>Next:</span>
-                                    <InputText v-model="order_queues[index].next"  class="mx-2 "/>
+                                    <InputText v-model.number="order_queues[index].next"  class="mx-2 "/>
                                     <Button severity="secondary" aria-label="Remove" icon="pi pi-times" @click="order_queues.splice(index,1)" />
                                 </div>
                                 <div class="flex align-items-center mt-3">
