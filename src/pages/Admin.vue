@@ -12,13 +12,13 @@
                 </Menubar>
             </div>
             <div class="col-2">
-                <Listbox  v-model="selected_list_item" :options="list_items" optionGroupLabel="name" optionGroupChildren="items" class="w-full mt-2">
-                    <template #option="slotProps">
-                        <RouterLink style="text-decoration: none;color: inherit" :to="slotProps.option.link" class="flex align-items-center">
-                            <div>{{ slotProps.option.name }}</div>
+                <Tree v-model:expandedKeys="expandedKeys" :value="menu_tree" selectionMode="single" class="w-full">
+                    <template #default="slotProps">
+                        <RouterLink style="text-decoration: none;color: inherit" :to="slotProps.node.link" class="flex align-items-center">
+                            <div>{{ slotProps.node.label }}</div>
                         </RouterLink>
                     </template>
-                </Listbox>
+                </Tree>
             </div>
             <div class="col-10 flex pt-3">
                 <RouterView />
@@ -30,29 +30,93 @@
 <script setup>
 import {ref} from "vue";
 import Menubar from 'primevue/menubar'
-import Listbox from 'primevue/listbox';
+import Tree from "primevue/tree";
 
-const selected_list_item = ref ({ name: 'Inventory', icon:'inbox', link:'inventory' })
+// const selected_list_item = ref ({ name: 'Inventory', icon:'inbox', link:'inventory' })
 
-const list_items = ref([
-    { 
-        name: 'Admin', 
-        items: [
-            { name: 'Inventory', icon:'inbox', link:'/admin/inventory' },
-            { name: 'Products', icon:'barcode', link:'/admin/products' },
-            { name: 'Categories', icon:'barcode', link:'/admin/categories' },
-            { name: 'Orders', icon:'barcode', link:'/admin/orders' },
-        ]
-        
+
+const expandAll = () => {
+    for (let node of menu_tree.value) {
+        expandNode(node);
+    }
+
+    expandedKeys.value = { ...expandedKeys.value };
+};
+
+const expandNode = (node) => {
+    if (node.children && node.children.length) {
+        expandedKeys.value[node.key] = true;
+
+        for (let child of node.children) {
+            expandNode(child);
+        }
+    }
+};
+
+const expandedKeys = ref({});
+
+const menu_tree =ref([
+    {
+        key: '0',
+        label: 'Inventory',
+        data: 'Inventory',
+        icon: 'pi pi-fw pi-inbox',
+        link:'/admin/inventory',
     },
-    { 
-        name: 'Observe',
-        items: [
-            { name: 'Sales', icon:'dollar-sign', link: '/admin/sales'}
-        ]
-        
+    {
+        key: '1',
+        label: 'Products',
+        data: 'Products',
+        icon: 'pi pi-fw pi-barcode',
+        link:'/admin/products',
     },
-]);
+    {
+        key: '2',
+        label: 'Categories',
+        data: 'Categories',
+        icon: 'pi pi-fw pi-sitemap',
+        link:'/admin/categories',
+    },
+    {
+        key: '3',
+        label: 'Orders',
+        data: 'Orders',
+        icon: 'pi pi-fw pi-box',
+        link:'/admin/orders',
+        children: [
+            {
+                key: '3-0',
+                label: 'List',
+                data: 'List oders',
+                icon: 'pi pi-fw pi-list',
+                link:'/admin/orders',
+            },
+        ]
+    },
+    {
+        key: '4',
+        label: 'Reports',
+        data: 'Reports',
+        icon: 'pi pi-fw pi-chart-line',
+        link:'/admin/sales',
+        children: [
+            {
+                key: '4-0',
+                label: 'Sales',
+                data: 'Sales',
+                icon: 'pi pi-fw pi-percentage',
+                link:'/admin/sales',
+            },
+        ]
+    },
+    {
+        key: '5',
+        label: 'Settings',
+        data: 'Settings',
+        icon: 'pi pi-fw pi-cog',
+        link:'/admin/settings',
+    }
+])
 
 const items = ref([
       {
@@ -71,4 +135,6 @@ const items = ref([
           link: '/admin',
       }
   ]);
+
+expandAll()
 </script>

@@ -32,6 +32,7 @@ import Orders from '@/pages/Orders.vue'
 import { createPinia } from 'pinia'
 import zitadelAuth from "@/services/zitadelAuth";
 import Tooltip from 'primevue/tooltip';
+import Settings from './pages/Settings.vue';
 
 
 const routes = [
@@ -75,7 +76,11 @@ const routes = [
       {path: 'sales', component: Sales,},
       {path: 'products', component: Products,},
       {path: 'categories', component: Categories,},
-      {path: 'orders', component: Orders,},
+      {path: 'orders',
+      children:[
+        {path: '', component: Orders,},
+      ]},
+      {path: 'settings', component: Settings,},
     ],
   },
 ]
