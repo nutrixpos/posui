@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Message :severity="notification.severity" @close="emit('closed')">
+        <Message :severity="notification.severity" @close="emit('closed')" class="my-1">
             <div class="flex flex-column">
                 <h4 class="m-0 mb-1">{{ props.notification.topic_name }}</h4>
                 {{ props.notification.description }}

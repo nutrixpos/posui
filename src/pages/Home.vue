@@ -83,7 +83,9 @@
                 <OverlayPanel ref="notifications_op" class="w-3" style="max-height:60vh;overflow-y: auto;">
                     <h4 class="my-0 mx-2" style="color:#c2c2c2">Notifications</h4>
                     <Button text label="Clear all" severity="secondary" @click="clearNotifications()"/>
-                    <NotificationView @closed="notifications.splice(index,1)" :notification="notification" v-for="(notification,index) in notifications" :key="notification.id" />
+                    <div class="flex flex-column-reverse">
+                        <NotificationView @closed="notifications.splice(index,1)" :notification="notification" v-for="(notification,index) in notifications" :key="notification.id" />
+                    </div>
                 </OverlayPanel>
                 <Button  severity="secondary" size="large"  text rounded aria-label="Profile" label="Profile" @click.stop="user_profile_toggle">
                     <span style="font-size:0.9rem;" class="mr-2">{{ user.name }}</span>
