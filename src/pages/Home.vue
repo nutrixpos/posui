@@ -536,6 +536,7 @@ const startWebsocket = () => {
                 notification.severity = "success"
                 notification.topic_name = "Order Finished"
                 notification.type = "topic_message"
+                notification.date = data.date
                 notifications.value.push(notification);
 
 
@@ -546,6 +547,7 @@ const startWebsocket = () => {
                 notification.severity = data.severity
                 notification.topic_name = data.topic_name
                 notification.type = data.type
+                notification.date = data.date
                 notifications.value.push(notification);
 
                 toast.removeGroup('br')

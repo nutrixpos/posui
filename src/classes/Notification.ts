@@ -1,5 +1,6 @@
 export class Notification {
     id: string
+    date: Date
     description: string
     type: string
     topic_name: string
@@ -10,6 +11,7 @@ export class Notification {
         this.type = ""
         this.topic_name = ""
         this.severity = ""
+        this.date = new Date()
     }
 }
 
