@@ -113,8 +113,14 @@
                 </Listbox>
             </div>
             <div class="lg:col-7 col-6 flex pt-3 pb-3">
-                <Panel header="Recipes" style="width:100%;">
-                    <InputText v-model="searchtext" placeholder="Search" class="mb-4" />
+                <Panel header="Products" style="width:100%;">
+                    <IconField iconPosition="left" class="mb-3">
+                        <InputIcon v-if="!isSearchingProduct">
+                            <i class="pi pi-search" />
+                        </InputIcon>
+                        <InputIcon v-if="isSearchingProduct" class="pi pi-spin pi-spinner"> </InputIcon>
+                        <InputText v-model="searchtext" placeholder="Search products" />
+                    </IconField>
                     <div class="flex flex-wrap">
                         <MealCard  v-for="(item,index) in products" :key="index" :item="item" class="m-2" style="width:9rem;" @addwithcomment="visible=true;idwithcomment=item.id; namewithcomment=item.name" @add="addItem(item)"/>
                     </div>
@@ -235,6 +241,7 @@ const chat_container = useTemplateRef("chat_container")
 const mainSearchText = ref("")
 const order_details_dialog = ref(false)
 const order_to_show = ref<Order>()
+const isSearchingProduct = ref(false)
 
 import MealCard from '@/components/MealCard.vue';
 
@@ -721,7 +728,22 @@ const isUpdatingDiscountPercent = ref(false)
 
 
 watch(searchtext, (newSearchText) => {
-  console.log(`x is ${newSearchText}`)
+
+    isSearchingProduct.value = true
+    
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products?search=${newSearchText}`,
+    {
+        headers:{
+            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+        }
+    }
+    ).then((response) => {
+        products.value = []
+        products.value = response.data.products
+        refreshAvailabilities();
+        isSearchingProduct.value=false
+    })
+
 })
 
 watch(subtotal, (new_subtotal) => {
@@ -783,20 +805,23 @@ const products = ref([
 
 const refreshAvailabilities = () => {
     var product_ids = ""
-    products.value.forEach((product,index) => {
-        product_ids += index > 0 ? "," +product.id : product.id
-    })
 
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/recipeavailability?ids=`+product_ids,{
-        headers:{
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
-        }
-    })
-    .then((response) => {
+    if (products.value != null){
         products.value.forEach((product,index) => {
-            products.value[index].availability = Math.round(response.data.filter((x) => x.recipe_id == product.id)[0].available * 100) / 100
+            product_ids += index > 0 ? "," +product.id : product.id
         })
-    })
+
+        axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/recipeavailability?ids=`+product_ids,{
+            headers:{
+                Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            }
+        })
+        .then((response) => {
+            products.value.forEach((product,index) => {
+                products.value[index].availability = Math.round(response.data.filter((x) => x.recipe_id == product.id)[0].available * 100) / 100
+            })
+        })
+    }
 }
 
 
