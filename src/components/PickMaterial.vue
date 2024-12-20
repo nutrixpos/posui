@@ -65,11 +65,11 @@ const GetMaterials = () => {
     .then((response) => {
 
         
-        response.data.forEach((component:Material,materialIndex: number) => {
+        response.data.data.forEach((component:Material,materialIndex: number) => {
 
             component.entries?.forEach((entry: MaterialEntry,entryIndex: number) => {
                 if (entry.quantity < 0){
-                    response.data[materialIndex].entries.splice(entryIndex, 1)
+                    response.data.data[materialIndex].entries.splice(entryIndex, 1)
                     return
                 }
                     
@@ -78,7 +78,7 @@ const GetMaterials = () => {
         });
 
 
-        materials.value = response.data
+        materials.value = response.data.data
         loading.value = false
     })
 }

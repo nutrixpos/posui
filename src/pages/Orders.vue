@@ -76,13 +76,10 @@ const updatOrdersTableRowsPerPage = (event: any) => {
 
 const cancelOrder = (order_id: string) => {
 
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/ordercancel`, {
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${order_id}/cancel`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
-        },
-        params: {
-            id: order_id
-        },
+        }
     })
     .then(()=>{
         toast.add({ severity: 'success', summary: 'Success', detail: 'Order cancelled successfully',group:'br' });
@@ -127,15 +124,23 @@ const confirmCancelOrder = (event,display_id,order_id) => {
     });
   }
 
-const loadOrders =  (first=0,rows=-1) => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?first=${first}&rows=${rows}`, {
+const loadOrders =  (first=0,rows=100) => {
+
+    let page_number = Math.ceil((first/rows))
+
+    if (page_number == 0) {
+        page_number = 1
+    }
+
+
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?page[number]=${page_number}&page[size]=${rows}`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     })
     .then((result)=>{
-        orders.value = result.data.orders
-        ordersTableTotalRecords.value = result.data.total_records
+        orders.value = result.data.data
+        ordersTableTotalRecords.value = result.data.meta.total_records
     })
 };
 

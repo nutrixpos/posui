@@ -49,6 +49,13 @@ const order_status : any = computed(() => {
         }
     }
 
+    if (props.order.state == "stashed" ){
+        return {
+            title:"STASHED",
+            severity:"warning"
+        }
+    }
+
     return {}
 
 })

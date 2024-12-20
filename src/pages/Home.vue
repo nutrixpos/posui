@@ -281,15 +281,15 @@ const mainSearchTextChanged = (event:any) => {
     if (mainSearchText.value != ""){
         mainsearch_op.value.show(event)
 
-        axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?display_id=${mainSearchText.value}`, {
+        axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[display_id]=${mainSearchText.value}`, {
             headers: {
                 Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
             }
         })
         .then(response => {
             mainSearchResult.value = []
-            for (var i=0;i<response.data.orders.length;i++){
-                mainSearchResult.value.push(response.data.orders[i])
+            for (var i=0;i<response.data.data.length;i++){
+                mainSearchResult.value.push(response.data.data[i])
             }
         })
         .catch(error => {
@@ -315,13 +315,13 @@ const payLaterStart = () => {
 }
 
 const getUnpaidOrders = () => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/unpaidorders`,{
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=false`,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     })
     .then(response => {
-        payLaterOrders.value = response.data.orders
+        payLaterOrders.value = response.data.data
     })
 }
 
@@ -378,9 +378,7 @@ const BackStashedOrderToCheckout = async (stashed_order_index:number) => {
     // discount.value = order.discount == null || order.discount == undefined ? 0 : order.discount
 
 
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orderremovestash`,{
-        order_display_id:order.display_id
-    },
+    axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${order.id}`,
     {
         headers:{
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
@@ -431,13 +429,13 @@ const notifications = ref<Notification[]>([])
 
 
 const getStashedOrders = () => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/ordergetstashed`,{
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_stashed]=true`,{
         headers:{
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     }).then(async (response) => {
 
-        const dataCopy = JSON.parse(JSON.stringify(response.data))
+        const dataCopy = JSON.parse(JSON.stringify(response.data.data))
 
         for (var i=0;i<dataCopy.length;i++){
 
@@ -467,12 +465,13 @@ const stashOrder = () => {
     const order = new Order()
     order.items = orderItems.value
     order.discount = discount.value == null ? 0 : discount.value
+    order.state = "stashed"
 
 
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orderstash`,
-    {
-        order:order
-    },
+    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders`,
+        {
+            data: order
+        },
     {
         headers:{
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
@@ -488,16 +487,16 @@ const stashOrder = () => {
         console.log(response)
 
 
-        for (var index=0;index<response.data.order.items.length;index++){
+        for (var index=0;index<response.data.data.items.length;index++){
             const temp_order_item = new OrderItem()
-            await temp_order_item.FromItemData(response.data.order.items[index])
+            await temp_order_item.FromItemData(response.data.data.items[index])
             await temp_order_item.RefreshProductData()
             temp_order_item.ValidateItem()
-            response.data.order.items[index] = temp_order_item
+            response.data.data.items[index] = temp_order_item
         }
 
         
-        stashedOrders.value.push(response.data.order)
+        stashedOrders.value.push(response.data.data)
         toast.add({severity:'success', summary: `Order ${order.display_id} stashed successfully !`, detail: "successfully stashed order !", life: 3000,group:'br'});
     }).catch( () => {
         toast.add({severity:'error', summary: 'Error Stashing Item', detail: "", life: 3000,group:'br'});
@@ -683,7 +682,7 @@ const getCategories = async () => {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     })
-    categories.value = categories.value.concat(response.data.categories)
+    categories.value = categories.value.concat(response.data.data)
     selectedCategory.value = categories.value[0]
 }
 
@@ -702,15 +701,16 @@ const goOrder = (isPaylater:boolean = false) => {
     }
 
     if (orderItems.value.length > 0){
-        axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/submitorder`,
-            order,
+        axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders`,
+            {
+                data:order
+            },
             {
                 headers:{
                     Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
                 },
             },
-        ).then((response) => {
-            console.log(response.data)
+        ).then(() => {
             toast.add({ severity: 'success', summary: 'Success', detail: 'Order in progress !', life: 3000,group:'br' });
 
             if (isPaylater){
@@ -731,7 +731,7 @@ watch(searchtext, (newSearchText) => {
 
     isSearchingProduct.value = true
     
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products?search=${newSearchText}`,
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products?filter[search]=${newSearchText}`,
     {
         headers:{
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
@@ -739,7 +739,7 @@ watch(searchtext, (newSearchText) => {
     }
     ).then((response) => {
         products.value = []
-        products.value = response.data.products
+        products.value = response.data.data
         refreshAvailabilities();
         isSearchingProduct.value=false
     })
@@ -807,18 +807,19 @@ const refreshAvailabilities = () => {
     var product_ids = ""
 
     if (products.value != null){
+        
         products.value.forEach((product,index) => {
             product_ids += index > 0 ? "," +product.id : product.id
         })
 
-        axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/recipeavailability?ids=`+product_ids,{
+        axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/availability?ids=`+product_ids,{
             headers:{
                 Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
             }
         })
         .then((response) => {
             products.value.forEach((product,index) => {
-                products.value[index].availability = Math.round(response.data.filter((x) => x.recipe_id == product.id)[0].available * 100) / 100
+                products.value[index].availability = Math.round(response.data.data.filter((x) => x.recipe_id == product.id)[0].available * 100) / 100
             })
         })
     }

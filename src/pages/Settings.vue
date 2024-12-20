@@ -64,13 +64,15 @@ const new_queue_next = ref(1)
 const toast = useToast();
 
 const saveSettings = () => {
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/updatesettings`, 
+    axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/settings`, 
         {
-            inventory: {
-                default_inventory_quantity_warn:default_inventory_quantity_warn.value
-            },
-            orders: {
-                queues: order_queues.value
+            data: {
+                inventory: {
+                    default_inventory_quantity_warn:default_inventory_quantity_warn.value
+                },
+                orders: {
+                    queues: order_queues.value
+                }
             }
         },
         {
@@ -89,15 +91,15 @@ const saveSettings = () => {
 }
 
 const getSettings = () => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/getsettings`, {
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/settings`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         },
     })
     .then((response)=>{
-        console.log(response.data)
-        default_inventory_quantity_warn.value = response.data.settings.inventory.default_inventory_quantity_warn
-        order_queues.value = response.data.settings.orders.queues
+        console.log(response.data.data)
+        default_inventory_quantity_warn.value = response.data.data.inventory.default_inventory_quantity_warn
+        order_queues.value = response.data.data.orders.queues
     })
     .catch((err) => {
         console.log(err)

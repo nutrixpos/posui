@@ -280,7 +280,7 @@ export class OrderItem {
 
     async RefreshReadyNumber(){
 
-        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/productgetready?id=`+this.Id,
+        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/${this.Id}`,
             {
                 headers: {
                     'Authorization': `Bearer ${zitadelAuth.oidcAuth.accessToken}`
@@ -288,14 +288,14 @@ export class OrderItem {
             }
         ).then((response) => { 
 
-            this.ready = response.data
+            this.ready = response.data.data.ready
 
          })
     }
 
 
     async RefreshProductData(){
-        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/recipetree?id=`+this.product.id,
+        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/${this.product.id}/recipetree`,
             {
                 headers: {
                     'Authorization': `Bearer ${zitadelAuth.oidcAuth.accessToken}`
@@ -304,9 +304,9 @@ export class OrderItem {
         ).then((response) => {
 
             const materials : Material[] = []
-            this.product = response.data
+            this.product = response.data.data
 
-            response.data.materials.forEach((material: any) => {
+            response.data.data.materials.forEach((material: any) => {
 
                 const new_material = new Material()
                 new_material.id = material.id
@@ -361,13 +361,13 @@ export class OrderItem {
 
     async UpdateMaterialEntryCost(materialIndex: number){
         if (this.materials[materialIndex].entry != undefined){
-            await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materialcost?material_id=${this.materials[materialIndex].material.id}&entry_id=${this.materials[materialIndex].entry.id}&quantity=${this.materials[materialIndex].quantity}`, {
+            await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${this.materials[materialIndex].material.id}/entries/${this.materials[materialIndex].entry.id}/cost?quantity=${this.materials[materialIndex].quantity}`, {
                 headers: {
                     'Authorization': `Bearer ${zitadelAuth.oidcAuth.accessToken}`
                 }
             }).then((response) => {
     
-                this.materials[materialIndex].entry.cost = response.data
+                this.materials[materialIndex].entry.cost = response.data.data
                 this.ValidateMaterialQuantity(materialIndex)
               
             })
@@ -499,7 +499,7 @@ export class OrderItem {
 
 
     async ReloadDefaults() {
-        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/recipetree?id=`+this.product.id,
+        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/${this.product.id}/recipetree`,
         {
             headers: {
                 'Authorization': `Bearer ${zitadelAuth.oidcAuth.accessToken}`
@@ -508,17 +508,17 @@ export class OrderItem {
 
             const materials : Material[] = []
             const subrecipes: OrderItem[] = []
-            this.product = response.data
-            this.price = response.data.price
-            this.ready = response.data.ready
+            this.product = response.data.data
+            this.price = response.data.data.price
+            this.ready = response.data.data.ready
             this.sub_items = this.FillSubitems()
-            this.Id = response.data.id
+            this.Id = response.data.data.id
 
             if (this.ready >= this.quantity){
                 this.can_change_ready_toggle = true
             }
 
-            response.data.materials.forEach((material: any) => {
+            response.data.data.materials.forEach((material: any) => {
 
                 const new_material = new Material()
                 new_material.id = material.id
@@ -541,7 +541,7 @@ export class OrderItem {
                 materials.push(new_material)
             })
 
-            // response.data.sub_recipes?.forEach((sub_product: Product) => {
+            // response.data.data.sub_recipes?.forEach((sub_product: Product) => {
 
             //     const sub_order_item = new OrderItem()
             //     sub_order_item.Product.Id = sub_product.Id

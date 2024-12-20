@@ -196,7 +196,14 @@ const setChartOptions = () => {
 
 const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.value) => {
 
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/salesperday?first_index=${first}&rows=${rows}`, {
+
+    let page_number = Math.ceil(first/rows)
+
+    if (page_number == 0)
+        page_number = 1
+
+
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/salesperday?page[number]=${page_number}&page[size]=${rows}`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
@@ -211,28 +218,28 @@ const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.v
         productPieChartSales.value = []
         isSalesTableLoading.value = true
 
-        salesTableTotalRecords.value = response.data.total_records
+        salesTableTotalRecords.value = response.data.meta.total_records
 
 
-        for (let i=0;i<response.data.sales.length;i++){
-            chartLabels.value.push(response.data.sales[i].date)
-            temp_sales_log.push(response.data.sales[i])
-            chartSales.value.push(response.data.sales[i].total_sales)
-            chartCost.value.push(response.data.sales[i].costs)
+        for (let i=0;i<response.data.data.length;i++){
+            chartLabels.value.push(response.data.data[i].date)
+            temp_sales_log.push(response.data.data[i])
+            chartSales.value.push(response.data.data[i].total_sales)
+            chartCost.value.push(response.data.data[i].costs)
 
-            for (let j=0;j<response.data.sales[i].orders.length;j++){
+            for (let j=0;j<response.data.data[i].orders.length;j++){
 
 
 
-                for (let k=0;k<response.data.sales[i].orders[j].order.items.length;k++){
+                for (let k=0;k<response.data.data[i].orders[j].order.items.length;k++){
 
-                    if (!productPieChartLabels.value.includes(response.data.sales[i].orders[j].order.items[k].product.name)){
-                        productPieChartLabels.value.push(response.data.sales[i].orders[j].order.items[k].product.name)
-                        productPieChartSales.value.push(response.data.sales[i].orders[j].order.items[k].quantity)
+                    if (!productPieChartLabels.value.includes(response.data.data[i].orders[j].order.items[k].product.name)){
+                        productPieChartLabels.value.push(response.data.data[i].orders[j].order.items[k].product.name)
+                        productPieChartSales.value.push(response.data.data[i].orders[j].order.items[k].quantity)
                     }else {
 
-                        let index = productPieChartLabels.value.indexOf(response.data.sales[i].orders[j].order.items[k].product.name)
-                        productPieChartSales.value[index] += response.data.sales[i].orders[j].order.items[k].quantity
+                        let index = productPieChartLabels.value.indexOf(response.data.data[i].orders[j].order.items[k].product.name)
+                        productPieChartSales.value[index] += response.data.data[i].orders[j].order.items[k].quantity
                     }   
                 }
                 

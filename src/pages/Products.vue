@@ -222,10 +222,7 @@ const toast = useToast()
 
 
 const deleteProduct = (product_id: string) => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/deleteproduct`, {
-        params: {
-            id:product_id
-        },
+    axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/${product_id}`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
@@ -283,13 +280,16 @@ const prepareProductToEdit = (product: any) => {
 
 const updateProduct = () => {
 
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/updateproduct`, productToEdit.value, {
+    axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/${productToEdit.value.id}`, 
+    {
+        data : productToEdit.value
+    },{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     })
     .then(response => {
-        toast.add({ severity: 'success', summary: 'Product Updated', detail: response.data.message,group:'br' });
+        toast.add({ severity: 'success', summary: 'Product Updated', detail: response.data.data,group:'br' });
         productEditDialog.value = false;
         productToEdit.value = {}
         loadProducts()
@@ -309,20 +309,22 @@ const submitProduct = () => {
         sub_products: sub_products.value,
     };
 
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/addproduct`, payload, {
+    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products`,{
+        data : payload
+    } , {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     })
         .then(response => {
-            toast.add({ severity: 'success', summary: 'Product Added', detail: response.data.message,group:'br' });
+            toast.add({ severity: 'success', summary: 'Product Added', detail: response.data.data,group:'br' });
             productAddDialog.value = false;
 
             loadProducts()
             // Optionally, refresh the product list or clear inputs
         })
         .catch(error => {
-            toast.add({ severity: 'error', summary: 'Error', detail: error.response?.data?.message || 'An error occurred',group:'br' });
+            toast.add({ severity: 'error', summary: 'Error', detail: error.response?.data?.data || 'An error occurred',group:'br' });
         });
 }
 
@@ -360,19 +362,25 @@ const updatProductsTableRowsPerPage = (event: any) => {
 
 const loadProducts = (first=0,rows=productsTableRowsPerPage.value) => {
     isProductsTableLoading.value = true;
+
+    if (first == 0){
+        first = 1
+    }
+
+    const page_number = Math.ceil((first/rows))
     
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products`, {
         params: {
-            first: first,
-            rows: rows
+            "page[number]": page_number,
+            "page[size]": rows
         },
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     })
     .then(response => {
-        products.value = response.data.products;
-        productsTableTotalRecords.value = response.data.total_records;
+        products.value = response.data.data;
+        productsTableTotalRecords.value = response.data.meta.total_records;
     })
     .catch(() => {
         toast.add({severity:'error', summary: 'Error', detail: 'Failed to load products'});

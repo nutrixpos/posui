@@ -209,8 +209,8 @@ const confirm = useConfirm();
 
 
   const saveMaterialSettings = () => {
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/editmaterial`, {
-        material: material_settings.value
+    axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials`, {
+        data: material_settings.value
     },{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
@@ -246,7 +246,7 @@ const confirm = useConfirm();
 
 
 
-            axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/entry?entry_id=${entry_id}&component_id=`+expanded_component_id.value,{
+            axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${expanded_component_id.value}/entries/${entry_id}`,{
                 headers: {
                     Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
                 }
@@ -276,9 +276,8 @@ const confirm = useConfirm();
                 "expiration_date": new_entry_expiration_date.value
             }
 
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materialentry`, {
-        component_id,
-        entries: [
+    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${component_id}/entries/`, {
+        data: [
            newEntry
         ]
       },{
@@ -309,7 +308,7 @@ const confirm = useConfirm();
 
   const submitNewComponent = () => {
 
-      var entries = []
+      var entries : any = []
       new_component_entries.value.forEach((entry) => {
           entries.push({
             company: entry.company,
@@ -318,10 +317,12 @@ const confirm = useConfirm();
           })
       })
 
-      axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/material`, {
-        name: new_component_name.value,
-        unit: new_component_unit.value,
-        entries: entries,
+      axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials`, {
+        data : {
+            name: new_component_name.value,
+            unit: new_component_unit.value,
+            entries: entries,
+        }
       },{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
@@ -335,7 +336,7 @@ const confirm = useConfirm();
 
 
   const onComponentLogRowExpand = (event) => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/order?id=`+event.data.order_id,{
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/`+event.data.order_id,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
@@ -344,7 +345,7 @@ const confirm = useConfirm();
 
         component_logs.value.forEach((log) => {
             if (log.id == event.data.id){
-                log.order = result.data
+                log.order = result.data.data
             }
         })
 
@@ -353,13 +354,13 @@ const confirm = useConfirm();
 
 
   const loadComponentLogs = (component_id) => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materiallogs?id=`+component_id,{
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/`+component_id+`/logs`,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     })
     .then((result)=>{
-        component_logs.value = result.data
+        component_logs.value = result.data.data
         component_logs_dialog.value = true
         component_logs_name.value = component_id
     })
@@ -374,7 +375,7 @@ const confirm = useConfirm();
     })
     .then((result)=>{
 
-        result.data.forEach(component => {
+        result.data.data.forEach(component => {
             var totalAmount;
 
             component.entries?.forEach(entry => {
@@ -385,7 +386,7 @@ const confirm = useConfirm();
             component.totalAmount = totalAmount
         });
         
-        inventory_components.value = result.data
+        inventory_components.value = result.data.data
     })
   }
 

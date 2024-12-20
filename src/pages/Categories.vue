@@ -149,8 +149,9 @@ const updatCategoriesTableRowsPerPage = (event: any) => {
 }
 
 const submitCategory = () => {
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/insertcategory`, {
-        category: new_category.value
+
+    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories`, {
+        data: new_category.value
     }, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
@@ -168,10 +169,7 @@ const submitCategory = () => {
 }
 
 const deleteCategory = (category_id: string) => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/deletecategory`, {
-        params: {
-            id:category_id
-        },
+    axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories/${category_id}`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
@@ -188,8 +186,8 @@ const deleteCategory = (category_id: string) => {
 }
 
 const updateCategory = () => {
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/updatecategory`, {
-        category: categoryToEdit.value
+    axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories/${categoryToEdit.value.id}`, {
+        data: categoryToEdit.value
     }, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
@@ -242,16 +240,22 @@ const addEdittedProduct = (product: any) => {
 }
 
 const getCategories = (first=0,rows=categoriesTableRowsPerPage.value) => {
+
+
+    if (first == 0){
+        first = 1
+    }
+
+    const page_number = Math.ceil((first/rows))
     
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories`, {
-        params: { first_index:first, rows },
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories?page[number]=${page_number}&page[size]=${rows}`, {
         headers: {
             'Authorization': `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     })
     .then(response => {
-        categories.value = response.data.categories;
-        categoriesTableTotalRecords.value = response.data.total_records;
+        categories.value = response.data.data;
+        categoriesTableTotalRecords.value = response.data.meta.total_records;
     })
     .catch(() => {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch categories' });

@@ -79,13 +79,10 @@ const confirmCancelOrder = (event) => {
         },
         accept: () => {
             
-            axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/ordercancel`, {
+            axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/cancel`, {
                 headers: {
                     Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
-                },
-                params: {
-                    id: props.order.id
-                },
+                }
             })
             .then(()=>{
                 toast.add({ severity: 'success', summary: 'Success', detail: 'Order cancelled successfully',group:'br' });

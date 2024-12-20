@@ -209,10 +209,8 @@ const confirmFinish = (event) => {
 
 const finishOrder = () => {
 
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/finishorder`,
-        {
-            "order_id":props.order.id
-        },
+    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/finish`,
+        {},
         {
             headers: {
                 Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
@@ -228,10 +226,9 @@ const finishOrder = () => {
 
 const startOrder =  () => {
 
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/startorder`,
+    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/start`,
         {
-            "order_id":props.order.id,
-            "items" : items.value
+            "data" : items.value
         },
         {
             headers: {
