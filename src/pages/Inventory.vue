@@ -63,7 +63,7 @@
                     </div>
                 </div>
             </div>
-            <Dialog v-model:visible="material_settings_dialog" modal :header="`Settings for  ${material_settings.name}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
+            <Dialog v-model:visible="material_settings_dialog" modal :header="`Settings for  ${material_settings?.name}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
                 <div class="flex align-items-center">
                     <h4>stock_alert_treshold</h4>
                     <InputText type="number" class="ml-2" id="stock_alert_treshold" v-model.number="material_settings.settings.stock_alert_treshold" aria-describedby="stock_alert_treshold" />
@@ -110,7 +110,7 @@
                </div>
             </Dialog>
             <Dialog v-model:visible="component_logs_dialog" modal :header="`Consumption for  ${component_logs_name}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
-                <DataTable @rowExpand="onComponentLogRowExpand"  v-model:expandedRows="expandedComponentLogsRows" :value="component_logs" stripedRows tableStyle="min-width: 50rem" class="w-full pr-5">
+                <DataTable @rowExpand="onComponentLogRowExpand" @page="updatLogsTableRowsPerPage" :lazy="true" :totalRecords="logsTableTotalRecords" :loading="isLogsTableLoading" v-model:expandedRows="expandedComponentLogsRows" paginatorPosition="both"  paginator :rows="logsTableRowsPerPage" :rowsPerPageOptions="[7, 14, 30, 90]" :value="component_logs" stripedRows tableStyle="min-width: 50rem;max-height:50vh;" class="w-full pr-2">
                     <Column expander style="width: 5rem" />
                     <Column field="date" header="Date"></Column>
                     <Column field="quantity" header="Quantity"></Column>
@@ -173,11 +173,16 @@ const { proxy } = getCurrentInstance();
 const confirm = useConfirm();
 
 
+const logsTableRowsPerPage = ref(7)
+const logsTableTotalRecords = ref(0)
+const isLogsTableLoading = ref(true)
+
+
 
   const toast = useToast();
 
   const material_settings_dialog = ref(false)
-  const material_settings = ref<Material>({})
+  const material_settings = ref<Material>()
   
   const expandedRows = ref([]);
   const expandedComponentLogsRows = ref([])
@@ -206,6 +211,13 @@ const confirm = useConfirm();
   const new_entry_expiration_date = ref("")
 
   const expanded_component_id = ref("")
+
+
+  const material_logs_id = ref("")
+  const updatLogsTableRowsPerPage = (event) => {
+    const { first, rows } = event;
+    loadComponentLogs(material_logs_id.value,first,rows)
+}
 
 
   const saveMaterialSettings = () => {
@@ -353,8 +365,17 @@ const confirm = useConfirm();
   };
 
 
-  const loadComponentLogs = (component_id) => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/`+component_id+`/logs`,{
+  const loadComponentLogs = (component_id:string,first=0,rows=50) => {
+
+    material_logs_id.value = component_id
+    isLogsTableLoading.value = true
+
+    let page_number = Math.floor((first/rows)) + 1
+
+    
+
+
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/`+component_id+`/logs?page[number]=${page_number}&page[size]=${rows}`,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
@@ -363,6 +384,8 @@ const confirm = useConfirm();
         component_logs.value = result.data.data
         component_logs_dialog.value = true
         component_logs_name.value = component_id
+        logsTableTotalRecords.value = result.data.meta.total_records
+        isLogsTableLoading.value = false
     })
   }
 
