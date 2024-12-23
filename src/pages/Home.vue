@@ -315,7 +315,7 @@ const payLaterStart = () => {
 }
 
 const getUnpaidOrders = () => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=false&filter[finished]=false`,{
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=false&filter[is_finished]=false`,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
