@@ -1,9 +1,9 @@
 <template>
-    <div class="flex flex-column m-2" style="height: 100%;">
+    <div v-if="!loading" class="flex flex-column m-2" style="height: 100%;">
         <Toolbar>
             <template #start>
                 <router-link v-for="(item,index) in items" :key="index" :to="item.link">
-                    <Button :icon="item.icon" :label="item.label"  text severity="secondary" />
+                    <Button :icon="item.icon" :label="t(`${item.label.title}`,item.label.plural ? 3 : 1)"  text severity="secondary" />
                 </router-link>
             </template>
 
@@ -12,7 +12,7 @@
                     <InputIcon>
                         <i class="pi pi-search" />
                     </InputIcon>
-                    <InputText placeholder="Search" v-model="mainSearchText" @keyup.stop="mainSearchTextChanged" />
+                    <InputText :placeholder="t('search')" v-model="mainSearchText" @keyup.stop="mainSearchTextChanged" />
                 </IconField>
                 <OverlayPanel ref="mainsearch_op" class="w-5 lg:w-3" style="max-height:60vh;overflow-y: auto;">
                     <MainSearchResultView @view-order-pressed="order_to_show = result; order_details_dialog=true" v-for="(result,index) in mainSearchResult" :key="index" :order="result" />
@@ -20,13 +20,13 @@
             </template>
 
             <template #end>
-
+                
                 <Button  severity="secondary" size="large"  text rounded aria-label="PayLater" @click.stop="paylater_toggle">
                     <span class="p-button-icon pi pi-hourglass"></span>
-                    <Badge :value="payLaterOrders.length" class="p-badge-warning"  />
+                    <Badge :value="payLaterOrders.length" class="p-badge-warn"  />
                 </Button>
                 <OverlayPanel ref="paylater_orders_op" class="w-5 lg:w-3" style="max-height:60vh;overflow-y: auto;">
-                    <h4 class="my-0 mx-2" style="color:#c2c2c2">Paylater Orders</h4>
+                    <h4 class="my-0 mx-2" style="color:#c2c2c2">{{t('paylater_orders')}}</h4>
                     <PayLaterOrder @order_paid="PayLaterOrderPaid(index)" :order="order" v-for="(order,index) in payLaterOrders" :key="index" />
                 </OverlayPanel>
                 <Button  severity="secondary" size="large"  text rounded aria-label="Stashed"  @click.stop="chats_toggle">
@@ -34,7 +34,7 @@
                     <Badge class="p-badge-danger" v-if="has_new_message"  />
                 </Button>
                 <OverlayPanel ref="chats_op" class="w-5 lg:w-4" style="max-height:90vh;overflow-y: auto;">
-                    <Panel header="Chats">
+                    <Panel :header="t('chats')">
 
                         <div style="height:40vh;overflow-y: auto;" ref="chat_container">                            
                             <div v-for="(chat,index) in chats" :key="index" :class="`flex ${chat.user_sub == user.sub ? 'justify-content-end' : ''}`">
@@ -61,7 +61,7 @@
                     </Panel>
 
                     <InputGroup class="mt-2">
-                        <InputText v-model="chat_text" placeholder="Write message.." @keyup.enter="SendChatMessage(chat_text)" />
+                        <InputText v-model="chat_text" :placeholder="t('write_message')+'..'" @keyup.enter="SendChatMessage(chat_text)" />
                         <Button icon="pi pi-send" severity="info" @click="SendChatMessage(chat_text)" />
                     </InputGroup>
                 </OverlayPanel>
@@ -70,19 +70,19 @@
                     <Badge :value="stashedOrders.length" class="p-badge-success"  />
                 </Button>
                 <OverlayPanel ref="stashed_orders_op" class="w-5 lg:w-3" style="max-height:60vh;overflow-y: auto;">
-                    <h4 class="my-0 mx-2" style="color:#c2c2c2">Stashed Orders</h4>
+                    <h4 class="my-0 mx-2" style="color:#c2c2c2">{{ t('stashed_orders') }}</h4>
                     <StashedOrder :order="order" v-for="(order,index) in stashedOrders" :key="index" @back_to_checkout="BackStashedOrderToCheckout(index)" />
                 </OverlayPanel>
-                <Button  severity="secondary" size="large"  text rounded aria-label="Notifications" @click.stop="notifications_toggle">
+                <Button  severity="secondary" size="large"  text rounded :aria-label="t('notifications')" @click.stop="notifications_toggle">
                     <span class="p-button-icon pi pi-bell"></span>
                     <Badge :value="notifications_severity_counter[0]" class="p-badge-success"  />
                     <Badge :value="notifications_severity_counter[1]" class="p-badge-info"  />
-                    <Badge :value="notifications_severity_counter[2]" class="p-badge-warning" />
+                    <Badge :value="notifications_severity_counter[2]" class="p-badge-warn" />
                     <Badge :value="notifications_severity_counter[3]" class="p-badge-danger" />
                 </Button>
                 <OverlayPanel ref="notifications_op" class="w-3" style="max-height:60vh;overflow-y: auto;">
-                    <h4 class="my-0 mx-2" style="color:#c2c2c2">Notifications</h4>
-                    <Button text label="Clear all" severity="secondary" @click="clearNotifications()"/>
+                    <h4 class="my-0 mx-2" style="color:#c2c2c2">{{ t('notifications') }}</h4>
+                    <Button text :label="t('clear_all')" severity="secondary" @click="clearNotifications()"/>
                     <div class="flex flex-column-reverse">
                         <NotificationView @closed="notifications.splice(index,1)" :notification="notification" v-for="(notification,index) in notifications" :key="notification.id" />
                     </div>
@@ -97,7 +97,7 @@
                         <div class="mt-2">
                             <Chip v-for="(role,index) in roles" :key="index" :label="role" style="height: 1.5rem;" class="m-1" />
                         </div>
-                        <Button class="mt-5" icon="pi pi-sign-out" severity="secondary" text aria-label="Signout" label="Signout" @click="proxy.$zitadel.oidcAuth.signOut()" />
+                        <Button class="mt-5" icon="pi pi-sign-out" severity="secondary" text aria-label="Signout" :label="t('signout')" @click="proxy.$zitadel.oidcAuth.signOut()" />
                     </div>
                 </OverlayPanel>
             </template>
@@ -113,13 +113,13 @@
                 </Listbox>
             </div>
             <div class="lg:col-7 col-6 flex pt-3 pb-3">
-                <Panel header="Products" style="width:100%;">
+                <Panel :header="t('product',3)" style="width:100%;">
                     <IconField iconPosition="left" class="mb-3">
                         <InputIcon v-if="!isSearchingProduct">
                             <i class="pi pi-search" />
                         </InputIcon>
                         <InputIcon v-if="isSearchingProduct" class="pi pi-spin pi-spinner"> </InputIcon>
-                        <InputText v-model="searchtext" placeholder="Search products" />
+                        <InputText v-model="searchtext" :placeholder="t('search')+' '+t('product',3)" />
                     </IconField>
                     <div class="flex flex-wrap">
                         <MealCard  v-for="(item,index) in products" :key="index" :item="item" class="m-2" style="width:9rem;" @addwithcomment="visible=true;idwithcomment=item.id; namewithcomment=item.name" @add="addItem(item)"/>
@@ -127,7 +127,7 @@
                 </Panel>
             </div>
             <div class="col-4 lg:col-3 flex pt-3 pb-3">
-                <Panel header="Order Items" class="w-12" :style="`background-color:${is_order_valid ?  'white' : 'var(--red-100)'};border-color: ${is_order_valid ?  '' : 'red'};`">
+                <Panel :header="t('order_items')" class="w-12" :style="`background-color:${is_order_valid ?  'white' : 'var(--red-100)'};border-color: ${is_order_valid ?  '' : 'red'};`">
                     <div class="flex flex-column" style="height:calc(100vh - 10rem)">
                         <div style="height:60vh;overflow: auto;">
                             <div v-for="(item,index) in orderItems" :key="index">
@@ -136,7 +136,7 @@
                                         &nbsp;
                                     </div>
                                     <p class="w-6" style="text-overflow:ellipsis"><strong>{{ item.product.name }}</strong></p>
-                                    <p>{{ item.price }} EGP</p>
+                                    <p>{{ item.price }} {{t('egp')}}</p>
                                     <div>
                                         <Button icon="pi pi-pencil" size="small" style="width:2rem;height: 2rem;" aria-label="Edit" severity="secondary" @click="itemToEditIndex = index; edit_item_dialog=true" class="mr-1"/>
                                         <Button icon="pi pi-times" size="small" style="width:2rem;height: 2rem;" aria-label="Remove" severity="secondary" @click="orderItems.splice(index,1)" />
@@ -149,14 +149,14 @@
                             <div>
                                 <Divider />
                                 <div class="flex justify-content-between flex-wrap align-items-center">
-                                    <p>Subtotal : </p>
-                                    <p style="font-size:1rem">{{ subtotal.toFixed(2) }} <span style="font-size:0.8rem">EGP</span></p>
+                                    <p>{{t('subtotal')}} : </p>
+                                    <p style="font-size:1rem">{{ subtotal.toFixed(2) }} <span style="font-size:0.8rem">{{t('egp')}}</span></p>
                                 </div>
                                 <div class="flex justify-content-between flex-wrap align-items-center">
-                                    <p class="my-0">Discount :</p>
+                                    <p class="my-0">{{t('discount')}} :</p>
                                     <div class="w-7 flex justify-content-end align-items-center">
                                         <InputText v-model="discount" :disabled="orderItems.length == 0" placeholder="0" type="number" class="w-8 h-2rem"  />
-                                        <p style="font-size:0.8rem" class="ml-2">EGP</p>
+                                        <p style="font-size:0.8rem" class="mx-2">{{ t('egp') }}</p>
                                     </div>
                                 </div>
                                 <div class="flex justify-content-center align-items-center">
@@ -164,15 +164,15 @@
                                     <p class="ml-2" style="font-size:0.8rem">{{ discount_percent.toFixed(2) }} %</p>
                                 </div>
                                 <div class="flex justify-content-between flex-wrap align-items-center">
-                                    <h2>Total : </h2>
-                                    <p style="font-size:1.4rem">{{ total.toFixed(2) }} <span style="font-size:1rem">EGP</span></p>
+                                    <h2>{{t('total')}} : </h2>
+                                    <p style="font-size:1.4rem">{{ total.toFixed(2) }} <span style="font-size:1rem">{{t('egp')}}</span></p>
                                 </div>
                             </div>
                             <ButtonGroup class="mb-4">
                                 <Button icon="pi pi-bookmark" @click="stashOrder" severity="secondary" />
                                 <Button class="ml-2" icon="pi pi-hourglass" @click="payLaterStart" severity="secondary" />
                             </ButtonGroup>
-                            <Button label="Checkout" :disabled="!is_order_valid" @click="goOrder()" />
+                            <Button :label="t('checkout')" :disabled="!is_order_valid" @click="goOrder()" />
                         </div>
                     </div>
                 </Panel>
@@ -191,6 +191,10 @@
                 </div>
             </Dialog>
         </div>
+    </div>
+    <div style="width:100vw;height:100vh;display:flex;justify-content:center;align-items:center" v-if="loading">
+      <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="8" fill="transparent"
+      animationDuration=".5s" aria-label="Custom ProgressSpinner" />
     </div>
 </template>
 
@@ -222,9 +226,16 @@
   import InlineMessage from 'primevue/inlinemessage'
   import MainSearchResultView from '@/components/MainSearchResultView.vue';
   import OrderView from '@/components/OrderView.vue';
+  import ProgressSpinner from "primevue/progressspinner";
+  import { useI18n } from 'vue-i18n'
+  import { globalStore } from '@/store';
 
 
-  const { proxy } = getCurrentInstance();
+
+
+const { t } = useI18n() 
+const { proxy } = getCurrentInstance();
+const store = globalStore()
 
 
 
@@ -602,7 +613,50 @@ const startWebsocket = () => {
     }
 }
 
-const init = () => {
+const loading = ref(true)
+const { locale,setLocaleMessage } = useI18n({ useScope: 'global' })
+
+const loadLanguage = async () => {
+
+    await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/settings`, {
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+        },
+    })
+    .then(async (response)=>{
+        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/languages/${response.data.data.language.code}`, {
+            headers: {
+                Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            }
+        })
+        .then(response2 => {
+
+            setLocaleMessage(response2.data.data.code, response2.data.data.pack);
+            locale.value = response2.data.data.code
+            store.setOrientation(response2.data.data.orientation)
+            loading.value = false
+        })
+        .catch((err) => {
+            console.log(err)
+        });
+        loading.value = false
+    })
+    .catch((err) => {
+        console.log(err)
+    });
+
+}
+
+const init = async () => {
+
+    if (proxy.$zitadel.oidcAuth.isAuthenticated){
+        await loadLanguage()
+    }else {
+        proxy.$router.push('/no-access')
+        loading.value = false
+    }
+
+
     startWebsocket()
     getStashedOrders()
     getUnpaidOrders()
@@ -842,20 +896,29 @@ watch(selectedCategory, (category) => {
 
 
   const items = ref([
-      {
-          label: 'Cashier',
+    {
+          label: {
+              title:'cashier',
+              plural:false
+          },
           icon: 'pi pi-home',
-          link: 'home',
+          link: '/home',
       },
       {
-          label: 'Kitchen',
+          label: {
+              title:'kitchen',
+              plural:false
+          },
           icon: 'pi pi-star',
-          link:'kitchen'
+          link:'/kitchen'
       },
       {
-          label: 'Admin',
+          label: {
+              title:'admin',
+              plural:false
+          },
           icon: 'pi pi-cog',
-          link: 'admin',
+          link: '/admin',
       }
   ]);
   

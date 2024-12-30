@@ -4,28 +4,28 @@
             <div class="col-12 flex pt-3">
                 <div class="gird w-full">
                     <div class="col-12">
-                        <h3>Inventory</h3>
+                        <h3>{{ $t('inventory') }}</h3>
                     </div>
                     <div class="col-12 flex justify-content-center align-items-center w-full">
                         <DataTable v-model:expandedRows="expandedRows"  @rowExpand="componentRowExpand" :value="inventory_components" stripedRows tableStyle="min-width: 50rem" class="w-full pr-5">
                             <template #header>
                                 <div class="flex flex-wrap items-center justify-between align-items-center gap-2">
-                                    <Button icon="pi pi-plus" label="Add Component" @click="add_component_dialog = true" rounded raised />
+                                    <Button icon="pi pi-plus" :label="$t('add_component')" @click="add_component_dialog = true" rounded raised />
                                 </div>
                             </template>
                             <Column expander style="width: 5rem" />
-                            <Column field="name" header="Name"></Column>
-                            <Column field="totalAmount" header="Quantity"></Column>
-                            <Column field="unit" header="Unit"></Column>
-                            <Column header="Status">
+                            <Column field="name" :header="$t('name')"></Column>
+                            <Column field="totalAmount" :header="$t('quantity')"></Column>
+                            <Column field="unit" :header="$t('unit')"></Column>
+                            <Column :header="$t('status')">
                                 <template #body="slotProps">
                                     <Tag :value="slotProps.data.totalAmount > slotProps.data.settings.stock_alert_treshold ? 'INSTOCK' : 'LOWSTOCK'" :severity="slotProps.data.totalAmount > slotProps.data.settings.stock_alert_treshold ? 'success' : 'warning'" />
                                 </template>
                             </Column>
-                            <Column header="Actions" style="width:30rem">
+                            <Column :header="$t('actions')" style="width:30rem">
                                 <template #body="slotProps">
                                     <ButtonGroup>
-                                        <Button icon="pi pi-clock" label="History" @click="loadComponentLogs(slotProps.data.id)" severity="secondary" aria-label="Save"  />
+                                        <Button icon="pi pi-clock" :label="$t('history')" @click="loadComponentLogs(slotProps.data.id)" severity="secondary" aria-label="Save"  />
                                         <Button icon="pi pi-cog" class="ml-2" severity="secondary" aria-label="Edit" @click="material_settings = slotProps.data; material_settings_dialog=true"  />
                                     </ButtonGroup>
                                 </template>
@@ -34,9 +34,9 @@
                                 <div class="p-4">
                                     <h4>Entries for {{ slotProps.data.name }}</h4>
                                     <div class="flex justify-content-center align-items-center">
-                                        <InputText class="m-1" placeholder="Company" v-model="new_entry_company" aria-describedby="name-help" />
-                                        <InputText class="m-1" placeholder="Purchase Quantity" v-model="new_entry_quantity" aria-describedby="name-help" />
-                                        <InputText class="m-1" placeholder="Purchase Price" v-model="new_entry_price" aria-describedby="name-help" />
+                                        <InputText class="m-1" :placeholder="$t('company')" v-model="new_entry_company" aria-describedby="name-help" />
+                                        <InputText class="m-1" :placeholder="$t('purchase_quantity')" v-model="new_entry_quantity" aria-describedby="name-help" />
+                                        <InputText class="m-1" :placeholder="$t('purchase_price')" v-model="new_entry_price" aria-describedby="name-help" />
                                         <FloatLabel>
                                             <Calendar inputId="new_entry_expiration_date" v-model="new_entry_expiration_date" showIcon />
                                             <label for="new_entry_expiration_date">Expiration date</label>
@@ -44,15 +44,15 @@
                                         <Button icon="pi pi-plus" label="Add Entry" class="ml-2" @click="addNewEntry(slotProps.data.id)" severity="info" raised />
                                     </div>
                                     <DataTable :value="slotProps.data.entries">
-                                        <Column field="company" header="Company"></Column>
-                                        <Column field="quantity" header="Quantity" sortable></Column>
-                                        <Column field="purchase_quantity" header="Purchase Quantity" sortable></Column>
-                                        <Column field="purchase_price" header="Purchase Price" sortable></Column>
-                                        <Column field="expiration_date" header="Expiration date" sortable></Column>
+                                        <Column field="company" :header="$t('company')"></Column>
+                                        <Column field="quantity" :header="$t('quantity')" sortable></Column>
+                                        <Column field="purchase_quantity" :header="$t('purchase_quantity')" sortable></Column>
+                                        <Column field="purchase_price" :header="$t('purchase_price')" sortable></Column>
+                                        <Column field="expiration_date" :header="$t('expiration_date')" sortable></Column>
                                         <Column header="Actions" style="width:30rem">
                                             <template #body="slotProps">
                                                 <ButtonGroup>
-                                                    <Button icon="pi pi-times" label="Delete" severity="secondary" aria-label="Delete" @click="confirmDeleteEntry($event,slotProps.data.id)" />
+                                                    <Button icon="pi pi-times" :label="$t('delete')" severity="secondary" aria-label="Delete" @click="confirmDeleteEntry($event,slotProps.data.id)" />
                                                 </ButtonGroup>
                                             </template>
                                         </Column>

@@ -4,18 +4,18 @@
                 <div class="col-12 flex">
                     <div class="gird w-full">
                         <div class="col-12">
-                            <h3>Orders</h3>
+                            <h3>{{ $t('order',3) }}</h3>
                         </div>
                         <div class="col-12">
                             <DataTable @page="updatOrdersTableRowsPerPage" :lazy="true" :totalRecords="ordersTableTotalRecords" :loading="isOrdersTableLoading"  paginatorPosition="both"  paginator :rows="ordersTableRowsPerPage" :rowsPerPageOptions="[50, 100, 500]" :value="orders" stripedRows tableStyle="min-width: 50rem;max-height:50vh;" class="w-full pr-2">
-                                <Column field="display_id" header="Id"></Column>
-                                <Column header="State">
+                                <Column field="display_id" :header="$t('id')"></Column>
+                                <Column :header="$t('status')">
                                     <template #body="slotProps">
                                         <Tag :value="slotProps.data.state" :severity="orderStateSeverity[slotProps.data.state]" />
                                     </template>
                                 </Column>
-                                <Column field="submitted_at" header="Submitted at"></Column>
-                                <Column header="Actions">
+                                <Column field="submitted_at" :header="$t('submitted_at')"></Column>
+                                <Column :header="$t('actions')">
                                     <template #body="slotProps">
                                         <ButtonGroup>
                                             <Button v-tooltip.top="'cancel'" icon="pi pi-times" severity="secondary" aria-label="Remove" @click="confirmCancelOrder($event,slotProps.data.display_id,slotProps.data.id)" />

@@ -1,13 +1,13 @@
 <template>
     <div>
         <DataTable :value="props.items" stripedRows tableStyle="width: 50rem" class="w-full pr-5">
-            <Column field="product.name" header="Name"></Column>
-            <Column field="price" header="Price"></Column>
-            <Column field="quantity" header="Quantity"></Column>
-            <Column header="Actions">
+            <Column field="product.name" :header="$t('name')"></Column>
+            <Column field="price" :header="$t('price')"></Column>
+            <Column field="quantity" :header="$t('quantity')"></Column>
+            <Column :header="$t('actions')">
                 <template #body="slotProps">
                     <ButtonGroup>
-                        <Button icon="pi pi-book" label="Details" severity="secondary" aria-label="Details" @click="itemToDisplay=slotProps.data; item_details_dialog=true" />
+                        <Button icon="pi pi-book" :label="$t('details')" severity="secondary" aria-label="Details" @click="itemToDisplay=slotProps.data; item_details_dialog=true" />
                     </ButtonGroup>
                 </template>
             </Column>

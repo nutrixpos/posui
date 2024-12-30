@@ -3,7 +3,7 @@
         <div v-if="state =='cancelled'" style="position:absolute;height:100%;width:100%;z-index:9" class="flex justify-content-center align-items-center">
             <div class="flex flex-column justify-content-center align-items-center">
                 <span style="color:white;font-size:1.3rem;font-weight:800;text-decoration: line-through;background-color: rgb(0,119,255);">{{ props.order.display_id }}</span>
-                <h2 style="color:tomato;font-weight:800">CANCELLED</h2>
+                <h2 style="color:tomato;font-weight:800">{{$t('cancelled')}}</h2>
             </div>
         </div>
         <Card :style="`width: 20rem; overflow: hidden;${state == 'cancelled' ? 'filter:grayscale(1) blur(0.2rem);' : ''}`">
@@ -20,12 +20,12 @@
                     </div>
                     <div class="col-9 flex justify-content-center align-items-center">
                         <ButtonGroup v-if="state != 'in_progress'"  class="w-full">
-                            <Button label="Start" iconPos="right" icon="pi pi-play" class="w-full" @click="prepareOrder" severity="info" />
+                            <Button :label="$t('start')" iconPos="right" icon="pi pi-play" class="w-full" @click="prepareOrder" severity="info" />
                         </ButtonGroup>
                         <ButtonGroup v-if="state == 'in_progress'" class="w-full">
                             <Button  icon="pi pi-trash" class="w-3" severity="secondary" />
                             <ConfirmPopup></ConfirmPopup>
-                            <Button icon="pi pi-check" class="w-9" aria-label="Finish" label="Finish" @click="confirmFinish($event)" severity="success" iconPos="right" />
+                            <Button icon="pi pi-check" class="w-9" aria-label="Finish" :label="$t('finish')" @click="confirmFinish($event)" severity="success" iconPos="right" />
                         </ButtonGroup>
                     </div>
                 </div>
@@ -58,17 +58,21 @@
         </Dialog>
         <Dialog v-model:visible="visible" modal :header="`Order #${props.order.display_id}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
             <!-- <Dialog v-model:visible="visible" modal :header="props.order.items[currentItemIndex].name+` #${currentItemIndex+1}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"> -->
-            <Stepper @update:activeStep="(number) => {currentItemIndex = number}">
-                <StepperPanel v-for="item,index in items" :key="index" :header="item.product.name">
-                    <template #content="{ prevCallback, nextCallback }">
-                        <Message v-if="props.order.items[currentItemIndex].comment != ''" severity="warn">{{ props.order.items[currentItemIndex].comment }}</Message>
+            <Stepper :value="currentItemIndex">
+                <StepList>
+                    <Step v-for="item,index in items" :key="index" :value="index">
+                        {{ item.product.name }}
+                    </Step>
+                </StepList>
+                <StepPanels>
+                    <StepPanel v-for="item,index in items" :key="index" :value="index">
+                        <Message v-if="item.comment != ''" severity="warn">{{ item.comment }}</Message>
                         <OrderItemView v-model="items[index]" />
                         <div class="flex pt-4 justify-content-between">
-                            <Button label="Back" severity="secondary" :disabled="currentItemIndex==0" icon="pi pi-arrow-left" @click="prevCallback" />
-                            <Button :disabled="currentItemIndex == props.order.items.length-1 && !isValid" :label="currentItemIndex == props.order.items.length-1 ? 'Go' : 'Next'" :icon="currentItemIndex != props.order.items.length-1 ? 'pi pi-arrow-right' : ''" iconPos="right" @click="if (currentItemIndex == props.order.items.length-1) {startOrder(); visible=false;} else nextCallback()" />
+                            <Button v-if="index == items.length-1" @click="startOrder(); visible=false;" :label="$t('start')" :disabled="!isValid" severity="success" :icon="`pi pi-arrow-${orientation == 'ltr' ? 'right' : 'left' }`" :iconPos="`orientation == 'ltr' ? 'right' : 'left'`" />
                         </div>
-                    </template>
-                </StepperPanel>
+                    </StepPanel>
+                </StepPanels>
             </Stepper>
         </Dialog>
     </div>
@@ -84,7 +88,10 @@ import Dialog from 'primevue/dialog'
 import moment from 'moment';
 import axios from 'axios';
 import Stepper from 'primevue/stepper';
-import StepperPanel from 'primevue/stepperpanel';
+import StepList from 'primevue/steplist';
+import StepPanels from 'primevue/steppanels';
+import Step from 'primevue/step';
+import StepPanel from 'primevue/steppanel';
 import Message from 'primevue/message';
 import Divider from 'primevue/divider';
 import { useConfirm } from "primevue/useconfirm";
@@ -93,6 +100,12 @@ import { useToast } from "primevue/usetoast";
 import OrderItemView from "./OrderItemView.vue";
 import {OrderItem, Product} from '@/classes/OrderItem'
 import {getCurrentInstance} from 'vue'
+
+import { globalStore } from '@/store';
+
+
+const store = globalStore()
+const orientation = computed(() => store.currentOrientation)
 
 const { proxy } = getCurrentInstance();
 

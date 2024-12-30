@@ -4,22 +4,22 @@
             <div class="col-12 flex">
                 <div class="gird w-full">
                     <div class="col-12">
-                        <h3>Categories</h3>
+                        <h3>{{$t('category',3)}}</h3>
                     </div>
                     <div class="col-12">
                         <DataTable @page="updatCategoriesTableRowsPerPage" :lazy="true" :totalRecords="categoriesTableTotalRecords" :loading="isCategoriesTableLoading"  paginatorPosition="both"  paginator :rows="categoriesTableRowsPerPage" :rowsPerPageOptions="[50, 100, 500]" :value="categories" stripedRows tableStyle="min-width: 50rem;max-height:50vh;" class="w-full pr-2">
                             <template #header>
                                 <div class="flex justify-start">
-                                    <Button icon="pi pi-plus" label="Add Category"  rounded raised @click="categoryAddDialog=true" />
+                                    <Button icon="pi pi-plus" :label="$t('add_category')"  rounded raised @click="categoryAddDialog=true" />
                                 </div>
                             </template>
-                            <Column sortable field="name" header="Name"></Column>
-                            <Column field="products.length" header="Products">
+                            <Column sortable field="name" :header="$t('name')"></Column>
+                            <Column field="products.length" :header="$t('product',3)">
                                 <template #body="slotProps">
                                     {{ slotProps.data.products != null ? slotProps.data.products.length : 0 }}
                                 </template>
                             </Column>
-                            <Column header="Actions">
+                            <Column :header="$t('actions')">
                                 <template #body="slotProps">
                                     <ConfirmPopup></ConfirmPopup>
                                     <ButtonGroup>

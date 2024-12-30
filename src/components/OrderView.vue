@@ -4,44 +4,44 @@
 
             <div class="col-12">
                 <Button v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'"  severity="danger" size="small" aria-label="Cancel order" @click.stop="confirmCancelOrder($event)">
-                    Cancel order
+                    {{$t('cancel')}} {{ $t('order') }}
                 </Button>
                 <ConfirmPopup></ConfirmPopup>
             </div>
 
-            <div class="col-3">Items</div>
+            <div class="col-3">{{$t('item',3)}}</div>
             <div class="col-9">
                 <OrderItemsInfo :items="props.order.items" />
             </div>
 
-            <div class="col-6">Display id</div>
+            <div class="col-6">{{ $t('display_id') }}</div>
             <div class="col-6">{{ props.order.display_id }}</div>
 
-            <div class="col-6">State</div>
+            <div class="col-6">{{ $t('status') }}</div>
             <Badge :value="order_status.title" :severity="order_status.severity" />
 
-            <div class="col-6">Submitted At</div>
+            <div class="col-6">{{ $t('submitted_at') }}</div>
             <div class="col-6">{{ props.order.submitted_at }}</div>
 
-            <div class="col-6">Started At</div>
+            <div class="col-6">{{$t('started_at')}}</div>
             <div class="col-6">{{ props.order.started_at }}</div>
 
-            <div class="col-6">Comment</div>
+            <div class="col-6">{{ $t('comment') }}</div>
             <div class="col-6">{{ props.order.comment }}</div>
 
-            <div class="col-6">Cost</div>
+            <div class="col-6">{{ $t('cost') }}</div>
             <div class="col-6">{{ props.order.cost }}</div>
 
-            <div class="col-6">Sale price</div>
+            <div class="col-6">{{ $t('sale_price') }}</div>
             <div class="col-6">{{ props.order.sale_price }}</div>
 
-            <div class="col-6">is_pay_later</div>
+            <div class="col-6">{{$t('pay_later')}}?</div>
             <div class="col-6">{{ props.order.is_pay_later }}</div>
 
-            <div class="col-6">is_paid</div>
+            <div class="col-6">{{$t('paid')}}</div>
             <div class="col-6">{{ props.order.is_paid }}</div>
 
-            <div class="col-6">Discount</div>
+            <div class="col-6">{{$t('discount')}}</div>
             <div class="col-6">{{ props.order.discount }}</div>
         </div>
     </div>

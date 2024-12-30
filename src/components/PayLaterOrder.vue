@@ -7,7 +7,7 @@
                     <Badge :value="order_status.title" :severity="order_status.severity" />
                     <span>{{ props.order.items.length }} Item(s)</span>
                     <Button @click="payUnpaidOrder()">
-                        Checkout
+                        {{$t('checkout')}}
                         <Badge :value="order_unpaid_amount_str" class="p-badge-secondary" />
                     </Button>
                 </div>
