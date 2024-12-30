@@ -1,5 +1,5 @@
 <template>
-  <main style="height:100%;">
+  <main :style="`height:100%;direction:${orientation}`">
       <RouterView />
       <Toast  group="br" position="top-center">
         <template #content="{ message }">
@@ -21,11 +21,20 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import Toast from 'primevue/toast';
+import { globalStore } from '@/store';
+
+
+const store = globalStore()
+const orientation = computed(() => store.currentOrientation)
+
 </script>
 
 <style>
-#app{
-  height: 100vh;
+body {
+    font-family: sans-serif; /* Replace with your desired font */
+    height: 100vh;
+    background-color: rgb(247, 247, 247);
 }
 </style>

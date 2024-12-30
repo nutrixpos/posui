@@ -7,7 +7,7 @@
                         <i class="pi pi-clock"></i>
                         <div class="flex ml-2">
                             <h4 class="m-0 mb-1">{{ props.order.display_id }}</h4>
-                            &nbsp;({{ props.order.items.length }} items)
+                            &nbsp;({{ props.order.items.length }} {{$t('item',3)}})
                         </div>
                     </div>
                     <div class="flex align-items-center">

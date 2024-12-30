@@ -11,13 +11,13 @@
                     </IconField>
                 </div>
             </template>
-            <Column field="name" header="Name"></Column>
-            <Column field="quantity" header="Quantity"></Column>
-            <Column field="unit" header="Unit"></Column>
-            <Column header="Actions">
+            <Column field="name" :header="$t('name')"></Column>
+            <Column field="quantity" :header="$t('quantity')"></Column>
+            <Column field="unit" :header="$t('unit')"></Column>
+            <Column :header="$t('actions')">
                 <template #body="slotProps">
                     <ButtonGroup>
-                        <Button icon="pi pi-plus" label="Add" severity="secondary" aria-label="Ddd" @click="returnMaterial(slotProps.data)" />
+                        <Button icon="pi pi-plus" :label="$t('add')" severity="secondary" aria-label="Ddd" @click="returnMaterial(slotProps.data)" />
                     </ButtonGroup>
                 </template>
             </Column>
@@ -34,7 +34,6 @@ import IconField from 'primevue/iconfield'
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import axios from 'axios'
-import { FilterMatchMode } from 'primevue/api';
 import { Material, MaterialEntry } from '@/classes/OrderItem';
 const { proxy } = getCurrentInstance();
 
@@ -43,7 +42,7 @@ const materials = ref([])
 const loading = ref(false)
 
 const filters = ref({
-    name: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    name: { value: null},
 });
 
 

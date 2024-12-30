@@ -4,17 +4,17 @@
              <div class="col-12 flex">
                  <div class="gird w-full">
                      <div class="col-12">
-                        <h3>Settings</h3>
+                        <h3>{{$t('settings')}}</h3>
                     </div>
                     <div class="col-12 flex-column flex">
-                        <h4>Inventory</h4>
+                        <h4>{{$t('inventory')}}</h4>
                         <div class="flex align-items-center">
                             <span>default_inventory_quantity_warn</span>
                             <InputText class="ml-3" v-model.number="default_inventory_quantity_warn" type="number" />
                         </div>
                         
                         <Divider />
-                        <h4 class="mb-2">Orders</h4>
+                        <h4 class="mb-2">{{$t('order',3)}}</h4>
                         <span class="mt-1">Queues</span>
                         <div class="flex align-items-center">
                             <div class="flex flex-column">
@@ -35,6 +35,14 @@
                                 </div>
                             </div>
                         </div>
+
+                        <Divider />
+                        <div class="flex flex-column">
+                            <h3><span class="pi pi-language"></span> {{ t('language',3) }}</h3>
+                            <Dropdown @change="changedLanguage" v-model="selectedLang" :options="languages" optionLabel="language" placeholder="Select a Language" class="w-full md:w-3" />
+                            <Button @click="applyLang" v-if="changedLang" class="mt-2 md:w-3" type="button" label="Apply" severity="secondary"></Button>
+                        </div>
+
                         <div class="mt-6">
                             <Button label="Save" @click="saveSettings()" />
                         </div>
@@ -52,6 +60,9 @@ import Divider from 'primevue/divider';
 import Button from 'primevue/button';
 import { useToast } from "primevue/usetoast";
 import {getCurrentInstance,ref} from 'vue'
+import Dropdown from 'primevue/dropdown';
+import { useI18n } from 'vue-i18n'
+import { globalStore } from '../store';
 
 const { proxy } = getCurrentInstance();
 
@@ -63,6 +74,27 @@ const new_queue_next = ref(1)
 
 const toast = useToast();
 
+const store = globalStore()
+
+
+const changedLang = ref(false)
+
+const { t,locale,setLocaleMessage } = useI18n({ useScope: 'global' }) 
+
+const selectedLang : any = ref({"language":"English","code":"en"})
+const languages = ref([
+    {"language":"English","code":"en"},
+])
+
+const changedLanguage = () => {
+    if (proxy.$i18n.locale != selectedLang.value.code) {
+        changedLang.value = true
+    }else {
+        changedLang.value = false
+    }
+}
+
+
 const saveSettings = () => {
     axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/settings`, 
         {
@@ -72,6 +104,10 @@ const saveSettings = () => {
                 },
                 orders: {
                     queues: order_queues.value
+                },
+                language:{
+                    code: selectedLang.value.code,
+                    language: selectedLang.value.language
                 }
             }
         },
@@ -100,12 +136,46 @@ const getSettings = () => {
         console.log(response.data.data)
         default_inventory_quantity_warn.value = response.data.data.inventory.default_inventory_quantity_warn
         order_queues.value = response.data.data.orders.queues
+        selectedLang.value = response.data.data.language
     })
     .catch((err) => {
         console.log(err)
     });
 }
 
+const applyLang = () => {
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/languages/${selectedLang.value.code}`, {
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+        }
+    })
+    .then(response => {
+
+        setLocaleMessage(selectedLang.value.code, response.data.data.pack);
+        locale.value = response.data.data.code
+        store.setOrientation(response.data.data.orientation)
+    })
+    .catch(() => {
+        proxy.$toast.add({severity:'error', summary: 'Error', detail: "error loading language", life: 3000,grpup:'br'});
+    });
+}
+
+
+const getAvailableLanguages = () => {
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/languages`, {
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+        }
+    })
+    .then(response => {
+        languages.value = response.data.data
+    })
+    .catch(error => {
+        proxy.$toast.add({severity:'error', summary: 'Error', detail: error.response.data.error, life: 3000,grpup:'br'});
+    });
+}
+
+getAvailableLanguages();
 getSettings()
 
 </script>

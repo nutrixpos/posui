@@ -4,28 +4,32 @@
             <div class="col-12 flex">
                 <div class="gird w-full">
                     <div class="col-12">
-                        <h3>Sales</h3>
+                        <h3>{{$t('sales')}}</h3>
                     </div>
                     <div class="col-12 flex justify-content-center align-items-center w-full">
                         <div class="flex flex-column w-full">
                             <div class="grid">
                                 <div class="col-8">
-                                    <div class="card">
-                                        <Chart style="min-height: 20rem;" type="line" :data="chartData" :options="chartOptions" />
-                                    </div>
+                                    <Card>
+                                        <template #content>
+                                            <Line v-if="chartData != undefined" style="min-height: 20rem;" :chartData="chartData" :chartOptions="chartOptions" />
+                                        </template>
+                                    </Card>
                                 </div>
-                                <div class="col-4 flex justify-content-center align-items-center">
-                                    <div class="card">
-                                        <Chart type="pie" class="w-20rem" :data="productPiechartData" :options="productPiechartOptions" />
-                                    </div>
+                                <div class="col-4 flex justify-content-start align-items-start">
+                                    <Card>
+                                        <template #content>
+                                            <Pie v-if="productPiechartData != undefined" :chartData="productPiechartData" :chartOptions="productPiechartOptions" />
+                                        </template>
+                                    </Card>
                                 </div>
                             </div>
                             <DataTable @page="updatSalesTableRowsPerPage" :lazy="true" :totalRecords="salesTableTotalRecords" :loading="isSalesTableLoading" v-model:expandedRows="expandedSalesLogRows" paginatorPosition="both"  paginator :rows="salesTableRowsPerPage" :rowsPerPageOptions="[7, 14, 30, 90]" :value="sales_log" stripedRows tableStyle="min-width: 50rem;max-height:50vh;" class="w-full pr-2">
                                     <Column expander style="width: 5rem" />
-                                    <Column sortable field="date" header="Date"></Column>
-                                    <Column sortable field="costs" header="Costs"></Column>
-                                    <Column sortable field="total_sales" header="Sales"></Column>
-                                    <Column sortable field="profit" header="Profit">
+                                    <Column sortable field="date" :header="$t('date')"></Column>
+                                    <Column sortable field="costs" :header="$t('cost')"></Column>
+                                    <Column sortable field="total_sales" :header="$t('sales')"></Column>
+                                    <Column sortable field="profit" :header="$t('profit')">
                                         <template #body="slotProps">
                                             <div :style="`${ (slotProps.data.total_sales - slotProps.data.costs) > 0 ? 'color:green' : 'color:red' }`">{{ slotProps.data.total_sales - slotProps.data.costs }}</div>
                                         </template>
@@ -59,10 +63,17 @@
 <script setup>
 import DataTable from "primevue/datatable";
 import Column from 'primevue/column'
-import Chart from 'primevue/chart';
+import {Line,Pie} from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,PointElement,LineElement,ArcElement} from 'chart.js'
+import Card from "primevue/card";
 import {getCurrentInstance, ref} from 'vue'
 import axios from 'axios'
 import SalesLogTableItems from '@/components/SalesLogTableItems.vue'
+import { $dt } from '@primevue/themes';
+
+
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,PointElement,LineElement,ArcElement)
+
 
 const {proxy} = getCurrentInstance()
 
@@ -100,15 +111,13 @@ const updatSalesTableRowsPerPage = (event) => {
 
 
 const setProductPieChartData = () => {
-    const documentStyle = getComputedStyle(document.body);
-
     return {
-        labels: productPieChartLabels,
+        labels: productPieChartLabels.value,
         datasets: [
             {
-                data: productPieChartSales,
-                backgroundColor: [documentStyle.getPropertyValue('--cyan-500'), documentStyle.getPropertyValue('--orange-500'), documentStyle.getPropertyValue('--gray-500')],
-                hoverBackgroundColor: [documentStyle.getPropertyValue('--cyan-400'), documentStyle.getPropertyValue('--orange-400'), documentStyle.getPropertyValue('--gray-400')]
+                data: productPieChartSales.value,
+                backgroundColor: [$dt('teal.500').value, $dt('sky.500').value, $dt('gray.500').value],
+                hoverBackgroundColor: [$dt('teal.500').value, $dt('sky.500').value, $dt('gray.500').value]
             }
         ]
     };
@@ -116,7 +125,7 @@ const setProductPieChartData = () => {
 
 const setProductPieChartOptions = () => {
     const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--text-color');
+    const textColor = documentStyle.getPropertyValue('--p-blue-500');
 
     return {
         plugins: {
@@ -134,8 +143,6 @@ const setProductPieChartOptions = () => {
 
         
 const setChartData = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-
     return {
         labels: chartLabels.value,
         datasets: [
@@ -144,22 +151,22 @@ const setChartData = () => {
                 data: chartSales.value,
                 fill: false,
                 tension: 0.4,
-                borderColor: documentStyle.getPropertyValue('--cyan-500'),
+                borderColor: $dt('emerald.500').value,
             },
             {
                 label: 'Cost',
                 data: chartCost.value,
                 fill: false,
                 tension: 0.4,
-                borderColor: documentStyle.getPropertyValue('--orange-300'),
+                borderColor: $dt('amber.300').value,
             },
         ]
     };
 };
 const setChartOptions = () => {
     const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--text-color');
     const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
+    const textColor = documentStyle.getPropertyValue('--text-color');
     const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
     return {
@@ -197,10 +204,7 @@ const setChartOptions = () => {
 const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.value) => {
 
 
-    let page_number = Math.ceil(first/rows)
-
-    if (page_number == 0)
-        page_number = 1
+    let page_number = Math.floor(first/rows) + 1
 
 
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/salesperday?page[number]=${page_number}&page[size]=${rows}`, {

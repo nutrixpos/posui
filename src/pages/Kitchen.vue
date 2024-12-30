@@ -1,15 +1,15 @@
 <template>
-    <div style="overflow-x: hidden;">
+    <div v-if="!loading" style="overflow-x: hidden;">
         <div class="grid">
             <div class="col-8 pt-5 pl-3">
                 <div v-if="orders.length <= 0" style="height:100vh;width:100%;" class="flex justify-content-center align-items-center">
-                    <h1 style="color:cadetblue">0 Orders</h1>
+                    <h1 style="color:cadetblue">0 {{$t('order',3)}}</h1>
                 </div>
                 <div class="flex flex-wrap">
                     <QueueOrder @finished="orderFinished(index)" @openedDialog="openedDialogs++" @closedDialog="openedDialogs--" v-for="(order,index) in orders" :key="index" :order="order" :number="index+1" class="queue-order"/>
                 </div>
             </div>
-            <div class="col-4" style="background-color:#f8f8ff;height:100vh;position:fixed;right:0;top:0">
+            <div class="col-4" :style="`background-color:#f8f8ff;height:100vh;position:fixed;${orientation == 'ltr' ? 'right:0' : 'left:0'};top:0`">
                 <div class="p-3">
                     <!-- <div style="height:100%;width:100%;" class="flex align-items-center justify-content-center">
                         <i class="pi pi-comments" style="font-size:4rem;color:darkgray"></i>
@@ -48,12 +48,16 @@
                         </div>
                     </div>
                     <InputGroup class="mt-2">
-                        <InputText v-model="chat_text" placeholder="Write message.." @keyup.enter="SendChatMessage(chat_text)" />
+                        <InputText v-model="chat_text" :placeholder="$t('write_message')" @keyup.enter="SendChatMessage(chat_text)" />
                         <Button icon="pi pi-send" severity="info" @click="SendChatMessage(chat_text)" />
                     </InputGroup>
                 </div>
             </div>
         </div>
+    </div>
+    <div style="width:100vw;height:100vh;display:flex;justify-content:center;align-items:center" v-if="loading">
+      <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="8" fill="transparent"
+      animationDuration=".5s" aria-label="Custom ProgressSpinner" />
     </div>
 </template>
 
@@ -67,6 +71,14 @@ import InputGroup from 'primevue/inputgroup';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
+import { globalStore } from '@/store';
+import { useI18n } from 'vue-i18n'
+import ProgressSpinner from "primevue/progressspinner";
+
+
+
+
+const store = globalStore()
 
 const { proxy } = getCurrentInstance();
 const toast = useToast();
@@ -90,6 +102,42 @@ return proxy.$zitadel.oidcAuth.userProfile
 
 
 let socket : WebSocket
+const orientation = computed(() => store.currentOrientation)
+
+
+const loading = ref(true)
+const { locale,setLocaleMessage } = useI18n({ useScope: 'global' })
+
+const loadLanguage = async () => {
+
+    await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/settings`, {
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+        },
+    })
+    .then(async (response)=>{
+        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/languages/${response.data.data.language.code}`, {
+            headers: {
+                Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            }
+        })
+        .then(response2 => {
+
+            setLocaleMessage(response2.data.data.code, response2.data.data.pack);
+            locale.value = response2.data.data.code
+            store.setOrientation(response2.data.data.orientation)
+            loading.value = false
+        })
+        .catch((err) => {
+            console.log(err)
+        });
+        loading.value = false
+    })
+    .catch((err) => {
+        console.log(err)
+    });
+
+}
 
 
 const SendChatMessage = (msg: string) => {
@@ -210,6 +258,7 @@ setInterval(() => {
 }, 5000);
 
 
+loadLanguage()
 loadOrders()
 startWebsocket()
 

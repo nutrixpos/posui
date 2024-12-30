@@ -9,10 +9,10 @@
                     <div class="flex align-items-center" style="height: 3rem;">
                         <h4 class="m-0 p-1">{{props.item.name}}</h4>
                     </div>
-                    <p class="mx-1 my-1" style="color:green"><strong>{{props.item.price}} EGP</strong></p>   
+                    <p class="mx-1 my-1" style="color:green"><strong>{{props.item.price}} {{$t('egp')}}</strong></p>   
 
                     <div class="text-center flex align-items-center justify-content-center" style="background-color:#ffd589;">
-                        <p class="m-0" style="font-size:0.9rem;">{{ props.item.availability ? Math.max(0, props.item.availability) : "..." || "..." }} can</p>
+                        <p class="m-0" style="font-size:0.9rem;">{{ props.item.availability ? Math.max(0, props.item.availability) : "..." || "..." }} {{$t('possible')}}</p>
                     </div>
 
                     <OverlayPanel ref="op">

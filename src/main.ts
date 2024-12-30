@@ -4,15 +4,14 @@ import App from './App.vue'
 
 import '@/assets/styles.scss'
 import PrimeVue from 'primevue/config';
-import 'primevue/resources/themes/aura-light-green/theme.css'
-import 'primevue/resources/primevue.min.css'
+import Aura from '@primevue/themes/aura';
 import 'primeicons/primeicons.css'
 
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
 import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
-
+import { createI18n } from 'vue-i18n'
 
 
 // library.add(fas)
@@ -36,6 +35,12 @@ import Settings from './pages/Settings.vue';
 
 
 const routes = [
+  {
+    path: '/no-access', 
+    component: ()=>{
+        return import('@/pages/NoAccessView.vue')
+    },
+  },
   { 
     path: '/', alias:['/home'], 
     meta: {
@@ -96,6 +101,50 @@ declare module 'vue' {
   }
 }
 
+const i18n = createI18n({
+  legacy: false,
+  locale: 'en',
+  fallbackLocale: 'en',
+  messages: {
+    en: {
+      "cashier":"Cashier",
+      "kitchen":"Kitchen",
+      "admin":"Admin",
+      "inventory":"Inventory",
+      "product": "Product | Products",
+      "order":"Order | Orders",
+      "order_items":"Order Items",
+      "total":"Total",
+      "subtotal":"Subtotal",
+      "discount":"Discount",
+      "egp":"EGP",
+      "search":"Search",
+      "signout":"Signout",
+      "notifications":"Notifications",
+      "clear_all":"Clear All",
+      "stashed_orders":"Stashed Orders",
+      "chats":"Chats",
+      "messages":"Messages",
+      "write_message":"Write Message",
+      "paylater_orders":"Paylater Orders",
+      "checkout":"Checkout",
+      "category":"Category | Categories",
+      "add_component":"Add Component",
+      "name":"Name",
+      "quantity":"Quantity",
+      "unit":"Unit",
+      "status":"Status",
+      "actions":"Actions",
+      "history":"History",
+      "list":"List",
+      "report":"Report | Reports",
+      "settings":"Settings",
+      "language":"Language | Languages",
+      "sales":"Sales"
+    }
+  }
+})
+
 
 zitadelAuth.oidcAuth.useRouter(router)
 
@@ -106,13 +155,24 @@ zitadelAuth.oidcAuth.startup().then(ok => {
 
         app
         .use(router)
-        .use(PrimeVue)
+        .use(PrimeVue,{
+            // Default theme configuration
+            theme: {
+                preset: Aura,
+                options: {
+                    prefix: 'p',
+                    darkModeSelector: 'system',
+                    cssLayer: false
+                }
+            }
+        })
         .use(ToastService)
         .use(ConfirmationService)
+        .use(i18n)
         .directive('tooltip', Tooltip)
         .mount('#app')
   } else {
-      console.error('Startup was not ok')
+      console.error('Zitadel startup was not ok')
   }
 })
 
