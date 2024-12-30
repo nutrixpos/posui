@@ -26,7 +26,7 @@
                     <Badge :value="payLaterOrders.length" class="p-badge-warn"  />
                 </Button>
                 <OverlayPanel ref="paylater_orders_op" class="w-5 lg:w-3" style="max-height:60vh;overflow-y: auto;">
-                    <h4 class="my-0 mx-2" style="color:#c2c2c2">{{t('paylater_orders')}}</h4>
+                    <h4 class="m-2" style="color:#c2c2c2">{{t('paylater_orders')}}</h4>
                     <PayLaterOrder @order_paid="PayLaterOrderPaid(index)" :order="order" v-for="(order,index) in payLaterOrders" :key="index" />
                 </OverlayPanel>
                 <Button  severity="secondary" size="large"  text rounded aria-label="Stashed"  @click.stop="chats_toggle">
@@ -70,7 +70,7 @@
                     <Badge :value="stashedOrders.length" class="p-badge-success"  />
                 </Button>
                 <OverlayPanel ref="stashed_orders_op" class="w-5 lg:w-3" style="max-height:60vh;overflow-y: auto;">
-                    <h4 class="my-0 mx-2" style="color:#c2c2c2">{{ t('stashed_orders') }}</h4>
+                    <h4 class="m-2" style="color:#c2c2c2">{{ t('stashed_orders') }}</h4>
                     <StashedOrder :order="order" v-for="(order,index) in stashedOrders" :key="index" @back_to_checkout="BackStashedOrderToCheckout(index)" />
                 </OverlayPanel>
                 <Button  severity="secondary" size="large"  text rounded :aria-label="t('notifications')" @click.stop="notifications_toggle">
