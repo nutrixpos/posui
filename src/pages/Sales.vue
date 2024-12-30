@@ -10,16 +10,16 @@
                         <div class="flex flex-column w-full">
                             <div class="grid">
                                 <div class="col-8">
-                                    <Card>
+                                    <Card style="max-width:100%;">
                                         <template #content>
-                                            <Line v-if="chartData != undefined" style="min-height: 20rem;" :chartData="chartData" :chartOptions="chartOptions" />
+                                            <Line  v-if="chartData != undefined" style="min-height: 20rem;max-width:100%;" :chartData="chartData" :chartOptions="chartOptions" />
                                         </template>
                                     </Card>
                                 </div>
                                 <div class="col-4 flex justify-content-start align-items-start">
-                                    <Card>
+                                    <Card style="max-width:100%;">
                                         <template #content>
-                                            <Pie v-if="productPiechartData != undefined" :chartData="productPiechartData" :chartOptions="productPiechartOptions" />
+                                            <Pie style="max-width: 100%;" v-if="productPiechartData != undefined" :chartData="productPiechartData" :chartOptions="productPiechartOptions" />
                                         </template>
                                     </Card>
                                 </div>
