@@ -1,26 +1,46 @@
 <template>
     <div v-if="!loading">
-        <div class="grid m-2">
-            <div class="col-12">
-                <Menubar :model="items">
-                    <template #item="{ item }">
-                        <router-link :to="item.link">
+        <div class="grid p-0 m-0">
+            <div class="col-12 p-0">
+                <Toolbar>
+                    <template #start>
+                        <router-link v-for="(item,index) in items" :key="index" :to="item.link">
                             <Button :icon="item.icon" :label="$t(`${item.label.title}`,item.label.plural ? 3 : 1)"  text severity="secondary" />
                         </router-link>
                     </template>
-                </Menubar>
-            </div>
-            <div class="col-2">
-                <Tree v-model:expandedKeys="expandedKeys" :value="menu_tree" selectionMode="single" class="w-full">
-                    <template #default="slotProps">
-                        <RouterLink style="text-decoration: none;color: inherit;" :to="slotProps.node.link" class="flex align-items-center">
-                            <div>{{ $t(`${slotProps.node.label.title}`,slotProps.node.label.plural ? 3 : 1) }}</div>
-                        </RouterLink>
+
+                    <template #end>
+                        <Button  severity="secondary" size="large"  text rounded aria-label="Profile" label="Profile" @click.stop="user_profile_toggle">
+                            <span style="font-size:0.9rem;" class="mr-2">{{ user.name }}</span>
+                            <span class="p-button-icon pi pi-user"></span>
+                        </Button>
+                        <OverlayPanel ref="user_profile_op" class="lg:w-2 md:w-3">
+                            <div class="flex flex-column">
+                                <span>Welcome <strong>{{ user.name }}</strong></span>
+                                <div class="mt-2">
+                                    <Chip v-for="(role,index) in roles" :key="index" :label="role" style="height: 1.5rem;" class="m-1" />
+                                </div>
+                                <Button class="mt-5" icon="pi pi-sign-out" severity="secondary" text aria-label="Signout" :label=" $t('signout')" @click="proxy.$zitadel.oidcAuth.signOut()" />
+                            </div>
+                        </OverlayPanel>
                     </template>
-                </Tree>
+                </Toolbar>
             </div>
-            <div class="col-10 flex pt-3">
-                <RouterView />
+            <div class="col-12">
+                <div class="grid">
+                    <div class="col-2">
+                        <Tree v-model:expandedKeys="expandedKeys" :value="menu_tree" selectionMode="single" class="w-full">
+                            <template #default="slotProps">
+                                <RouterLink style="text-decoration: none;color: inherit;" :to="slotProps.node.link" class="flex align-items-center">
+                                    <div>{{ $t(`${slotProps.node.label.title}`,slotProps.node.label.plural ? 3 : 1) }}</div>
+                                </RouterLink>
+                            </template>
+                        </Tree>
+                    </div>
+                    <div class="col-10 flex pt-3">
+                        <RouterView />
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -30,22 +50,34 @@
     </div>
 </template>
 
-<script setup>
-import {ref,getCurrentInstance} from "vue";
-import Menubar from 'primevue/menubar'
+<script setup lang="ts">
+import {ref,getCurrentInstance,computed} from "vue";
+import { Toolbar } from "primevue";
 import Tree from "primevue/tree";
 import Button from "primevue/button";
 import { useI18n } from 'vue-i18n'
 import { globalStore } from '@/store';
 import axios from "axios";
+import OverlayPanel from "primevue/overlaypanel";
 import ProgressSpinner from "primevue/progressspinner";
 
 
 const { proxy } = getCurrentInstance();
 const store = globalStore()
+const user_profile_op = ref();
+
+const user : any = computed(() => {
+
+    return proxy.$zitadel.oidcAuth.userProfile
+
+})
+
 
 // const selected_list_item = ref ({ name: 'Inventory', icon:'inbox', link:'inventory' })
 
+const user_profile_toggle = (event: any) => {
+    user_profile_op.value.toggle(event);
+}
 
 const expandAll = () => {
     for (let node of menu_tree.value) {

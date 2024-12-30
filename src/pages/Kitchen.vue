@@ -9,7 +9,7 @@
                     <QueueOrder @finished="orderFinished(index)" @openedDialog="openedDialogs++" @closedDialog="openedDialogs--" v-for="(order,index) in orders" :key="index" :order="order" :number="index+1" class="queue-order"/>
                 </div>
             </div>
-            <div class="col-4" :style="`background-color:#f8f8ff;height:100vh;position:fixed;${orientation == 'ltr' ? 'right:0' : 'left:0'};top:0`">
+            <div class="col-4" :style="`background-color:${$dt('slate.400').value};height:100vh;position:fixed;${orientation == 'ltr' ? 'right:0' : 'left:0'};top:0`">
                 <div class="p-3">
                     <!-- <div style="height:100%;width:100%;" class="flex align-items-center justify-content-center">
                         <i class="pi pi-comments" style="font-size:4rem;color:darkgray"></i>
@@ -18,7 +18,7 @@
                     </div> -->
                     <div style="height:calc(100vh - 5rem);overflow-y:auto;" ref="chat_container">
                         <div v-for="(chat,index) in chats" :key="index">
-                            <Message severity="success" v-if="chat.type == 'chat_message' && chat.user_sub != user.sub">
+                            <Message severity="success" v-if="chat.type == 'chat_message' && chat.user_sub != user.sub" class="m-1">
                                 <template #container>
                                     <div class="p-3 flex flex-column">
                                         <strong>{{ chat.sender_name }}</strong>
@@ -27,7 +27,7 @@
                                 </template>
                             </Message>
 
-                            <Message severity="info" v-if="chat.type == 'chat_message' && chat.user_sub == user.sub">
+                            <Message severity="info" v-if="chat.type == 'chat_message' && chat.user_sub == user.sub" class="m-1">
                                 <template #container>
                                     <div class="p-3 flex flex-column">
                                         <strong>{{ chat.sender_name }}</strong>
@@ -36,7 +36,7 @@
                                 </template>
                             </Message>
 
-                            <Message severity="warn" v-if="chat.type == 'notification'">
+                            <Message severity="warn" v-if="chat.type == 'notification'" class="m-1">
                                 <template #container>
                                     <div class="p-3 flex flex-column">
                                         <strong>{{ chat.topic_name }}</strong>
@@ -74,6 +74,7 @@ import Message from 'primevue/message';
 import { globalStore } from '@/store';
 import { useI18n } from 'vue-i18n'
 import ProgressSpinner from "primevue/progressspinner";
+import { $dt } from '@primevue/themes';
 
 
 

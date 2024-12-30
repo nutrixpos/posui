@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!loading" class="flex flex-column m-2" style="height: 100%;">
+    <div v-if="!loading" class="flex flex-column m-0 p-0" style="height: 100%;">
         <Toolbar>
             <template #start>
                 <router-link v-for="(item,index) in items" :key="index" :to="item.link">
@@ -102,7 +102,7 @@
                 </OverlayPanel>
             </template>
         </Toolbar>
-        <div class="grid" style="flex-grow:1;">
+        <div class="grid m-0 p-0" style="flex-grow:1;">
             <div class="col-2">
                 <Listbox  v-model="selectedCategory" :options="categories" optionLabel="name" class="w-full mt-2" filter>
                     <template #option="slotProps">
