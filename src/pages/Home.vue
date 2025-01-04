@@ -155,7 +155,7 @@
                                 <div class="flex justify-content-between flex-wrap align-items-center">
                                     <p class="my-0">{{t('discount')}} :</p>
                                     <div class="w-7 flex justify-content-end align-items-center">
-                                        <InputText v-model="discount" :disabled="orderItems.length == 0" placeholder="0" type="number" class="w-8 h-2rem"  />
+                                        <InputText v-model.number="discount" :disabled="orderItems.length == 0" placeholder="0" type="number" class="w-8 h-2rem"  />
                                         <p style="font-size:0.8rem" class="mx-2">{{ t('egp') }}</p>
                                     </div>
                                 </div>
@@ -325,8 +325,8 @@ const payLaterStart = () => {
     goOrder(true)
 }
 
-const getUnpaidOrders = () => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=false&filter[is_finished]=false`,{
+const getPayLaterOrders = () => {
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=false&filter[is_pay_later]=true`,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
@@ -485,7 +485,8 @@ const stashOrder = () => {
         },
     {
         headers:{
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
+            "Accept-Languages": proxy.$i18n.locale
         },
     }).then(async (response) => {
         orderItems.value=[]
@@ -559,7 +560,7 @@ const startWebsocket = () => {
                 notifications.value.push(notification);
 
 
-                getUnpaidOrders()
+                getPayLaterOrders()
             }else {
                 const notification = new Notification();
                 notification.description = data.message
@@ -659,7 +660,7 @@ const init = async () => {
 
     startWebsocket()
     getStashedOrders()
-    getUnpaidOrders()
+    getPayLaterOrders()
 
     console.log("user:")
     console.log(user.value)
@@ -761,14 +762,15 @@ const goOrder = (isPaylater:boolean = false) => {
             },
             {
                 headers:{
-                    Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+                    Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
+                    'Accept-Language': proxy.$i18n.locale,
                 },
             },
         ).then(() => {
             toast.add({ severity: 'success', summary: 'Success', detail: 'Order in progress !', life: 3000,group:'br' });
 
             if (isPaylater){
-                getUnpaidOrders()
+                getPayLaterOrders()
             }
         })
     

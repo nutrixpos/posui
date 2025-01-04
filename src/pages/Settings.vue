@@ -38,10 +38,20 @@
 
                         <Divider />
                         <div class="flex flex-column">
+                            <h3><span class="pi pi-language"></span> {{ t('printer',1) }}</h3>
+                            <div class="flex align-items-center mt-3">
+                                    <span>{{t("host",1)}}:</span>
+                                    <InputText v-model="receipt_printer_host"  class="mx-2" />
+                            </div>
+                        </div>
+
+                        <Divider />
+                        <div class="flex flex-column">
                             <h3><span class="pi pi-language"></span> {{ t('language',3) }}</h3>
                             <Dropdown @change="changedLanguage" v-model="selectedLang" :options="languages" optionLabel="language" placeholder="Select a Language" class="w-full md:w-3" />
                             <Button @click="applyLang" v-if="changedLang" class="mt-2 md:w-3" type="button" label="Apply" severity="secondary"></Button>
                         </div>
+
 
                         <div class="mt-6">
                             <Button label="Save" @click="saveSettings()" />
@@ -71,6 +81,7 @@ const order_queues = ref<any>({})
 
 const new_queue_prefix = ref("")
 const new_queue_next = ref(1)
+const receipt_printer_host = ref()
 
 const toast = useToast();
 
@@ -108,6 +119,9 @@ const saveSettings = () => {
                 language:{
                     code: selectedLang.value.code,
                     language: selectedLang.value.language
+                },
+                receipt_printer: {
+                    host: receipt_printer_host.value
                 }
             }
         },
@@ -137,6 +151,7 @@ const getSettings = () => {
         default_inventory_quantity_warn.value = response.data.data.inventory.default_inventory_quantity_warn
         order_queues.value = response.data.data.orders.queues
         selectedLang.value = response.data.data.language
+        receipt_printer_host.value = response.data.data.receipt_printer.host
     })
     .catch((err) => {
         console.log(err)
