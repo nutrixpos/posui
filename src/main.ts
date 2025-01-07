@@ -6,6 +6,7 @@ import '@/assets/styles.scss'
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
 import 'primeicons/primeicons.css'
+import { definePreset } from '@primevue/themes';
 
 
 
@@ -145,6 +146,24 @@ const i18n = createI18n({
   }
 })
 
+const MyPreset = definePreset(Aura, {
+  semantic: {
+    primary: {
+        50: '{yellow.50}',
+        100: '{yellow.100}',
+        200: '{yellow.200}',
+        300: '{yellow.300}',
+        400: '{yellow.400}',
+        500: '{yellow.500}',
+        600: '{yellow.600}',
+        700: '{yellow.700}',
+        800: '{yellow.800}',
+        900: '{yellow.900}',
+        950: '{yellow.950}'
+    }
+  }
+});
+
 
 zitadelAuth.oidcAuth.useRouter(router)
 
@@ -158,7 +177,7 @@ zitadelAuth.oidcAuth.startup().then(ok => {
         .use(PrimeVue,{
             // Default theme configuration
             theme: {
-                preset: Aura,
+                preset: MyPreset,
                 options: {
                     prefix: 'p',
                     darkModeSelector: 'system',

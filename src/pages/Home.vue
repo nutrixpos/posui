@@ -2,6 +2,7 @@
     <div v-if="!loading" class="flex flex-column m-0 p-0" style="height: 100%;">
         <Toolbar>
             <template #start>
+                <img src="@/assets/logo.png" alt="logo" style="height:25px">
                 <router-link v-for="(item,index) in items" :key="index" :to="item.link">
                     <Button :icon="item.icon" :label="t(`${item.label.title}`,item.label.plural ? 3 : 1)"  text severity="secondary" />
                 </router-link>
@@ -27,7 +28,7 @@
                 </Button>
                 <OverlayPanel ref="paylater_orders_op" class="w-5 lg:w-3" style="max-height:60vh;overflow-y: auto;">
                     <h4 class="m-2" style="color:#c2c2c2">{{t('paylater_orders')}}</h4>
-                    <PayLaterOrder @order_paid="PayLaterOrderPaid(index)" :order="order" v-for="(order,index) in payLaterOrders" :key="index" />
+                    <PayLaterOrder @order_paid="PayLaterOrderPaid(index)" :order="order" v-for="(order,index) in payLaterOrders" :key="index" class="mt-2" />
                 </OverlayPanel>
                 <Button  severity="secondary" size="large"  text rounded aria-label="Stashed"  @click.stop="chats_toggle">
                     <span class="p-button-icon pi pi-comments"></span>

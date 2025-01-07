@@ -4,6 +4,7 @@
             <div class="col-12 p-0">
                 <Toolbar>
                     <template #start>
+                        <img src="@/assets/logo.png" alt="logo" style="height:25px">
                         <router-link v-for="(item,index) in items" :key="index" :to="item.link">
                             <Button :icon="item.icon" :label="$t(`${item.label.title}`,item.label.plural ? 3 : 1)"  text severity="secondary" />
                         </router-link>

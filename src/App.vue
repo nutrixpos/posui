@@ -31,7 +31,10 @@ const orientation = computed(() => store.currentOrientation)
 
 </script>
 
-<style>
+<style lang="scss">
+@import '@/assets/styles.scss';
+
+
 body {
     font-family: sans-serif; /* Replace with your desired font */
     height: 100vh;
