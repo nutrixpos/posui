@@ -146,21 +146,51 @@ const i18n = createI18n({
   }
 })
 
-const MyPreset = definePreset(Aura, {
+const Noir = definePreset(Aura, {
   semantic: {
-    primary: {
-        50: '{yellow.50}',
-        100: '{yellow.100}',
-        200: '{yellow.200}',
-        300: '{yellow.300}',
-        400: '{yellow.400}',
-        500: '{yellow.500}',
-        600: '{yellow.600}',
-        700: '{yellow.700}',
-        800: '{yellow.800}',
-        900: '{yellow.900}',
-        950: '{yellow.950}'
-    }
+      primary: {
+          50: '{zinc.50}',
+          100: '{zinc.100}',
+          200: '{zinc.200}',
+          300: '{zinc.300}',
+          400: '{zinc.400}',
+          500: '{zinc.500}',
+          600: '{zinc.600}',
+          700: '{zinc.700}',
+          800: '{zinc.800}',
+          900: '{zinc.900}',
+          950: '{zinc.950}'
+      },
+      colorScheme: {
+          light: {
+              primary: {
+                  color: '#173350',
+                  inverseColor: '#FFDC00',
+                  hoverColor: '#455c75',
+                  activeColor: '#2e4762'
+              },
+              highlight: {
+                  background: '#e2e6ea',
+                  focusBackground: '#2e4762',
+                  color: '#173350',
+                  focusColor: '#ffffff'
+              }
+          },
+          dark: {
+              primary: {
+                  color: '#FFDC00',
+                  inverseColor: '#001F3E',
+                  hoverColor: '{zinc.100}',
+                  activeColor: '{zinc.200}'
+              },
+              highlight: {
+                  background: 'rgba(250, 250, 250, .16)',
+                  focusBackground: 'rgba(250, 250, 250, .24)',
+                  color: 'rgba(255,255,255,.87)',
+                  focusColor: 'rgba(255,255,255,.87)'
+              }
+          }
+      }
   }
 });
 
@@ -177,7 +207,7 @@ zitadelAuth.oidcAuth.startup().then(ok => {
         .use(PrimeVue,{
             // Default theme configuration
             theme: {
-                preset: MyPreset,
+                preset: Noir,
                 options: {
                     prefix: 'p',
                     darkModeSelector: 'system',

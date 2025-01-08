@@ -9,7 +9,7 @@
                     <QueueOrder @finished="orderFinished(index)" @openedDialog="openedDialogs++" @closedDialog="openedDialogs--" v-for="(order,index) in orders" :key="index" :order="order" :number="index+1" class="queue-order"/>
                 </div>
             </div>
-            <div class="col-4" :style="`background-color:${$dt('slate.400').value};height:100vh;position:fixed;${orientation == 'ltr' ? 'right:0' : 'left:0'};top:0`">
+            <div class="col-4" :style="`background-color:${$dt('slate.50').value};height:100vh;position:fixed;${orientation == 'ltr' ? 'right:0' : 'left:0'};top:0`">
                 <div class="p-3">
                     <!-- <div style="height:100%;width:100%;" class="flex align-items-center justify-content-center">
                         <i class="pi pi-comments" style="font-size:4rem;color:darkgray"></i>
