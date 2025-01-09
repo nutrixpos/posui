@@ -147,28 +147,28 @@ const i18n = createI18n({
 })
 
 const Noir = definePreset(Aura, {
-  components: {
-    button: {
-      colorScheme: {
-        light: {
-            root: {
-                primary: {
-                  color: '#2e4762',
-                  hover: {
-                    color: '#2e4762',
-                  },
-                  active: {
-                    color: '#2e4762',
-                  }
-                }
-            },
-            subtitle: {
-                color: '#2e4762'
-            }
-        },
-      }
-    },
-  },
+  // components: {
+  //   button: {
+  //     colorScheme: {
+  //       light: {
+  //           root: {
+  //               primary: {
+  //                 color: '#2e4762',
+  //                 hover: {
+  //                   color: '#2e4762',
+  //                 },
+  //                 active: {
+  //                   color: '#2e4762',
+  //                 }
+  //               }
+  //           },
+  //           subtitle: {
+  //               color: '#2e4762'
+  //           }
+  //       },
+  //     }
+  //   },
+  // },
   semantic: {
       primary: {
           50: '{zinc.50}',
@@ -185,11 +185,20 @@ const Noir = definePreset(Aura, {
       },
       colorScheme: {
           light: {
-              button: {
-                primary: {
-                  color: 'red'
-                }
+              primary: {
+                  color: '#2e4762',
+                  inverseColor: '#FFDC00',
+                  hoverColor: '#365473',
+                  activeColor: '#263a51'
               },
+              highlight: {
+                  background: '#fff6c7',
+                  focusBackground: '#FFDC00',
+                  color: '#173350',
+                  focusColor: '#173350'
+              }
+          },
+          dark: {
               primary: {
                   color: '#FFDC00',
                   inverseColor: '#2e4762',
@@ -203,20 +212,6 @@ const Noir = definePreset(Aura, {
                   focusColor: '#173350'
               }
           },
-          dark: {
-              primary: {
-                  color: '#FFDC00',
-                  inverseColor: '#001F3E',
-                  hoverColor: '{zinc.100}',
-                  activeColor: '{zinc.200}'
-              },
-              highlight: {
-                  background: 'rgba(250, 250, 250, .16)',
-                  focusBackground: 'rgba(250, 250, 250, .24)',
-                  color: 'rgba(255,255,255,.87)',
-                  focusColor: 'rgba(255,255,255,.87)'
-              }
-          }
       }
   }
 });
