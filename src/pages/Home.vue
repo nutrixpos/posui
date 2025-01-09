@@ -18,7 +18,7 @@
                     <InputText :placeholder="t('search')" v-model="mainSearchText" @keyup.stop="mainSearchTextChanged" />
                 </IconField>
                 <OverlayPanel ref="mainsearch_op" class="w-5 lg:w-3" style="max-height:60vh;overflow-y: auto;">
-                    <MainSearchResultView @view-order-pressed="order_to_show = result; order_details_dialog=true" v-for="(result,index) in mainSearchResult" :key="index" :order="result" />
+                    <MainSearchResultView class="mt-2" @view-order-pressed="order_to_show = result; order_details_dialog=true" v-for="(result,index) in mainSearchResult" :key="index" :order="result" />
                 </OverlayPanel>
             </template>
 

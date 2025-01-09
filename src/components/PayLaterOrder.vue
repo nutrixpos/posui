@@ -64,6 +64,13 @@ if (props.order.state == "" || props.order.state == "pending" ){
     }
 }
 
+if (props.order.state == "in_progress" ){
+    return {
+        title:"INPROGRESS",
+        severity:"success"
+    }
+}
+
 
 if (props.order.state == "cancelled" ){
     return {

@@ -47,6 +47,13 @@ if (props.order.state == "cancelled" ){
     }
 }
 
+if (props.order.state == "in_progress" ){
+    return {
+        title:"INPROGRESS",
+        severity:"success"
+    }
+}
+
 if (props.order.state == "finished" ){
     return {
         title:"FINISHED",
