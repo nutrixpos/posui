@@ -2,7 +2,9 @@
     <div v-if="!loading" class="flex flex-column m-0 p-0" style="height: 100%;">
         <Toolbar>
             <template #start>
-                <img src="@/assets/logo.png" alt="logo" style="height:25px">
+                <router-link to="/">
+                    <img src="@/assets/logo.png" alt="logo" style="height:25px">
+                </router-link>
                 <router-link v-for="(item,index) in items" :key="index" :to="item.link">
                     <Button :icon="item.icon" :label="t(`${item.label.title}`,item.label.plural ? 3 : 1)"  text severity="secondary" />
                 </router-link>
@@ -904,7 +906,7 @@ watch(selectedCategory, (category) => {
               title:'cashier',
               plural:false
           },
-          icon: 'pi pi-home',
+          icon: 'pi pi-desktop',
           link: '/home',
       },
       {

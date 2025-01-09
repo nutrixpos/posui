@@ -13,7 +13,7 @@ import { definePreset } from '@primevue/themes';
 import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
 import { createI18n } from 'vue-i18n'
-
+import { dt } from '@primevue/themes';
 
 // library.add(fas)
 
@@ -147,6 +147,28 @@ const i18n = createI18n({
 })
 
 const Noir = definePreset(Aura, {
+  components: {
+    button: {
+      colorScheme: {
+        light: {
+            root: {
+                primary: {
+                  color: '#2e4762',
+                  hover: {
+                    color: '#2e4762',
+                  },
+                  active: {
+                    color: '#2e4762',
+                  }
+                }
+            },
+            subtitle: {
+                color: '#2e4762'
+            }
+        },
+      }
+    },
+  },
   semantic: {
       primary: {
           50: '{zinc.50}',
@@ -163,17 +185,22 @@ const Noir = definePreset(Aura, {
       },
       colorScheme: {
           light: {
+              button: {
+                primary: {
+                  color: 'red'
+                }
+              },
               primary: {
-                  color: '#173350',
-                  inverseColor: '#FFDC00',
-                  hoverColor: '#455c75',
-                  activeColor: '#2e4762'
+                  color: '#FFDC00',
+                  inverseColor: '#2e4762',
+                  hoverColor: '#ffec54',
+                  activeColor: '#ffce1e'
               },
               highlight: {
-                  background: '#e2e6ea',
-                  focusBackground: '#2e4762',
+                  background: '#fff6c7',
+                  focusBackground: '#FFDC00',
                   color: '#173350',
-                  focusColor: '#ffffff'
+                  focusColor: '#173350'
               }
           },
           dark: {
