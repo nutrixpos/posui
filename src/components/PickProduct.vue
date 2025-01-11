@@ -60,7 +60,7 @@ const GetProducts = (page_number=1,page_size=9999999999) => {
         }
     })
     .then((response) => {
-        products.value = response.data.data.products
+        products.value = response.data.data
         loading.value = false
     })
 }

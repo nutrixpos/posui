@@ -6,7 +6,7 @@
         </div>
         <div class="flex align-items-center justify-content-center">
             <span class="mx-2">{{$t('from_ready')}}</span>
-            <InputSwitch @change="model.ValidateItem()" v-model="model.is_consume_from_ready" :disabled="!model.can_change_ready_toggle" />
+            <ToggleSwitch @change="model.ValidateItem()" v-model="model.is_consume_from_ready" :disabled="!model.can_change_ready_toggle" />
             <span class="mx-2">
                 <p style="font-size: 0.9rem;">{{model.ready}} {{$t('ready')}}</p>
             </span>
@@ -42,7 +42,7 @@ import {defineModel,ref, watch,defineEmits} from 'vue'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Dropdown from 'primevue/dropdown'
-import InputSwitch from 'primevue/inputswitch';
+import ToggleSwitch from 'primevue/toggleswitch';
 import { Material, OrderItem } from '@/classes/OrderItem'
 import PickMaterial from '@/components/PickMaterial.vue'
 import Dialog from 'primevue/dialog'

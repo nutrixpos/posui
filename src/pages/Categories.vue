@@ -47,7 +47,7 @@
                                     </Column>
                                     <template #header>
                                         <div class="flex justify-start">
-                                            <Button icon="pi pi-plus" label="Add Product"  rounded raised @click="new_cateogry_product_dialog=true" />
+                                            <Button icon="pi pi-plus" :label="$t('add_product')"  rounded raised @click="new_cateogry_product_dialog=true" />
                                         </div>
                                     </template>
                                 </DataTable>

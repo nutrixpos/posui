@@ -36,6 +36,10 @@
                                 <label for="name">{{$t('name')}}</label>
                                 <InputText id="name" v-model="new_product_name" aria-describedby="name" />
                             </div>
+                            <div class="flex flex-column gap-2 w-5 mt-2">
+                                <label for="price">{{$t('price')}}</label>
+                                <InputText id="name" v-model.number="new_product_price" aria-describedby="price" />
+                            </div>
                             <div class="flex flex-column gap-2 mt-2">
                                 <label for="name">{{$t('image')}}</label>
                                 <FileUpload @before-send="beforeNewProductImageUpload" ref="newProductImageUpload" name="image" :fileLimit="1" :showCancelButton="false" :chooseLabel="$t('choose')" :showUploadButton="false"  :url="`${backendUrl}/api/products/${new_product_id}/image`" @upload="onAdvancedUpload($event)" :multiple="false" accept="image/*" :maxFileSize="1000000">
@@ -106,6 +110,10 @@
                             <div class="flex flex-column gap-2 w-5">
                                 <label for="name">{{$t('name')}}</label>
                                 <InputText id="name" v-model="productToEdit.name" aria-describedby="name" />
+                            </div>
+                            <div class="flex flex-column gap-2 w-5 mt-2">
+                                <label for="price">{{$t('price')}}</label>
+                                <InputText id="price" v-model.number="productToEdit.price" aria-describedby="price" />
                             </div>
                             <div class="flex flex-column gap-2 w-5 mt-2">
                                 <label for="name">{{$t('ready')}}</label>
@@ -226,6 +234,7 @@ const productAddDialog = ref(false)
 const new_product_name = ref("")
 const new_product_ready = ref(0)
 const new_product_id = ref("")
+const new_product_price = ref(0)
 const add_subproduct_dialog = ref(false)
 // const new_product_materials = ref<Material[]>([])
 // const new_product_subproducts = ref([])
@@ -285,10 +294,10 @@ const deleteProduct = (product_id: string) => {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     }).then(() => {
-        toast.add({ severity: 'success', summary: 'Success', detail: 'Product deleted successfully',group:'br' });
+        toast.add({ severity: 'success', summary: 'Success', detail: 'Product deleted successfully',group:'br',life:3000 });
         loadProducts();
     }).catch(() => {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete product',group:'br' });
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete product',group:'br',life:3000 });
     });
 }
 
@@ -347,7 +356,7 @@ const updateProduct = () => {
         }
     })
     .then(() => {
-        toast.add({ severity: 'success', summary: 'Product Updated', detail: proxy.$t('done'),group:'br' });
+        toast.add({ severity: 'success', summary: 'Product Updated', detail: proxy.$t('done'),group:'br',life:3000 });
         productEditDialog.value = false;
 
 

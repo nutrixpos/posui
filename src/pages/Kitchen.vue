@@ -175,6 +175,10 @@ const startWebsocket = () => {
                 notification.topic_name = "Order Finished"
                 notification.type = "topic_message"
                 notifications.value.push(notification);
+            } else if (data.topic_name == "order_submitted") {
+    
+                orders.value.push(data.order)
+
             }else {
                 const notification = new Notification();
                 notification.description = data.message
@@ -193,6 +197,7 @@ const startWebsocket = () => {
                 })
             }
         }
+
 
         if (data.type == "chat_message") {
 
@@ -253,10 +258,7 @@ const loadOrders =  () => {
 };
 
 
-setInterval(() => {
-    if (openedDialogs.value <= 0)
-        loadOrders()
-}, 5000);
+loadOrders()
 
 
 loadLanguage()

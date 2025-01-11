@@ -1,6 +1,6 @@
 <template>
     <div v-if="!loading" class="flex flex-column m-0 p-0" style="height: 100%;">
-        <Toolbar>
+        <Toolbar style="border-radius: 0px;">
             <template #start>
                 <router-link to="/">
                     <img src="@/assets/logo.png" alt="logo" style="height:25px">

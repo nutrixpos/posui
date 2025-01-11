@@ -2,7 +2,7 @@
     <div v-if="!loading">
         <div class="grid p-0 m-0">
             <div class="col-12 p-0">
-                <Toolbar>
+                <Toolbar style="border-radius: 0px;">
                     <template #start>
                         <router-link to="/">
                             <img src="@/assets/logo.png" alt="logo" style="height:25px">

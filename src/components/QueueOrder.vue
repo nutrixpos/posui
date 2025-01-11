@@ -20,7 +20,7 @@
                     </div>
                     <div class="col-9 flex justify-content-center align-items-center">
                         <ButtonGroup v-if="state != 'in_progress'"  class="w-full">
-                            <Button :label="$t('start')" iconPos="right" icon="pi pi-play" class="w-full" @click="prepareOrder" severity="info" />
+                            <Button :loading="loading" :label="$t('start')" iconPos="right" icon="pi pi-play" class="w-full" @click="prepareOrder" severity="info" />
                         </ButtonGroup>
                         <ButtonGroup v-if="state == 'in_progress'" class="w-full">
                             <Button  icon="pi pi-trash" class="w-3" severity="secondary" />
@@ -58,18 +58,20 @@
         </Dialog>
         <Dialog v-model:visible="visible" modal :header="`Order #${props.order.display_id}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
             <!-- <Dialog v-model:visible="visible" modal :header="props.order.items[currentItemIndex].name+` #${currentItemIndex+1}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"> -->
-            <Stepper :value="currentItemIndex">
+            <Stepper :value="1">
                 <StepList>
-                    <Step v-for="item,index in items" :key="index" :value="index">
+                    <Step v-for="item,index in items" :key="index" :value="index+1">
                         {{ item.product.name }}
                     </Step>
                 </StepList>
                 <StepPanels>
-                    <StepPanel v-for="item,index in items" :key="index" :value="index">
+                    <StepPanel v-for="item,index in items" :key="index" :value="index+1" v-slot="{ activateCallback }">
                         <Message v-if="item.comment != ''" severity="warn">{{ item.comment }}</Message>
                         <OrderItemView v-model="items[index]" />
-                        <div class="flex pt-4 justify-content-between">
-                            <Button v-if="index == items.length-1" @click="startOrder(); visible=false;" :label="$t('start')" :disabled="!isValid" severity="success" :icon="`pi pi-arrow-${orientation == 'ltr' ? 'right' : 'left' }`" :iconPos="`orientation == 'ltr' ? 'right' : 'left'`" />
+                        <div class="flex pt-6 justify-end" >
+                            <Button v-if="index == 0 && index != items.length-1" label="Next" icon="pi pi-arrow-right" iconPos="right" @click="activateCallback(index+2)" />
+                            <Button v-if="index != items.length-1 && index != 0" label="Back" severity="secondary" icon="pi pi-arrow-left" @click="activateCallback(index)" />
+                            <Button v-if="index == items.length-1" @click="startOrder(); visible=false;" :label="$t('start')" :disabled="!isValid" severity="success" />
                         </div>
                     </StepPanel>
                 </StepPanels>
@@ -99,17 +101,13 @@ import ConfirmPopup from 'primevue/confirmpopup';
 import { useToast } from "primevue/usetoast";
 import OrderItemView from "./OrderItemView.vue";
 import {OrderItem, Product} from '@/classes/OrderItem'
-import {getCurrentInstance} from 'vue'
+import {getCurrentInstance,nextTick} from 'vue'
 
-import { globalStore } from '@/store';
-
-
-const store = globalStore()
-const orientation = computed(() => store.currentOrientation)
 
 const { proxy } = getCurrentInstance();
 
 
+const loading = ref(false)
 const toast = useToast();
 
 const items = ref<OrderItem[]>([])
@@ -126,8 +124,6 @@ const state = ref("pending")
 
 
 // const orderItemSelectedOptions = ref({})
-
-const currentItemIndex = ref(0)
 
 
 
@@ -261,8 +257,8 @@ const startOrder =  () => {
 
 const prepareOrder = async () => {
 
-    currentItemIndex.value = 0
     items.value = []
+    loading.value = true
 
 
     for(var i=0;i<props.order.items.length;i++){
@@ -278,8 +274,12 @@ const prepareOrder = async () => {
         
 
         items.value.push(item)
-        visible.value = true  
     }
+    
+    await nextTick()
+    visible.value = true  
+
+    loading.value = false
 }
 
 
