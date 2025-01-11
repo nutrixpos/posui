@@ -14,6 +14,8 @@ import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
 import { createI18n } from 'vue-i18n'
 import { dt } from '@primevue/themes';
+import '@fortawesome/fontawesome-free/css/all.css';
+
 
 // library.add(fas)
 
