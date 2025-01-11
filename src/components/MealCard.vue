@@ -5,7 +5,7 @@
             <template #header>
                 <div class="flex flex-column" style="position:relative;">
                     <Button icon="pi pi-ellipsis-h" @click.stop="toggle" severity="secondary" aria-label="Save" style="width: 2rem; height: 2rem; position:absolute;top:0;right:0;" size="small" class="m-1" />
-                    <div id='logo' style='background:url(https://girlheartfood.com/wp-content/uploads/2020/06/Crispy-Chicken-Burger-10.jpg) ;height:7rem;background-size:cover;background-position:center;' class="w-full"></div>
+                    <div id='logo' :style="`background:url(${backend_host}/public/${props.item.image_url}) ;height:7rem;background-size:cover;background-position:center;`" class="w-full"></div>
                     <div class="flex align-items-center" style="height: 3rem;">
                         <h4 class="m-0 p-1">{{props.item.name}}</h4>
                     </div>
@@ -42,15 +42,17 @@
 </template>
 
 <script setup>
-import {ref, defineProps} from 'vue'
+import {ref, defineProps,computed} from 'vue'
 
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
-
 import OverlayPanel from 'primevue/overlaypanel';
 
+const backend_host = computed(() => {
+    return `http://${process.env.VUE_APP_BACKEND_HOST}`;
+});
 
 const op = ref();
 

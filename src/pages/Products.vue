@@ -36,6 +36,14 @@
                                 <label for="name">{{$t('name')}}</label>
                                 <InputText id="name" v-model="new_product_name" aria-describedby="name" />
                             </div>
+                            <div class="flex flex-column gap-2 mt-2">
+                                <label for="name">{{$t('image')}}</label>
+                                <FileUpload @before-send="beforeNewProductImageUpload" ref="newProductImageUpload" name="image" :fileLimit="1" :showCancelButton="false" :chooseLabel="$t('choose')" :showUploadButton="false"  :url="`${backendUrl}/api/products/${new_product_id}/image`" @upload="onAdvancedUpload($event)" :multiple="false" accept="image/*" :maxFileSize="1000000">
+                                    <template #empty>
+                                        <span>Drag and drop files to here to upload.</span>
+                                    </template>
+                                </FileUpload>
+                            </div>
                             <div class="flex flex-column gap-2 w-5 mt-2">
                                 <label for="name">{{$t('ready')}}</label>
                                 <InputText v-model="new_product_ready" type="number" aria-describedby="ready" />
@@ -102,6 +110,17 @@
                             <div class="flex flex-column gap-2 w-5 mt-2">
                                 <label for="name">{{$t('ready')}}</label>
                                 <InputText v-model.number="productToEdit.ready" type="number" aria-describedby="ready" />
+                            </div>
+                            <div class="flex flex-column gap-2 w-10 mt-3">
+                                <label for="name">{{$t('image',1)}}</label>
+                                <Image :src="backend_host+'/public/'+productToEdit.image_url" alt="Image" width="250" />
+                            </div>
+                            <div class="flex flex-column gap-2 mt-2">
+                                <FileUpload @before-send="beforeEditProductImageUpload" :chooseLabel="$t('edit')" ref="editProductImageUpload" name="image" :fileLimit="1" :showCancelButton="false" :showUploadButton="false"  :url="`${backendUrl}/api/products/${productToEdit.id}/image`" :multiple="false" accept="image/*" :maxFileSize="1000000">
+                                    <template #empty>
+                                        <span>Drag and drop files to here to upload.</span>
+                                    </template>
+                                </FileUpload>
                             </div>
                             <div class="flex flex-column gap-2 w-10 mt-3">
                                 <label for="name">{{$t('material',3)}}</label>
@@ -181,16 +200,18 @@
 import ConfirmPopup from 'primevue/confirmpopup';
 import DataTable from 'primevue/datatable';
 import Dialog from 'primevue/dialog';
+import FileUpload from 'primevue/fileupload';
 import InputText from 'primevue/inputtext';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import ButtonGroup from 'primevue/buttongroup';
 import axios from 'axios'
-import { ref,getCurrentInstance } from "vue";
+import { ref,getCurrentInstance,computed, nextTick } from "vue";
 import { useToast } from "primevue/usetoast";
 import PickMaterial from '@/components/PickMaterial.vue';
 import PickProduct from '@/components/PickProduct.vue';
 import { useConfirm } from "primevue/useconfirm";
+import { Image } from 'primevue';
 // import { Material } from '@/classes/OrderItem';
 
 const { proxy } = getCurrentInstance();
@@ -204,6 +225,7 @@ const edit_subproduct_dialog = ref(false)
 const productAddDialog = ref(false)
 const new_product_name = ref("")
 const new_product_ready = ref(0)
+const new_product_id = ref("")
 const add_subproduct_dialog = ref(false)
 // const new_product_materials = ref<Material[]>([])
 // const new_product_subproducts = ref([])
@@ -218,6 +240,42 @@ const productsTableRowsPerPage = ref(50)
 const isProductsTableLoading = ref(true)
 const products = ref([])
 const toast = useToast()
+
+const newProductImageUpload = ref(null)
+const editProductImageUpload = ref(null)
+
+const beforeNewProductImageUpload = (event:any) => {
+    event.xhr.setRequestHeader("Authorization", "Bearer " + proxy.$zitadel.oidcAuth.accessToken);
+}
+
+const beforeEditProductImageUpload = (event:any) => {
+    event.xhr.setRequestHeader("Authorization", "Bearer " + proxy.$zitadel.oidcAuth.accessToken);
+}
+
+const onAdvancedUpload = () => {
+    toast.add({ severity: 'info', summary: 'Success', detail: `${proxy.$t('image_uploaded')}`, life: 3000 });
+};
+
+const backend_host = computed(() => {
+    return `http://${process.env.VUE_APP_BACKEND_HOST}`;
+});
+
+const backendUrl = computed(() => {
+    return `http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}`;
+});
+
+
+// const onFileSelect = (event:any) => {
+//     const file = event.files[0];
+//     const reader = new FileReader();
+
+//     reader.onload = async (e) => {
+//         src.value = e.target?.result;
+//     };
+
+//     reader.readAsDataURL(file);
+// }
+
 
 
 
@@ -288,9 +346,14 @@ const updateProduct = () => {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     })
-    .then(response => {
-        toast.add({ severity: 'success', summary: 'Product Updated', detail: response.data.data,group:'br' });
+    .then(() => {
+        toast.add({ severity: 'success', summary: 'Product Updated', detail: proxy.$t('done'),group:'br' });
         productEditDialog.value = false;
+
+
+        editProductImageUpload.value?.upload()
+
+
         productToEdit.value = {}
         loadProducts()
         // Optionally, refresh the product list or clear inputs
@@ -316,10 +379,12 @@ const submitProduct = () => {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     })
-        .then(response => {
-            toast.add({ severity: 'success', summary: 'Product Added', detail: response.data.data,group:'br' });
+        .then(async response => {
+            toast.add({ severity: 'success', summary: 'Product Added', detail: proxy.$t('done'),group:'br' });
+            new_product_id.value = response.data.data.id
+            await nextTick()
+            newProductImageUpload.value?.upload()
             productAddDialog.value = false;
-
             loadProducts()
             // Optionally, refresh the product list or clear inputs
         })

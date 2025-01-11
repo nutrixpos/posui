@@ -892,7 +892,8 @@ watch(selectedCategory, (category) => {
             products.value.push({
                 id: recipe.id,
                 name:recipe.name,
-                price:recipe.price
+                price:recipe.price,
+                image_url: recipe.image_url
             })
         })
         refreshAvailabilities();

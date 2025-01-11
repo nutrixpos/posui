@@ -255,9 +255,3 @@ const loadLanguage = async () => {
 loadLanguage()
 expandAll()
 </script>
-
-<style scoped>
-* {
-    font-size:1.2rem
-}
-</style>
