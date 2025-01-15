@@ -171,11 +171,17 @@
                                     <p style="font-size:1.4rem">{{ total.toFixed(2) }} <span style="font-size:1rem">{{t('egp')}}</span></p>
                                 </div>
                             </div>
-                            <ButtonGroup class="mb-4">
-                                <Button icon="pi pi-bookmark" @click="stashOrder" severity="secondary" />
-                                <Button class="ml-2" icon="pi pi-hourglass" @click="payLaterStart" severity="secondary" />
-                            </ButtonGroup>
-                            <Button :label="t('checkout')" :disabled="!is_order_valid" @click="goOrder()" />
+                            <div class="flex align-items-end mb-3">
+                                <ButtonGroup class="flex">
+                                    <Button icon="pi pi-bookmark" @click="stashOrder" severity="secondary" />
+                                    <Button class="ml-2" icon="pi pi-hourglass" @click="payLaterStart" severity="secondary" />
+                                </ButtonGroup>
+                                <div class="mx-2 flex justify-content-center align-items-center">
+                                    <ToggleButton v-model="is_print_receipt_kitchen" onLabel="Kitchen" offLabel="Kitchen" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36 mx-1" aria-label="Do you confirm" />
+                                    <ToggleButton v-model="is_print_receipt_client" onLabel="Client" offLabel="Client" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36 mx-1" aria-label="Do you confirm" />
+                                </div>
+                            </div>
+                            <Button :label="t('checkout')" :disabled="!is_order_valid" @click="submitOrder()" />
                         </div>
                     </div>
                 </Panel>
@@ -231,6 +237,7 @@
   import OrderView from '@/components/OrderView.vue';
   import ProgressSpinner from "primevue/progressspinner";
   import { useI18n } from 'vue-i18n'
+  import { ToggleButton } from 'primevue';
   import { globalStore } from '@/store';
 
 
@@ -241,7 +248,8 @@ const { proxy } = getCurrentInstance();
 const store = globalStore()
 
 
-
+const is_print_receipt_client = ref(true)
+const is_print_receipt_kitchen = ref(true)
 
 
 const toast = useToast();
@@ -325,7 +333,7 @@ const PayLaterOrderPaid = (index:number) => {
 }
 
 const payLaterStart = () => {
-    goOrder(true)
+    submitOrder(true)
 }
 
 const getPayLaterOrders = () => {
@@ -747,7 +755,7 @@ const getCategories = async () => {
 getCategories();
 
 
-const goOrder = (isPaylater:boolean = false) => {
+const submitOrder = (isPaylater:boolean = false) => {
 
     let order : any =  {
         items:orderItems.value,
@@ -761,6 +769,10 @@ const goOrder = (isPaylater:boolean = false) => {
     if (orderItems.value.length > 0){
         axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders`,
             {
+                meta: {
+                    is_print_client_receipt: is_print_receipt_client.value,
+                    is_print_kitchen_receipt: is_print_receipt_kitchen.value
+                },
                 data:order
             },
             {

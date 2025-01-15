@@ -12,7 +12,7 @@
                     <p class="mx-1 my-1" style="color:green"><strong>{{props.item.price}} {{$t('egp')}}</strong></p>   
 
                     <div class="text-center flex align-items-center justify-content-center" style="background-color:#ffd589;">
-                        <p class="m-0" style="font-size:0.9rem;">{{ props.item.availability ? Math.max(0, props.item.availability) : "..." || "..." }} {{$t('possible')}}</p>
+                        <p class="m-0" style="font-size:0.9rem;">{{ props.item.availability != undefined ? Math.max(0, props.item.availability) : "..." || "..." }} {{$t('possible')}}</p>
                     </div>
 
                     <OverlayPanel ref="op">
