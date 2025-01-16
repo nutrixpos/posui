@@ -115,7 +115,7 @@
                     </template>
                 </Listbox>
             </div>
-            <div class="lg:col-7 col-6 flex pt-3 pb-3">
+            <div class="lg:col-7 col-6 flex pt-2 pb-3">
                 <Panel :header="t('product',3)" style="width:100%;">
                     <IconField iconPosition="left" class="mb-3">
                         <InputIcon v-if="!isSearchingProduct">
@@ -129,7 +129,7 @@
                     </div>
                 </Panel>
             </div>
-            <div class="col-4 lg:col-3 flex pt-3 pb-3">
+            <div class="col-4 lg:col-3 flex pt-2 pb-3">
                 <Panel :header="t('order_items')" class="w-12" :style="`background-color:${is_order_valid ?  'white' : 'var(--red-100)'};border-color: ${is_order_valid ?  '' : 'red'};`">
                     <div class="flex flex-column" style="height:calc(100vh - 10rem)">
                         <div style="height:60vh;overflow: auto;">
@@ -171,14 +171,15 @@
                                     <p style="font-size:1.4rem">{{ total.toFixed(2) }} <span style="font-size:1rem">{{t('egp')}}</span></p>
                                 </div>
                             </div>
-                            <div class="flex align-items-end mb-3">
+                            <div class="flex flex-column align-items-start mb-3">
                                 <ButtonGroup class="flex">
                                     <Button icon="pi pi-bookmark" @click="stashOrder" severity="secondary" />
                                     <Button class="ml-2" icon="pi pi-hourglass" @click="payLaterStart" severity="secondary" />
                                 </ButtonGroup>
-                                <div class="mx-2 flex justify-content-center align-items-center">
-                                    <ToggleButton v-model="is_print_receipt_kitchen" onLabel="Kitchen" offLabel="Kitchen" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36 mx-1" aria-label="Do you confirm" />
+                                <div class="flex justify-content-center align-items-center mt-2">
+                                    <ToggleButton v-model="is_print_receipt_kitchen" onLabel="Kitchen" offLabel="Kitchen" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36" aria-label="Do you confirm" />
                                     <ToggleButton v-model="is_print_receipt_client" onLabel="Client" offLabel="Client" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36 mx-1" aria-label="Do you confirm" />
+                                    <ToggleButton v-tooltip.top="'Auto start order (doesn\'t wait for chef interaction)'" v-model="is_auto_start_order" onLabel="Start" offLabel="Start" onIcon="fa fa-play" offIcon="fa fa-play" class="w-36 mx-1" aria-label="Do you confirm" />
                                 </div>
                             </div>
                             <Button :label="t('checkout')" :disabled="!is_order_valid" @click="submitOrder()" />
@@ -250,6 +251,7 @@ const store = globalStore()
 
 const is_print_receipt_client = ref(true)
 const is_print_receipt_kitchen = ref(true)
+const is_auto_start_order = ref(true)
 
 
 const toast = useToast();
@@ -760,6 +762,7 @@ const submitOrder = (isPaylater:boolean = false) => {
     let order : any =  {
         items:orderItems.value,
         discount:discount.value,
+        is_auto_start: is_auto_start_order.value
     }
 
     if (isPaylater) {
@@ -783,7 +786,7 @@ const submitOrder = (isPaylater:boolean = false) => {
             },
         ).then(() => {
             toast.add({ severity: 'success', summary: 'Success', detail: 'Order in progress !', life: 3000,group:'br' });
-
+            refreshAvailabilities()
             if (isPaylater){
                 getPayLaterOrders()
             }

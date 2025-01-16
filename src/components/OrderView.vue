@@ -43,6 +43,14 @@
 
             <div class="col-6">{{$t('discount')}}</div>
             <div class="col-6">{{ props.order.discount }}</div>
+
+            <div class="col-12 flex flex-column">
+                <h4>Actions</h4>
+                <ButtonGroup class="flex">
+                    <Button icon="fa fa-print" severity="secondary" :label="$t('client_receipt')" @click="PrintClientReceipt()" />
+                    <Button class="ml-2" icon="fa fa-print" severity="secondary" :label="$t('kitchen_receipt')" @click="PrintKitchenReceipt()" />
+                </ButtonGroup>
+            </div>
         </div>
     </div>
 </template>
@@ -50,6 +58,7 @@
 <script setup lang="ts">
 import {defineProps,getCurrentInstance,computed,defineEmits} from 'vue'
 import Badge from 'primevue/badge';
+import { ButtonGroup } from 'primevue';
 import Button from 'primevue/button';
 import { useConfirm } from "primevue/useconfirm";
 import ConfirmPopup from 'primevue/confirmpopup';
@@ -63,6 +72,37 @@ const toast = useToast()
 const confirm = useConfirm();
 const { proxy } = getCurrentInstance();
 const emit = defineEmits(['order-cancelled'])
+
+
+const PrintKitchenReceipt = () => {
+    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/printkitchenreceipt`,{}, {
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
+            "Accept-Language": proxy.$i18n.locale
+        }
+    })
+    .then(()=>{
+        toast.add({ severity: 'success', summary: 'Success', detail: 'Print signal sent',group:'br' });
+    })
+    .catch(() => {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to perform the request',group:'br' });
+    });
+}
+
+const PrintClientReceipt = () => {
+    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/printclientreceipt`,{}, {
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
+            "Accept-Language": proxy.$i18n.locale
+        }
+    })
+    .then(()=>{
+        toast.add({ severity: 'success', summary: 'Success', detail: 'Print signal sent',group:'br' });
+    })
+    .catch(() => {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to perform the request',group:'br' });
+    });
+}
 
 const confirmCancelOrder = (event) => {
     confirm.require({

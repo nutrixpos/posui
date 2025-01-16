@@ -11,6 +11,7 @@ export default class Order {
 	started_at: Date
 	comment: string
     sale_price: number
+    is_auto_start: boolean
 
     constructor(){
         this.submitted_at = new Date()
@@ -22,5 +23,6 @@ export default class Order {
         this.started_at = new Date()
         this.comment = ""
         this.sale_price = 0
+        this.is_auto_start = false
     }
 }
