@@ -3,10 +3,12 @@
         <div class="grid w-12">
 
             <div class="col-12">
-                <Button v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'"  severity="danger" size="small" aria-label="Cancel order" @click.stop="confirmCancelOrder($event)">
-                    {{$t('cancel')}} {{ $t('order') }}
-                </Button>
-                <ConfirmPopup></ConfirmPopup>
+                
+            </div>
+
+            <div class="flex col-12">
+                <Badge :value="order_status.title" :severity="order_status.severity" />
+                <Badge :value="payment_status.title" :severity="payment_status.severity" class="mx-1" />
             </div>
 
             <div class="col-3">{{$t('item',3)}}</div>
@@ -49,6 +51,12 @@
                 <ButtonGroup class="flex">
                     <Button icon="fa fa-print" severity="secondary" :label="$t('client_receipt')" @click="PrintClientReceipt()" />
                     <Button class="ml-2" icon="fa fa-print" severity="secondary" :label="$t('kitchen_receipt')" @click="PrintKitchenReceipt()" />
+                    <Button class="ml-2" icon="fa fa-hand-holding-dollar" severity="secondary" :label="$t('collect_money')" @click="collectedMoney()"/>
+                    <Button class="ml-2" icon="fa fa-check" severity="secondary" :label="$t('finish')" @click="finishOrder()"/>
+                    <Button class="mx-2" v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'" severity="secondary" size="small" aria-label="Cancel order" @click.stop="confirmCancelOrder($event)">
+                        {{$t('cancel')}} {{ $t('order') }}
+                    </Button>
+                    <ConfirmPopup></ConfirmPopup>
                 </ButtonGroup>
             </div>
         </div>
@@ -69,10 +77,40 @@ import Order from '@/classes/Order';
 
 const toast = useToast()
 
+
 const confirm = useConfirm();
 const { proxy } = getCurrentInstance();
-const emit = defineEmits(['order-cancelled'])
+const emit = defineEmits(['order-cancelled','amount_collected','finished'])
 
+const finishOrder = () => {
+    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/finish`,{}, {
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
+        }
+    })
+    .then(()=>{
+        toast.add({ severity: 'success', summary: 'Success', detail: 'Order finished',group:'br' });
+        emit('finished')
+    })
+    .catch(() => {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to perform the request',group:'br' });
+    });
+}
+
+const collectedMoney = () => {
+    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/pay`,{}, {
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
+        }
+    })
+    .then(()=>{
+        toast.add({ severity: 'success', summary: 'Success', detail: 'Money collected',group:'br' });
+        emit('amount_collected')
+    })
+    .catch(() => {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to perform the request',group:'br' });
+    });
+}
 
 const PrintKitchenReceipt = () => {
     axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/printkitchenreceipt`,{}, {
@@ -148,13 +186,26 @@ const props = defineProps({
     }
 })
 
+const payment_status: any = computed(() => {
+    if (props.order.is_paid){
+        return {
+            title:"PAID",
+            severity:"success"
+        }
+    }
+
+    return {
+        title:"UNPAID",
+        severity:"warn"
+    }
+})
 
 const order_status : any = computed(() => {
 
 if (props.order.state == "" || props.order.state == "pending" ){
     return {
         title:"PENDING",
-        severity:"info"
+        severity:"secondary"
     }
 }
 
@@ -163,6 +214,13 @@ if (props.order.state == "cancelled" ){
     return {
         title:"CANCELLED",
         severity:"danger"
+    }
+}
+
+if (props.order.state == "in_progress" ){
+    return {
+        title:"INPROGRESS",
+        severity:"info"
     }
 }
 

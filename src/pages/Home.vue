@@ -24,13 +24,13 @@
 
             <template #end>
                 
-                <Button  severity="secondary" size="large"  text rounded aria-label="PayLater" @click.stop="paylater_toggle">
+                <Button  severity="secondary" size="large"  text rounded aria-label="Current" @click.stop="paylater_toggle">
                     <span class="p-button-icon pi pi-hourglass"></span>
                     <Badge :value="payLaterOrders.length" class="p-badge-warn"  />
                 </Button>
-                <OverlayPanel ref="paylater_orders_op" class="w-5 lg:w-3" style="max-height:60vh;overflow-y: auto;">
-                    <h4 class="m-2" style="color:#c2c2c2">{{t('paylater_orders')}}</h4>
-                    <PayLaterOrder @order_paid="PayLaterOrderPaid(index)" :order="order" v-for="(order,index) in payLaterOrders" :key="index" class="mt-2" />
+                <OverlayPanel ref="current_orders_op" class="w-5 lg:w-3" style="max-height:60vh;overflow-y: auto;">
+                    <h4 class="m-2" style="color:#c2c2c2">{{t('current_orders')}}</h4>
+                    <MainSearchResultView class="mt-2" @view-order-pressed="order_to_show = result; order_details_dialog=true" v-for="(result,index) in payLaterOrders" :key="index" :order="result" />
                 </OverlayPanel>
                 <Button  severity="secondary" size="large"  text rounded aria-label="Stashed"  @click.stop="chats_toggle">
                     <span class="p-button-icon pi pi-comments"></span>
@@ -107,7 +107,7 @@
         </Toolbar>
         <div class="grid m-0 p-0" style="flex-grow:1;">
             <div class="col-2">
-                <Listbox  v-model="selectedCategory" :options="categories" optionLabel="name" class="w-full mt-2" filter>
+                <Listbox  v-model="selectedCategory" :options="categories" optionLabel="name" class="w-full" filter>
                     <template #option="slotProps">
                         <div class="flex align-items-center">
                             <div>{{ slotProps.option.name }}</div>
@@ -115,7 +115,7 @@
                     </template>
                 </Listbox>
             </div>
-            <div class="lg:col-7 col-6 flex pt-2 pb-3">
+            <div class="lg:col-7 col-5 flex px-0 lg:px-2 pt-2 pb-3 overflow-auto">
                 <Panel :header="t('product',3)" style="width:100%;">
                     <IconField iconPosition="left" class="mb-3">
                         <InputIcon v-if="!isSearchingProduct">
@@ -125,11 +125,11 @@
                         <InputText v-model="searchtext" :placeholder="t('search')+' '+t('product',3)" />
                     </IconField>
                     <div class="flex flex-wrap">
-                        <MealCard  v-for="(item,index) in products" :key="index" :item="item" class="m-2" style="width:9rem;" @addwithcomment="visible=true;idwithcomment=item.id; namewithcomment=item.name" @add="addItem(item)"/>
+                        <MealCard  v-for="(item,index) in products" :key="index" :item="item" class="m-1 lg:m-2" style="width:9rem;" @addwithcomment="visible=true;idwithcomment=item.id; namewithcomment=item.name" @add="addItem(item)"/>
                     </div>
                 </Panel>
             </div>
-            <div class="col-4 lg:col-3 flex pt-2 pb-3">
+            <div class="col-5 lg:col-3 flex pt-2 pb-3">
                 <Panel :header="t('order_items')" class="w-12" :style="`background-color:${is_order_valid ?  'white' : 'var(--red-100)'};border-color: ${is_order_valid ?  '' : 'red'};`">
                     <div class="flex flex-column" style="height:calc(100vh - 10rem)">
                         <div style="height:60vh;overflow: auto;">
@@ -173,16 +173,18 @@
                             </div>
                             <div class="flex flex-column align-items-start mb-3">
                                 <ButtonGroup class="flex">
-                                    <Button icon="pi pi-bookmark" @click="stashOrder" severity="secondary" />
-                                    <Button class="ml-2" icon="pi pi-hourglass" @click="payLaterStart" severity="secondary" />
+                                    <Button icon="pi pi-bookmark" @click="stashOrder" size="small" severity="primary" v-tooltip.top="'Draft order for later interactions'" aria-label="Stash order" />
+                                    <ToggleButton v-tooltip.top="'Collect money now or postpone it for later'" v-model="is_collecting_money" size="small" onIcon="fa fa-hand-holding-dollar" offIcon="fa fa-hand-holding-dollar" onLabel="Collecting" offLabel="Postponing" class="w-36 mx-1" aria-label="Do you confirm" />
+                                    <ToggleButton v-model="is_delivery" size="small" onIcon="pi pi-check" offIcon="pi pi-truck" onLabel="Delivery" offLabel="Delivery" class="w-36" aria-label="Do you confirm" />
+                                    <ToggleButton v-model="is_take_away" size="small" onIcon="pi pi-check" offIcon="pi pi-box" onLabel="Takeaway" offLabel="Takeaway" class="w-36 mx-1" aria-label="Do you confirm" />
                                 </ButtonGroup>
                                 <div class="flex justify-content-center align-items-center mt-2">
-                                    <ToggleButton v-model="is_print_receipt_kitchen" onLabel="Kitchen" offLabel="Kitchen" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36" aria-label="Do you confirm" />
-                                    <ToggleButton v-model="is_print_receipt_client" onLabel="Client" offLabel="Client" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36 mx-1" aria-label="Do you confirm" />
-                                    <ToggleButton v-tooltip.top="'Auto start order (doesn\'t wait for chef interaction)'" v-model="is_auto_start_order" onLabel="Start" offLabel="Start" onIcon="fa fa-play" offIcon="fa fa-play" class="w-36 mx-1" aria-label="Do you confirm" />
+                                    <ToggleButton size="small" v-model="is_print_receipt_kitchen" onLabel="Kitchen" offLabel="Kitchen" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36" aria-label="Do you confirm" />
+                                    <ToggleButton size="small" v-model="is_print_receipt_client" onLabel="Client" offLabel="Client" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36 mx-1" aria-label="Do you confirm" />
+                                    <ToggleButton size="small" v-tooltip.top="'Auto start order and consume components from inventory'" v-model="is_auto_start_order" onLabel="Autostarting" offLabel="Autostart" onIcon="pi pi-check" offIcon="pi pi-play-circle" class="w-36 mx-1" aria-label="Do you confirm" />
                                 </div>
                             </div>
-                            <Button :label="t('checkout')" :disabled="!is_order_valid" @click="submitOrder()" />
+                            <Button :label="t('submit')" :disabled="!is_order_valid" @click="submitOrder()" />
                         </div>
                     </div>
                 </Panel>
@@ -191,7 +193,7 @@
                 <OrderItemView v-model="orderItems[itemToEditIndex]"  />
             </Dialog>
             <Dialog v-model:visible="order_details_dialog" modal header="Order details" class="xs:w-12 md:w-10 lg:w-8">
-                <OrderView :order="order_to_show" @order-cancelled="order_details_dialog=false" />
+                <OrderView @finished="finishOrderDisplayed()" @amount_collected="orderToShowAmountCollected()" :order="order_to_show" @order-cancelled="order_details_dialog=false" />
             </Dialog>
             <Dialog v-model:visible="visible" modal header="Add Comment" :style="{ width: '25rem' }">
                 <InputText v-model="comment" placeholder="Comment" class="mb-4" />
@@ -231,7 +233,6 @@
   import { Notification} from '@/classes/Notification';
   import { ref,watch,computed,getCurrentInstance, nextTick, useTemplateRef  } from "vue";
   import StashedOrder from '@/components/StashedOrder.vue'
-  import PayLaterOrder from '@/components/PayLaterOrder.vue'
   import InputGroup from 'primevue/inputgroup';
   import InlineMessage from 'primevue/inlinemessage'
   import MainSearchResultView from '@/components/MainSearchResultView.vue';
@@ -252,6 +253,9 @@ const store = globalStore()
 const is_print_receipt_client = ref(true)
 const is_print_receipt_kitchen = ref(true)
 const is_auto_start_order = ref(true)
+const is_delivery = ref(false)
+const is_take_away = ref(false)
+const is_collecting_money = ref(true)
 
 
 const toast = useToast();
@@ -287,7 +291,7 @@ const notifications_op = ref();
 const stashed_orders_op = ref();
 const chats_op = ref();
 const user_profile_op = ref();
-const paylater_orders_op = ref()
+const current_orders_op = ref()
 const mainsearch_op = ref()
 
 const mainSearchResult = ref<any[]>([])
@@ -299,6 +303,20 @@ const user : any = computed(() => {
 
 })
 
+const finishOrderDisplayed = () => {
+    if (order_to_show.value){
+        order_to_show.value.state = "finished"
+    }
+}
+
+const orderToShowAmountCollected = () => {
+
+    if (order_to_show.value){
+        order_to_show.value.is_paid = true
+    }
+
+    getCurrentOrders()
+}
 
 const mainSearchTextChanged = (event:any) => {
 
@@ -329,24 +347,30 @@ const mainSearchTextChanged = (event:any) => {
     console.log(mainSearchText.value)
 }
 
+const getCurrentOrders = () => {
 
-const PayLaterOrderPaid = (index:number) => {
-    payLaterOrders.value.splice(index,1)
-}
+    payLaterOrders.value = []
 
-const payLaterStart = () => {
-    submitOrder(true)
-}
-
-const getPayLaterOrders = () => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=false&filter[is_pay_later]=true`,{
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=false`,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
     })
     .then(response => {
-        payLaterOrders.value = response.data.data
+        payLaterOrders.value = payLaterOrders.value.concat(response.data.data)
     })
+
+
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=true&filter[state]='in_progress'`,{
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+        }
+    })
+    .then(response => {
+        payLaterOrders.value = payLaterOrders.value.concat(response.data.data)
+    })
+
+    
 }
 
 const claims : any = computed(() => {
@@ -435,7 +459,7 @@ const stashed_toggle = (event: any) => {
 }
 
 const paylater_toggle = (event: any) => {
-    paylater_orders_op.value.toggle(event);
+    current_orders_op.value.toggle(event);
 }
 
 
@@ -499,7 +523,7 @@ const stashOrder = () => {
     {
         headers:{
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
-            "Accept-Languages": proxy.$i18n.locale
+            "Accept-Language": proxy.$i18n.locale
         },
     }).then(async (response) => {
         orderItems.value=[]
@@ -573,7 +597,7 @@ const startWebsocket = () => {
                 notifications.value.push(notification);
 
 
-                getPayLaterOrders()
+                getCurrentOrders()
             }else {
                 const notification = new Notification();
                 notification.description = data.message
@@ -673,7 +697,7 @@ const init = async () => {
 
     startWebsocket()
     getStashedOrders()
-    getPayLaterOrders()
+    getCurrentOrders()
 
     console.log("user:")
     console.log(user.value)
@@ -757,16 +781,16 @@ const getCategories = async () => {
 getCategories();
 
 
-const submitOrder = (isPaylater:boolean = false) => {
+const submitOrder = () => {
 
     let order : any =  {
         items:orderItems.value,
         discount:discount.value,
-        is_auto_start: is_auto_start_order.value
-    }
-
-    if (isPaylater) {
-        order.is_pay_later = true
+        is_auto_start: is_auto_start_order.value,
+        is_pay_later: !is_collecting_money.value,
+        is_take_away: is_take_away.value,
+        is_delivery: is_delivery.value,
+        is_paid: is_collecting_money.value
     }
 
     if (orderItems.value.length > 0){
@@ -787,9 +811,13 @@ const submitOrder = (isPaylater:boolean = false) => {
         ).then(() => {
             toast.add({ severity: 'success', summary: 'Success', detail: 'Order in progress !', life: 3000,group:'br' });
             refreshAvailabilities()
-            if (isPaylater){
-                getPayLaterOrders()
+            if (!is_collecting_money.value || !is_auto_start_order.value){
+                getCurrentOrders()
             }
+
+            is_collecting_money.value = false
+            is_delivery.value = false
+            is_take_away.value = false
         })
     
         orderItems.value = []
