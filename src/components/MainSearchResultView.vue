@@ -79,6 +79,13 @@ if (props.order.state == "finished" ){
     }
 }
 
+if (props.order.state == "stashed" ){
+    return {
+        title:"STASHED",
+        severity:"secondary"
+    }
+}
+
 return {}
 
 })
