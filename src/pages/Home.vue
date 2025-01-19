@@ -107,13 +107,15 @@
         </Toolbar>
         <div class="grid m-0 p-0" style="flex-grow:1;">
             <div class="col-2">
-                <Listbox  v-model="selectedCategory" :options="categories" optionLabel="name" class="w-full" filter>
-                    <template #option="slotProps">
-                        <div class="flex align-items-center">
-                            <div>{{ slotProps.option.name }}</div>
-                        </div>
-                    </template>
-                </Listbox>
+                <Panel :header="t('categories')" style="width:100%;">
+                    <Listbox  v-model="selectedCategory" :options="categories" optionLabel="name" class="w-full" filter>
+                        <template #option="slotProps">
+                            <div class="flex align-items-center">
+                                <div>{{ slotProps.option.name }}</div>
+                            </div>
+                        </template>
+                    </Listbox>
+                </Panel>
             </div>
             <div class="lg:col-7 col-5 flex px-0 lg:px-2 pt-2 pb-3 overflow-auto">
                 <Panel :header="t('product',3)" style="width:100%;">
@@ -173,7 +175,7 @@
                             </div>
                             <div class="flex flex-column align-items-start mb-3">
                                 <ButtonGroup class="flex">
-                                    <Button icon="pi pi-bookmark" @click="stashOrder" size="small" severity="primary" v-tooltip.top="'Draft order for later interactions'" aria-label="Stash order" />
+                                    <Button icon="pi pi-bookmark" @click="stashOrder" size="small" text severity="primary" v-tooltip.top="'Draft order for later interactions'" aria-label="Stash order" />
                                     <ToggleButton v-tooltip.top="'Collect money now or postpone it for later'" v-model="is_collecting_money" size="small" onIcon="fa fa-hand-holding-dollar" offIcon="fa fa-hand-holding-dollar" onLabel="Collecting" offLabel="Postponing" class="w-36 mx-1" aria-label="Do you confirm" />
                                     <ToggleButton v-model="is_delivery" size="small" onIcon="pi pi-check" offIcon="pi pi-truck" onLabel="Delivery" offLabel="Delivery" class="w-36" aria-label="Do you confirm" />
                                     <ToggleButton v-model="is_take_away" size="small" onIcon="pi pi-check" offIcon="pi pi-box" onLabel="Takeaway" offLabel="Takeaway" class="w-36 mx-1" aria-label="Do you confirm" />
@@ -361,7 +363,7 @@ const getCurrentOrders = () => {
     })
 
 
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=true&filter[state]='in_progress'`,{
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=true&filter[state]=in_progress&filter[state]=pending&filter[state]=!stashed`,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
@@ -477,7 +479,7 @@ const notifications = ref<Notification[]>([])
 
 
 const getStashedOrders = () => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_stashed]=true`,{
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[state]=stashed`,{
         headers:{
             Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
         }
