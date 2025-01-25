@@ -1,6 +1,6 @@
 <template>
-    <div v-if="!loading" class="flex flex-column m-0 p-0" style="height: 100%;">
-        <Toolbar style="border-radius: 0px;">
+    <div v-if="!loading" class="flex flex-column m-0 p-0" style="height: 100vh;">
+        <Toolbar style="border-radius: 0px;" class="py-1 lg:py-2">
             <template #start>
                 <router-link to="/">
                     <img src="@/assets/logo.png" alt="logo" style="height:25px">
@@ -106,90 +106,93 @@
             </template>
         </Toolbar>
         <div class="grid m-0 p-0" style="flex-grow:1;">
-            <div class="col-2">
-                <Panel :header="t('categories')" style="width:100%;">
-                    <Listbox  v-model="selectedCategory" :options="categories" optionLabel="name" class="w-full" filter>
-                        <template #option="slotProps">
-                            <div class="flex align-items-center">
-                                <div>{{ slotProps.option.name }}</div>
-                            </div>
-                        </template>
-                    </Listbox>
-                </Panel>
+            <div class="col-2 flex flex-column py-3">
+                <div class="w- flex my-1" v-for="(category,index) in categories" :key="index" style="background-color:white;cursor:pointer" @click="selectedCategory = category">
+                    <div :style="`width:0.5rem;background-color:${category == selectedCategory? '#FDDB00' : 'silver'}`"></div>
+                    <div class="py-3 mx-3" :style="`color:${category == selectedCategory? '#2E4762' : 'black'};font-weight:${category == selectedCategory? 'bold' : '200'}`">{{ category.name }}</div>
+                </div>
             </div>
             <div class="lg:col-7 col-5 flex px-0 lg:px-2 pt-2 pb-3 overflow-auto">
-                <Panel :header="t('product',3)" style="width:100%;">
-                    <IconField iconPosition="left" class="mb-3">
-                        <InputIcon v-if="!isSearchingProduct">
-                            <i class="pi pi-search" />
-                        </InputIcon>
-                        <InputIcon v-if="isSearchingProduct" class="pi pi-spin pi-spinner"> </InputIcon>
-                        <InputText v-model="searchtext" :placeholder="t('search')+' '+t('product',3)" />
-                    </IconField>
-                    <div class="flex flex-wrap">
-                        <MealCard  v-for="(item,index) in products" :key="index" :item="item" class="m-1 lg:m-2" style="width:9rem;" @addwithcomment="visible=true;idwithcomment=item.id; namewithcomment=item.name" @add="addItem(item)"/>
-                    </div>
-                </Panel>
+                <Card style="width:100%;">
+                    <template #content>
+                        <IconField iconPosition="left" class="mb-3">
+                            <InputIcon v-if="!isSearchingProduct">
+                                <i class="pi pi-search" />
+                            </InputIcon>
+                            <InputIcon v-if="isSearchingProduct" class="pi pi-spin pi-spinner"> </InputIcon>
+                            <InputText v-model="searchtext" :placeholder="t('search')+' '+t('product',3)" />
+                        </IconField>
+                        <div class="flex flex-wrap">
+                            <MealCard  v-for="(item,index) in products" :key="index" :item="item" class="m-1 lg:m-2" style="width:9rem;" @addwithcomment="visible=true;idwithcomment=item.id; namewithcomment=item.name" @add="addItem(item)"/>
+                        </div>
+                    </template>
+                </Card>
             </div>
             <div class="col-5 lg:col-3 flex pt-2 pb-3">
-                <Panel :header="t('order_items')" class="w-12" :style="`background-color:${is_order_valid ?  'white' : 'var(--red-100)'};border-color: ${is_order_valid ?  '' : 'red'};`">
-                    <div class="flex flex-column" style="height:calc(100vh - 10rem)">
-                        <div style="height:60vh;overflow: auto;">
-                            <div v-for="(item,index) in orderItems" :key="index">
-                                <div class="flex justify-content-between align-items-center">
-                                    <div style="background-color:red;width:0.3rem;height:2.5rem;" class="mr-2" v-if="!item.isValid">
-                                        &nbsp;
+                <Card class="w-12" :style="`background-color:${is_order_valid ?  'white' : 'var(--red-100)'};border-color: ${is_order_valid ?  '' : 'red'};`">
+                    <template #content>
+                        <div class="flex flex-column" style="height: calc(100vh - var(--p-toolbar-padding) * 2 - 0.5rem - 36px - var(--p-card-body-padding))">
+                            <div style="height:65%;overflow: auto;">
+                                <div v-for="(item,index) in orderItems" :key="index">
+                                    <div class="flex justify-content-between align-items-center">
+                                        <div style="background-color:red;width:0.3rem;height:2.5rem;" class="mr-2" v-if="!item.isValid">
+                                            &nbsp;
+                                        </div>
+                                        <p class="w-6" style="text-overflow:ellipsis"><strong>{{ item.product.name }}</strong></p>
+                                        <p>{{ item.price }} {{t('egp')}}</p>
+                                        <div>
+                                            <Button icon="pi pi-pencil" size="small" style="width:2rem;height: 2rem;" aria-label="Edit" severity="secondary" @click="itemToEditIndex = index; edit_item_dialog=true" class="mr-1"/>
+                                            <Button icon="pi pi-times" size="small" style="width:2rem;height: 2rem;" aria-label="Remove" severity="secondary" @click="orderItems.splice(index,1)" />
+                                        </div>
                                     </div>
-                                    <p class="w-6" style="text-overflow:ellipsis"><strong>{{ item.product.name }}</strong></p>
-                                    <p>{{ item.price }} {{t('egp')}}</p>
-                                    <div>
-                                        <Button icon="pi pi-pencil" size="small" style="width:2rem;height: 2rem;" aria-label="Edit" severity="secondary" @click="itemToEditIndex = index; edit_item_dialog=true" class="mr-1"/>
-                                        <Button icon="pi pi-times" size="small" style="width:2rem;height: 2rem;" aria-label="Remove" severity="secondary" @click="orderItems.splice(index,1)" />
+                                    <p class="m-0">{{ item.comment }}</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-column flex-wrap justify-content-between">
+                                <div>
+                                    <Divider />
+                                    <ButtonGroup class="flex justify-content-start flex-wrap gap-1">
+                                        <Button icon="pi pi-bookmark" label="Draft" @click="stashOrder" size="small" severity="secondary" v-tooltip.top="'Draft order for later interactions'" aria-label="Stash order" />
+                                        <Button label="Add Discount" severity="secondary" icon="fa fa-percent" size="small"  @click="toggle_discount_popover" />
+                                    </ButtonGroup>
+                                    <Popover ref="discount_op">
+                                        <div class="flex flex-column gap-2" style="width:25vw">
+                                            <p class="mb-0">Add discount</p>
+                                            <div class="flex w-full">
+                                                <Slider v-model="discount_percent" class="w-9 m-1 mx-2" style="height:0.6rem;" />
+                                                <p class="ml-2" style="font-size:0.8rem">{{ discount_percent.toFixed(2) }} %</p>
+                                            </div>
+                                            <div class="w-7 flex">
+                                                <InputText v-model.number="discount" :disabled="orderItems.length == 0" placeholder="0" type="number" class="w-8 h-2rem"  />
+                                                <p style="font-size:0.8rem" class="mx-2">{{ t('egp') }}</p>
+                                            </div>
+                                        </div>
+                                    </Popover>
+                                    <div class="flex justify-content-between flex-wrap align-items-center">
+                                        <p style="font-size:0.8rem;" class="mb-0">{{t('subtotal')}} : </p>
+                                        <p style="font-size:0.7rem;">{{ subtotal.toFixed(2) }} <span style="font-size:0.7rem">{{t('egp')}}</span></p>
+                                    </div>
+                                    <div class="flex justify-content-between flex-wrap align-items-center">
+                                        <p class="my-0" style="font-size:0.8rem">{{t('discount')}} :</p>
+                                        <p style="font-size:0.7rem;">{{ discount.toFixed(2) }} <span style="font-size:0.7rem">{{t('egp')}}</span></p>
+                                    </div>
+                                    <div class="flex justify-content-between flex-wrap align-items-center">
+                                        <h2>{{t('total')}} : </h2>
+                                        <p style="font-size:1.4rem">{{ total.toFixed(2) }} <span style="font-size:1rem">{{t('egp')}}</span></p>
                                     </div>
                                 </div>
-                                <p class="m-0">{{ item.comment }}</p>
+                                <div class="flex flex-column align-items-start mb-3">
+                                    <div class="flex justify-content-center align-items-center mt-2">
+                                        <ToggleButton size="small" v-model="is_print_receipt_kitchen" onLabel="Kitchen" offLabel="Kitchen" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36" aria-label="Do you confirm" />
+                                        <ToggleButton size="small" v-model="is_print_receipt_client" onLabel="Client" offLabel="Client" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36 mx-1" aria-label="Do you confirm" />
+                                        <ToggleButton size="small" v-tooltip.top="'Auto start order and consume components from inventory'" v-model="is_auto_start_order" onLabel="Autostarting" offLabel="Autostart" onIcon="pi pi-check" offIcon="pi pi-play-circle" class="w-36 mx-1" aria-label="Do you confirm" />
+                                    </div>
+                                </div>
+                                <Button label="Next" icon="pi pi-arrow-right" iconPos="right" :disabled="!is_order_valid || orderItems.length == 0" @click="order_additional_details_dialog=true" />
                             </div>
                         </div>
-                        <div class="flex flex-column flex-wrap justify-content-between">
-                            <div>
-                                <Divider />
-                                <div class="flex justify-content-between flex-wrap align-items-center">
-                                    <p>{{t('subtotal')}} : </p>
-                                    <p style="font-size:1rem">{{ subtotal.toFixed(2) }} <span style="font-size:0.8rem">{{t('egp')}}</span></p>
-                                </div>
-                                <div class="flex justify-content-between flex-wrap align-items-center">
-                                    <p class="my-0">{{t('discount')}} :</p>
-                                    <div class="w-7 flex justify-content-end align-items-center">
-                                        <InputText v-model.number="discount" :disabled="orderItems.length == 0" placeholder="0" type="number" class="w-8 h-2rem"  />
-                                        <p style="font-size:0.8rem" class="mx-2">{{ t('egp') }}</p>
-                                    </div>
-                                </div>
-                                <div class="flex justify-content-center align-items-center">
-                                    <Slider v-model="discount_percent" class="w-9 mt-1" style="height:0.6rem;" />
-                                    <p class="ml-2" style="font-size:0.8rem">{{ discount_percent.toFixed(2) }} %</p>
-                                </div>
-                                <div class="flex justify-content-between flex-wrap align-items-center">
-                                    <h2>{{t('total')}} : </h2>
-                                    <p style="font-size:1.4rem">{{ total.toFixed(2) }} <span style="font-size:1rem">{{t('egp')}}</span></p>
-                                </div>
-                            </div>
-                            <div class="flex flex-column align-items-start mb-3">
-                                <ButtonGroup class="flex">
-                                    <Button icon="pi pi-bookmark" @click="stashOrder" size="small" text severity="primary" v-tooltip.top="'Draft order for later interactions'" aria-label="Stash order" />
-                                    <ToggleButton v-tooltip.top="'Collect money now or postpone it for later'" v-model="is_collecting_money" size="small" onIcon="fa fa-hand-holding-dollar" offIcon="fa fa-hand-holding-dollar" onLabel="Collecting" offLabel="Postponing" class="w-36 mx-1" aria-label="Do you confirm" />
-                                    <ToggleButton v-model="is_delivery" size="small" onIcon="pi pi-check" offIcon="pi pi-truck" onLabel="Delivery" offLabel="Delivery" class="w-36" aria-label="Do you confirm" />
-                                    <ToggleButton v-model="is_take_away" size="small" onIcon="pi pi-check" offIcon="pi pi-box" onLabel="Takeaway" offLabel="Takeaway" class="w-36 mx-1" aria-label="Do you confirm" />
-                                </ButtonGroup>
-                                <div class="flex justify-content-center align-items-center mt-2">
-                                    <ToggleButton size="small" v-model="is_print_receipt_kitchen" onLabel="Kitchen" offLabel="Kitchen" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36" aria-label="Do you confirm" />
-                                    <ToggleButton size="small" v-model="is_print_receipt_client" onLabel="Client" offLabel="Client" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36 mx-1" aria-label="Do you confirm" />
-                                    <ToggleButton size="small" v-tooltip.top="'Auto start order and consume components from inventory'" v-model="is_auto_start_order" onLabel="Autostarting" offLabel="Autostart" onIcon="pi pi-check" offIcon="pi pi-play-circle" class="w-36 mx-1" aria-label="Do you confirm" />
-                                </div>
-                            </div>
-                            <Button :label="t('submit')" :disabled="!is_order_valid" @click="submitOrder()" />
-                        </div>
-                    </div>
-                </Panel>
+                    </template>
+                </Card>
             </div>
             <Dialog v-model:visible="edit_item_dialog" modal header="Edit item" class="xs:w-12 md:w-10 lg:w-8">
                 <OrderItemView v-model="orderItems[itemToEditIndex]"  />
@@ -204,6 +207,148 @@
                     <Button type="button" label="Add" @click="addWithComment()"></Button>
                 </div>
             </Dialog>
+            <Dialog v-model:visible="order_additional_details_dialog" modal header="Order details" class="xs:w-12 md:w-10 lg:w-8">
+                <Stepper linear value="1">
+                    <StepList>
+                        <Step v-for="(step,index) in order_details_steps" :key="index" :value="`${index+1}`" >{{ step.label }}</Step>
+                    </StepList>
+                    <StepPanels>
+                        <StepPanel v-slot="{ activateCallback }" value="1">
+                            <div class="flex justify-content-center flex-wrap gap-3">
+                                <div class="flex flex-column align-items-center">
+                                    <h2 class="mt-0">
+                                        <i class="fa-regular fa-credit-card mx-2"></i>
+                                         Payment
+                                    </h2>
+                                    <ToggleButton v-model="is_collecting_money" onIcon="fa fa-hand-holding-dollar" offIcon="fa fa-hand-holding-dollar" :offLabel="`Collect (${total.toFixed(2)} EGP)`" :onLabel="`Collecting (${total.toFixed(2)} EGP)`" class="w-15rem h-5rem lg:h-10rem sm:w-40 border-noround" aria-label="Confirmation" />
+                                    <ToggleButton v-model="is_pay_later" onIcon="pi pi-hourglass" offIcon="fa fa-hourglass" offLabel="Pay later" onLabel="Paying later" class="w-15rem h-5rem lg:h-10rem sm:w-40 border-noround" aria-label="Confirmation" />
+                                </div>
+                                <Divider layout="vertical" />
+                                <div class="flex flex-column align-items-center">
+                                    <h2 class="mt-0">
+                                        <i class="fa fa-box-open mx-2"></i>
+                                        Service Style
+                                    </h2>
+                                    <ToggleButton v-model="is_serve_inside" onIcon="fa fa-bowl-food" offIcon="fa fa-bowl-food" offLabel="Dine in" onLabel="Dine in" class="w-15rem h-5rem lg:h-10rem sm:w-40 border-noround" aria-label="Confirmation" />
+                                    <ToggleButton v-model="is_take_away" onIcon="pi pi-box" offIcon="pi pi-box" offLabel="Takeaway" onLabel="Takeaway" class="w-15rem h-5rem lg:h-10rem sm:w-40 border-noround" aria-label="Confirmation" />
+                                    <ToggleButton v-model="is_delivery" onIcon="pi pi-truck" offIcon="pi pi-truck" offLabel="Delivery" onLabel="Delivery" class="w-15rem h-5rem lg:h-10rem sm:w-40 border-noround" aria-label="Confirmation" />
+                                </div>
+                                <Divider layout="vertical" />
+                                <div class="flex flex-column align-items-start">
+                                    <h2 class="mt-0">
+                                        <i class="fa-regular fa-comment mx-2"></i>
+                                        Comment
+                                    </h2>
+                                    <Textarea v-model="order_comment" size="small" placeholder="Comment" rows="3" />
+                                    <h2 class="mt-3">
+                                        <i class="fa fa-pen-to-square mx-2"></i>
+                                        Custom
+                                    </h2>
+                                    <div class="flex flex-column">
+                                        <div v-for="(item,index) in custom_data" :key="index" class="flex align-items-start flex-column mt-2 gap-1">
+                                            <span>Key:</span>
+                                            <InputText v-model="custom_data[index].key" />
+                                            <span>Value:</span>
+                                            <InputText v-model.number="custom_data[index].value"/>
+                                            <Button severity="secondary" aria-label="Remove" icon="pi pi-times" @click="custom_data.splice(index,1)" />
+                                        </div>
+                                        <div class="flex flex-column align-items-start mt-3 gap-1">
+                                            <span>Key:</span>
+                                            <InputText v-model="new_custom_data_key" />
+                                            <span>Value:</span>
+                                            <InputText v-model="new_custom_data_value"/>
+
+                                            <Button label="Add" @click="custom_data.push({key:new_custom_data_key,value:new_custom_data_value}); new_custom_data_key = ''; new_custom_data_value = ''" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex pt-6 justify-content-end">
+                                <Button label="Next" icon="pi pi-arrow-right" iconPos="right" @click="activateCallback('2')" />
+                            </div>
+                        </StepPanel>
+                        <StepPanel v-slot="{ activateCallback }" v-if="order_details_steps.length == 3" value="2">
+                            <div class="flex flex-column">
+                                <h2 class="mt-0">Customer</h2>
+                                <div class="flex flex-wrap gap-2">
+                                    <Button class="px-3" :label="t('existing_customer')" severity="secondary" icon="pi pi-user" iconPos="right" @click="pick_customer_dialog=true" />
+                                    <Button class="px-3" :label="t('add_new')" severity="secondary" icon="pi pi-plus" iconPos="right" @click="add_customer_dialog=true" />
+                                </div>
+                                <AddCustomer @update:visible="(x) => add_customer_dialog = x" :visible="add_customer_dialog" @customer-added="add_customer_dialog=false" />
+                                <DataTable showGridlines  class="w-full mt-3 px-3" :value="new_order_delivery_customer">
+                                    <Column field="name" header="Name"></Column>
+                                    <Column field="address" header="Address"></Column>
+                                    <Column field="phone" header="Phone"></Column>
+                                </DataTable>
+                                <div class="flex pt-6 justify-content-end gap-2">
+                                    <Button label="Back" icon="pi pi-arrow-left" iconPos="left" @click="activateCallback('1')" severity="secondary" />
+                                    <Button label="Next" icon="pi pi-arrow-right" iconPos="right" @click="activateCallback('3')" />
+                                </div>
+                            </div>
+                        </StepPanel>
+                        <StepPanel  v-slot="{ activateCallback }" :value="order_details_steps.length == 3 ? '3' : '2'">
+                            <div class="flex flex-column">
+                                <h2 class="mt-0">
+                                    <i class="pi pi-comment mx-2"></i>
+                                    Recap
+                                </h2>
+                                <Divider />
+                                <h3>Main details</h3>
+                                <div class="flex align-items-start mt-3 gap-1">
+                                    <span>{{t('autostarting')}}:</span>
+                                    <p class="my-0"><strong> {{is_auto_start_order}} </strong></p>
+                                </div>
+                                <div class="flex align-items-start mt-3 gap-1">
+                                    <span>Payment:</span>
+                                    <p class="my-0"><strong> {{ is_pay_later ? t('pay_later') : t('now') }} </strong></p>
+                                </div>
+                                <div class="flex align-items-start mt-3 gap-1">
+                                    <span>{{t('location')}}:</span>
+                                    <p  class="my-0" v-if="is_serve_inside"><strong> {{t('dine_in')}} </strong></p>
+                                    <p  class="my-0" v-if="is_delivery"><strong> {{t('delivery')}} </strong></p>
+                                    <p  class="my-0" v-if="is_take_away"><strong> {{t('takeaway')}} </strong></p>
+                                </div>
+                                <div class="flex align-items-start mt-3 gap-1">
+                                    <span>{{t('comment')}}:</span>
+                                    <p class="my-0"><strong> {{order_comment}} </strong></p>
+                                </div>
+                                <div class="flex flex-column align-items-start mt-3 gap-1">
+                                    <span>{{t('other')}}:</span>
+                                    <div class="flex align-items-start mt-3 gap-1" v-for="(item,index) in custom_data" :key="index">
+                                        <span>{{item.key}}:</span>
+                                        <p class="my-0"><strong> {{item.value}} </strong></p>
+                                    </div>
+                                </div>
+                                <div v-if="is_delivery">
+                                    <Divider />
+                                    <h3>Delivery</h3>
+                                    <div class="flex flex-column">
+                                        <div class="flex align-items-start mt-3 gap-1">
+                                            <span>Customer:</span>
+                                            <p class="my-0"><strong> {{new_order_delivery_customer[0]?.name}} </strong></p>
+                                        </div>
+                                        <div class="flex align-items-start mt-3 gap-1">
+                                            <span>Address:</span>
+                                            <p class="my-0"><strong> {{new_order_delivery_customer[0]?.address}} </strong></p>
+                                        </div>
+                                        <div class="flex align-items-start mt-3 gap-1">
+                                            <span>Phone:</span>
+                                            <p class="my-0"><strong> {{new_order_delivery_customer[0]?.phone}} </strong></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex pt-6 justify-content-end gap-2">
+                                    <Button label="Back" icon="pi pi-arrow-left" iconPos="left" @click="order_details_steps.length == 3 ? activateCallback('2') : activateCallback('1')" severity="secondary" />
+                                    <Button :label="`${is_auto_start_order ? t('start') : t('submit')} ${is_collecting_money ? '( '+t('collect')+ ' '+ total.toFixed(2) + ' EGP )' : '( '+t('pay_later') + ' )'} `" :disabled="!is_order_valid" @click="submitOrder()" />
+                                </div>
+                            </div>
+                        </StepPanel>
+                    </StepPanels>
+                </Stepper>
+                <Dialog v-model:visible="pick_customer_dialog">
+                    <PickCustomer @returnCustomer="(customer) => {new_order_delivery_customer = [customer]; pick_customer_dialog = false}" />
+                </Dialog>
+            </Dialog>
         </div>
     </div>
     <div style="width:100vw;height:100vh;display:flex;justify-content:center;align-items:center" v-if="loading">
@@ -217,10 +362,11 @@
   import IconField from 'primevue/iconfield';
   import Toolbar from 'primevue/toolbar';
   import Dialog from 'primevue/dialog';
-  import Listbox from 'primevue/listbox';
   import Panel from 'primevue/panel';
   import InputText from 'primevue/inputtext';
   import Chip from 'primevue/chip';
+  import DataTable from 'primevue/datatable';
+  import Column from 'primevue/column';
   import Button from 'primevue/button';
   import { useToast } from "primevue/usetoast";
   import axios from 'axios'
@@ -240,6 +386,16 @@
   import MainSearchResultView from '@/components/MainSearchResultView.vue';
   import OrderView from '@/components/OrderView.vue';
   import ProgressSpinner from "primevue/progressspinner";
+  import StepList from 'primevue/steplist';
+  import Step from 'primevue/step';
+  import Stepper from 'primevue/stepper';
+  import StepPanels from 'primevue/steppanels';
+  import StepPanel from 'primevue/steppanel';
+  import Card from 'primevue/card';
+  import Popover from 'primevue/popover';
+  import Textarea from 'primevue/textarea';
+  import PickCustomer from '@/components/PickCustomer.vue';
+  import AddCustomer from '@/components/AddCustomer.vue';
   import { useI18n } from 'vue-i18n'
   import { ToggleButton } from 'primevue';
   import { globalStore } from '@/store';
@@ -255,10 +411,18 @@ const store = globalStore()
 const is_print_receipt_client = ref(true)
 const is_print_receipt_kitchen = ref(true)
 const is_auto_start_order = ref(true)
+const is_serve_inside = ref(true)
 const is_delivery = ref(false)
 const is_take_away = ref(false)
 const is_collecting_money = ref(true)
-
+const is_pay_later = ref(false)
+const order_comment = ref("")
+const new_order_delivery_customer = ref([])
+const pick_customer_dialog = ref(false)
+const add_customer_dialog = ref(false)
+const new_custom_data_value = ref("")
+const new_custom_data_key = ref("")
+const custom_data : any = ref([])
 
 const toast = useToast();
 const itemToEditIndex = ref(0)
@@ -270,6 +434,7 @@ const has_new_message = ref(false)
 const chat_container = useTemplateRef("chat_container")
 const mainSearchText = ref("")
 const order_details_dialog = ref(false)
+const order_additional_details_dialog = ref(false)
 const order_to_show = ref<Order>()
 const isSearchingProduct = ref(false)
 
@@ -297,6 +462,69 @@ const current_orders_op = ref()
 const mainsearch_op = ref()
 
 const mainSearchResult = ref<any[]>([])
+
+const discount_op = ref();
+
+const order_details_steps : any = ref([
+    {"number": 1, "label": "Main details"},
+    {"number": 3, "label": "Confirmation"},
+])
+
+watch(is_delivery, (new_val) => {
+
+    if (new_val){
+        is_serve_inside.value = false
+        is_take_away.value = false
+        order_details_steps.value = [
+            {"number": 1, "label": "Main details"},
+            {"number": 2, "label": "Delivery"},
+            {"number": 3, "label": "Confirmation"},
+        ]
+    }else {
+        order_details_steps.value = [
+            {"number": 1, "label": "Main details"},
+            {"number": 3, "label": "Confirmation"},
+        ]
+    }
+
+})
+
+watch(is_serve_inside, (new_val) => {
+
+    if (new_val){
+        is_delivery.value = false
+        is_take_away.value = false
+    }
+
+})
+
+watch(is_take_away, (new_val) => {
+
+    if (new_val){
+        is_delivery.value = false
+        is_serve_inside.value = false
+    }
+
+})
+
+
+watch(is_collecting_money, (new_val) => {
+
+    if (new_val)
+        is_pay_later.value = false
+
+})
+
+watch(is_pay_later, (new_val) => {
+
+if (new_val)
+    is_collecting_money.value = false
+
+})
+
+const toggle_discount_popover = (event) => {
+    discount_op.value.toggle(event);
+}
 
 
 const user : any = computed(() => {
@@ -736,7 +964,7 @@ const notifications_severity_counter = computed(() => {
   
   
 const searchtext = ref("")
-const categories = ref([])
+const categories : any = ref([])
 
 const orderItems = ref<OrderItem[]>([])
 
@@ -785,17 +1013,27 @@ getCategories();
 
 const submitOrder = () => {
 
+    let custom_data_map : any = {}
+    custom_data.value.forEach((item : any) => {
+        custom_data_map[item.key] = item.value
+    })
+
     let order : any =  {
         items:orderItems.value,
         discount:discount.value,
         is_auto_start: is_auto_start_order.value,
-        is_pay_later: !is_collecting_money.value,
+        is_dine_in: is_serve_inside.value,
         is_take_away: is_take_away.value,
         is_delivery: is_delivery.value,
-        is_paid: is_collecting_money.value
+        is_paid: is_collecting_money.value,
+        is_pay_later: is_pay_later.value,
+        custom_data: custom_data_map,
+        comment: order_comment.value,
+        customer: new_order_delivery_customer.value.length > 0 ? new_order_delivery_customer.value[0] : null
     }
 
     if (orderItems.value.length > 0){
+
         axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders`,
             {
                 meta: {
@@ -813,16 +1051,17 @@ const submitOrder = () => {
         ).then(() => {
             toast.add({ severity: 'success', summary: 'Success', detail: 'Order in progress !', life: 3000,group:'br' });
             refreshAvailabilities()
-            if (!is_collecting_money.value || !is_auto_start_order.value){
+            if (!is_collecting_money.value || is_auto_start_order.value){
                 getCurrentOrders()
             }
 
-            is_collecting_money.value = false
             is_delivery.value = false
             is_take_away.value = false
+            order_additional_details_dialog.value = false
         })
     
         orderItems.value = []
+        
     }
 };
 

@@ -187,6 +187,16 @@ const menu_tree =ref([
         icon: 'pi pi-fw pi-cog',
         link:'/admin/settings',
     },
+    {
+        key: '6',
+        label: {
+            title:'customer',
+            plural:true
+        },
+        data: 'Customers',
+        icon: 'pi pi-users',
+        link:'/admin/customers',
+    },
     
 ])
 
