@@ -6,8 +6,8 @@ const zitadelAuth: { oidcAuth: OidcAuth; hasRole: (role: string) => any } = crea
     project_resource_id: process.env.VUE_APP_ZITADEL_PROJECT_RESOURCE_ID,
     client_id: process.env.VUE_APP_ZITADEL_CLIENT_ID,
     issuer: process.env.VUE_APP_ZITADEL_ISSUER,
-},"Zitadel",SignInType.Window,"http://localhost:8080/",{
-   post_logout_redirect_uri:'http://localhost:8080/',
+},"Zitadel",SignInType.Window,process.env.VUE_APP_ZITADEL_REDIRECT_URL,{
+   post_logout_redirect_uri:process.env.VUE_APP_ZITADEL_REDIRECT_URL,
 })
 
 // handle events
