@@ -112,7 +112,7 @@
                     <div class="py-3 mx-3" :style="`color:${category == selectedCategory? '#2E4762' : 'black'};font-weight:${category == selectedCategory? 'bold' : '200'}`">{{ category.name }}</div>
                 </div>
             </div>
-            <div class="lg:col-7 col-5 flex px-0 lg:px-2 pt-2 pb-3 overflow-auto">
+            <div class="xl:col-7 col-5 flex px-0 xl:px-2 pt-2 pb-3 overflow-auto">
                 <Card style="width:100%;">
                     <template #content>
                         <IconField iconPosition="left" class="mb-3">
@@ -128,7 +128,7 @@
                     </template>
                 </Card>
             </div>
-            <div class="col-5 lg:col-3 flex pt-2 pb-3">
+            <div class="col-5 xl:col-3 flex pt-2 pb-3">
                 <Card class="w-12" :style="`background-color:${is_order_valid ?  'white' : 'var(--red-100)'};border-color: ${is_order_valid ?  '' : 'red'};`">
                     <template #content>
                         <div class="flex flex-column" style="height: calc(100vh - var(--p-toolbar-padding) * 2 - 0.5rem - 36px - var(--p-card-body-padding))">

@@ -221,7 +221,7 @@ const isLogsTableLoading = ref(true)
 
 
   const saveMaterialSettings = () => {
-    axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials`, {
+    axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${material_settings.value?.id}`, {
         data: material_settings.value
     },{
         headers: {

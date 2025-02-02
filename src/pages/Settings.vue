@@ -9,8 +9,8 @@
                     <div class="col-12 flex-column flex">
                         <h4>{{$t('inventory')}}</h4>
                         <div class="flex align-items-center">
-                            <span>default_inventory_quantity_warn</span>
-                            <InputText class="ml-3" v-model.number="default_inventory_quantity_warn" type="number" />
+                            <span>stock_alert_treshold</span>
+                            <InputText class="ml-3" v-model.number="stock_alert_treshold" type="number" />
                         </div>
                         
                         <Divider />
@@ -76,7 +76,7 @@ import { globalStore } from '../store';
 
 const { proxy } = getCurrentInstance();
 
-const default_inventory_quantity_warn = ref(0)
+const stock_alert_treshold = ref(0)
 const order_queues = ref<any>({})
 
 const new_queue_prefix = ref("")
@@ -111,7 +111,7 @@ const saveSettings = () => {
         {
             data: {
                 inventory: {
-                    default_inventory_quantity_warn:default_inventory_quantity_warn.value
+                    stock_alert_treshold:stock_alert_treshold.value
                 },
                 orders: {
                     queues: order_queues.value
@@ -148,7 +148,7 @@ const getSettings = () => {
     })
     .then((response)=>{
         console.log(response.data.data)
-        default_inventory_quantity_warn.value = response.data.data.inventory.default_inventory_quantity_warn
+        stock_alert_treshold.value = response.data.data.inventory.stock_alert_treshold
         order_queues.value = response.data.data.orders.queues
         selectedLang.value = response.data.data.language
         receipt_printer_host.value = response.data.data.receipt_printer.host
