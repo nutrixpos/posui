@@ -23,19 +23,9 @@ import '@fortawesome/fontawesome-free/css/all.css';
 
 import {  createWebHistory, createRouter } from 'vue-router'
 
-import Home from '@/pages/Home.vue'
-import Kitchen from '@/pages/Kitchen.vue'
-import Admin from '@/pages/Admin.vue'
-import Inventory from '@/pages/Inventory.vue'
-import Sales from '@/pages/Sales.vue'
-import Products from '@/pages/Products.vue'
-import Categories from '@/pages/Categories.vue'
-import Orders from '@/pages/Orders.vue'
 import { createPinia } from 'pinia'
 import zitadelAuth from "@/services/zitadelAuth";
 import Tooltip from 'primevue/tooltip';
-import Settings from './pages/Settings.vue';
-import Customers from './pages/Customers.vue';
 
 
 const routes = [
@@ -53,7 +43,7 @@ const routes = [
     component: () => {
 
       if (zitadelAuth.hasRole("admin") || zitadelAuth.hasRole("cashier") ) {
-        return Home 
+        return import('@/pages/Home.vue')
       }
       return import('@/pages/NoAccessView.vue')
     }
@@ -62,7 +52,7 @@ const routes = [
     path: '/kitchen', component: () => {
 
       if (zitadelAuth.hasRole("admin") || zitadelAuth.hasRole("chef")) {
-        return Kitchen
+        return import('@/pages/Kitchen.vue')
       }
       return import('@/pages/NoAccessView.vue')
 
@@ -72,7 +62,7 @@ const routes = [
     path: '/admin', 
     component: () => {
       if (zitadelAuth.hasRole("admin")) {
-        return Admin
+        return import('@/pages/Admin.vue')
       }
       return import('@/pages/NoAccessView.vue')
     },
@@ -81,16 +71,16 @@ const routes = [
         path: '',
         redirect: { path: '/admin/inventory' }
       },
-      {path: 'inventory', component: Inventory,},
-      {path: 'sales', component: Sales,},
-      {path: 'products', component: Products,},
-      {path: 'categories', component: Categories,},
+      {path: 'inventory', component: () => import('@/pages/Inventory.vue'),},
+      {path: 'sales', component: () => import('@/pages/Sales.vue'),},
+      {path: 'products', component: ()=> import('@/pages/Products.vue'),},
+      {path: 'categories', component: () => import('@/pages/Categories.vue'),},
       {path: 'orders',
       children:[
-        {path: '', component: Orders,},
+        {path: '', component: () => import('@/pages/Orders.vue'),},
       ]},
-      {path: 'settings', component: Settings,},
-      {path: 'customers', component: Customers,},
+      {path: 'settings', component: () => import('@/pages/Settings.vue'),},
+      {path: 'customers', component: () => import('@/pages/Customers.vue'),},
     ],
   },
 ]
