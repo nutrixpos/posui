@@ -26,7 +26,9 @@
                                 <template #body="slotProps">
                                     <ButtonGroup>
                                         <Button icon="pi pi-clock" :label="$t('history')" @click="loadComponentLogs(slotProps.data.id)" severity="secondary" aria-label="Save"  />
-                                        <Button icon="pi pi-cog" class="ml-2" severity="secondary" aria-label="Edit" @click="material_settings = slotProps.data; material_settings_dialog=true"  />
+                                        <Button icon="pi pi-pencil" severity="secondary" @click="edit_material = slotProps.data; edit_material_dialog=true" aria-label="Edit"  />
+                                        <Button icon="pi pi-cog" severity="secondary" aria-label="Settings" @click="material_settings = slotProps.data; material_settings_dialog=true"  />
+                                        <Button icon="pi pi-times" severity="danger" aria-label="Delete" @click="confirmDeleteMaterial(slotProps.data.id)"/>
                                     </ButtonGroup>
                                 </template>
                             </Column>
@@ -63,6 +65,9 @@
                     </div>
                 </div>
             </div>
+            <Dialog v-model:visible="edit_material_dialog" modal :header="`Edit data for  ${edit_material?.name}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
+                <EditMaterial v-if="edit_material != undefined" @returnMaterial="(material) => saveEditedMaterial(material)" :material="edit_material" />
+            </Dialog>
             <Dialog v-model:visible="material_settings_dialog" modal :header="`Settings for  ${material_settings?.name}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
                 <div class="flex align-items-center">
                     <h4>stock_alert_treshold</h4>
@@ -143,7 +148,7 @@
                 </DataTable>
             </Dialog>
         </div>
-        <ConfirmPopup></ConfirmPopup>
+        <ConfirmDialog></ConfirmDialog>
     </div>
 </template>
 
@@ -156,11 +161,12 @@ import ButtonGroup from 'primevue/buttongroup'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import { useConfirm } from "primevue/useconfirm";
-import ConfirmPopup from 'primevue/confirmpopup';
 import Tag from 'primevue/tag'
 import { Material } from '@/classes/OrderItem';
 import Calendar from 'primevue/calendar';
 import FloatLabel from 'primevue/floatlabel'
+import EditMaterial from '@/components/EditMaterial.vue'
+import ConfirmDialog from 'primevue/confirmdialog'
 // import Message from 'primevue/message'
   
 import { ref,getCurrentInstance } from "vue";
@@ -168,9 +174,10 @@ import { useToast } from "primevue/usetoast";
 
 const { proxy } = getCurrentInstance();
 
-
-
 const confirm = useConfirm();
+
+const edit_material_dialog = ref(false)
+const edit_material = ref<Material>()
 
 
 const logsTableRowsPerPage = ref(7)
@@ -214,6 +221,63 @@ const isLogsTableLoading = ref(true)
 
 
   const material_logs_id = ref("")
+
+const confirmDeleteMaterial = (material_id: string) => {
+    confirm.require({
+        message: 'Are you sure you want to delete this material ?',
+        header: 'Confirmation',
+        icon: 'pi pi-exclamation-triangle',
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Yes',
+            severity: 'danger'
+        },
+        accept: () => {
+            deleteMaterial(material_id)
+        },
+        reject: () => {
+            
+        }
+    });
+};
+
+  const deleteMaterial = (material_id: string) => {
+    axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${material_id}`, {
+    headers: {
+        Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+    }
+    }).then(() => {
+        toast.add({ severity: 'success', summary: 'Success', detail: "Material deleted successfully", life: 3000 });
+        loadInventory()
+    }).catch(() => {
+        toast.add({ severity: 'error', summary: 'Error', detail: "Failed to delete material", life: 3000 });
+    });
+  }
+
+  const saveEditedMaterial = (material: Material) => {
+
+    axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${edit_material.value?.id}`, {
+        data: {
+            ...material,
+            ...material_settings.value
+        }
+    },{
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+        }
+    }).then(() => {
+      edit_material_dialog.value = false
+      toast.add({severity:'success', summary: 'Success', detail: "successfully edit material data", life: 3000});
+      loadInventory()
+    }).catch((error) => {
+      toast.add({severity:'error', summary: 'Error', detail: error.message, life: 3000});
+    })
+  }
+
   const updatLogsTableRowsPerPage = (event) => {
     const { first, rows } = event;
     loadComponentLogs(material_logs_id.value,first,rows)
@@ -343,6 +407,7 @@ const isLogsTableLoading = ref(true)
       .then(() => {
         toast.add({ severity: 'success', summary: 'Success', detail: 'Component saved successfully !', life: 3000,group:'br' });
         add_component_dialog.value = false
+        loadInventory()
       });
   }
 
