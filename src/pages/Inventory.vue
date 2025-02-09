@@ -352,7 +352,7 @@ const confirmDeleteMaterial = (material_id: string) => {
                 "expiration_date": new_entry_expiration_date.value
             }
 
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${component_id}/entries/`, {
+    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${component_id}/entries`, {
         data: [
            newEntry
         ]
