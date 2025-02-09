@@ -378,6 +378,7 @@ const submitProduct = () => {
     const payload = {
         name: new_product_name.value,
         ready: new_product_ready.value,
+        price: new_product_price.value,
         materials: materials.value,
         sub_products: sub_products.value,
     };
