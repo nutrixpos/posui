@@ -2,7 +2,7 @@
     <div v-if="!loading">
         <div class="grid p-0 m-0">
             <div class="col-12 p-0">
-                <Toolbar style="border-radius: 0px;">
+                <Toolbar style="border-radius: 0px;" class="py-1 lg:py-2">
                     <template #start>
                         <router-link to="/">
                             <img src="@/assets/logo.png" alt="logo" style="height:25px">
@@ -265,3 +265,11 @@ const loadLanguage = async () => {
 loadLanguage()
 expandAll()
 </script>
+
+<style>
+html,
+body {
+height: 100%;
+margin:0;
+}
+</style>
