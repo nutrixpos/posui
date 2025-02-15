@@ -6,7 +6,14 @@ const zitadelAuth: { oidcAuth: OidcAuth; hasRole: (role: string) => any } = crea
     project_resource_id: process.env.VUE_APP_ZITADEL_PROJECT_RESOURCE_ID,
     client_id: process.env.VUE_APP_ZITADEL_CLIENT_ID,
     issuer: process.env.VUE_APP_ZITADEL_ISSUER,
-})
+}, 
+"Zitadel",
+SignInType.Window,
+"http://localhost:3000/",
+{
+  post_logout_redirect_uri:process.env.VUE_APP_ZITADEL_ISSUER,
+}
+)
 
 // handle events
 zitadelAuth.oidcAuth.events.addAccessTokenExpiring(function() {

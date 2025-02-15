@@ -5,9 +5,11 @@
                 <router-link to="/">
                     <img src="@/assets/logo.png" alt="logo" style="height:25px">
                 </router-link>
-                <router-link v-for="(item,index) in items" :key="index" :to="item.link">
-                    <Button :icon="item.icon" :label="t(`${item.label.title}`,item.label.plural ? 3 : 1)"  text severity="secondary" />
-                </router-link>
+                <div  v-for="(item,index) in navbar_links" :key="index" >
+                    <router-link v-if="item.authority.some(role => roles.includes(role))" :to="item.link" >
+                        <Button :icon="item.icon" :label="t(`${item.label.title}`,item.label.plural ? 3 : 1)"  text severity="secondary" />
+                    </router-link>
+                </div>
             </template>
 
             <template #center>
@@ -1185,7 +1187,7 @@ watch(selectedCategory, (category) => {
 })
 
 
-  const items = ref([
+  const navbar_links = ref([
     {
           label: {
               title:'cashier',
@@ -1193,6 +1195,7 @@ watch(selectedCategory, (category) => {
           },
           icon: 'pi pi-desktop',
           link: '/home',
+          authority: ['cashier','admin']
       },
       {
           label: {
@@ -1200,7 +1203,8 @@ watch(selectedCategory, (category) => {
               plural:false
           },
           icon: 'fa fa-kitchen-set',
-          link:'/kitchen'
+          link:'/kitchen',
+          authority: ['chef','admin']
       },
       {
           label: {
@@ -1209,6 +1213,7 @@ watch(selectedCategory, (category) => {
           },
           icon: 'pi pi-cog',
           link: '/admin',
+          authority: ['admin']
       }
   ]);
   
