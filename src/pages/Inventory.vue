@@ -118,10 +118,9 @@
                 <DataTable @rowExpand="onComponentLogRowExpand" @page="updatLogsTableRowsPerPage" :lazy="true" :totalRecords="logsTableTotalRecords" :loading="isLogsTableLoading" v-model:expandedRows="expandedComponentLogsRows" paginatorPosition="both"  paginator :rows="logsTableRowsPerPage" :rowsPerPageOptions="[7, 14, 30, 90]" :value="component_logs" stripedRows tableStyle="min-width: 50rem;max-height:50vh;" class="w-full pr-2">
                     <Column expander style="width: 5rem" />
                     <Column field="date" header="Date"></Column>
-                    <Column field="quantity" header="Quantity"></Column>
-                    <Column  header="Order Item">
+                    <Column  header="Quantity">
                         <template #body="slotProps">
-                            [{{ slotProps.data.item_order_index }}] {{ slotProps.data.item_name }}
+                            <Tag :value="slotProps.data.type == 'component_consume' ? `- ${slotProps.data.quantity}` : `+ ${slotProps.data.quantity}`" :severity="slotProps.data.type == 'component_consume' ? 'secondary' : 'success'" />
                         </template>
                     </Column>
                     <Column field="order_id" header="Order Id"></Column>
