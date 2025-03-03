@@ -120,25 +120,14 @@
                     <Column field="date" header="Date"></Column>
                     <Column  header="Quantity">
                         <template #body="slotProps">
-                            <Tag :value="slotProps.data.type == 'component_consume' ? `- ${slotProps.data.quantity}` : `+ ${slotProps.data.quantity}`" :severity="slotProps.data.type == 'component_consume' ? 'secondary' : 'success'" />
+                            <Tag :value="slotProps.data.type == 'component_consume' ? `- ${slotProps.data.quantity}` : `+ ${slotProps.data.quantity}`" :severity="slotProps.data.type == 'component_consume' ? 'danger' : 'success'" />
                         </template>
                     </Column>
                     <Column field="order_id" header="Order Id"></Column>
                     <template #expansion="slotProps">
                         <div class="p-4">
                             <h4>Order Items</h4>
-                            <DataTable :value="slotProps.data.order.items" v-if="slotProps.data.order">
-                                <Column field="product.name" header="Name"></Column>
-                                <Column header="Materials">
-                                    <template #body="slotProps">
-                                        <ul>
-                                            <li v-for="(material,index) in slotProps.data.materials" :key="index">
-                                                {{ material.material.name }}: {{ material.quantity }} {{ material.material.unit }}
-                                            </li>
-                                        </ul>
-                                    </template>
-                                </Column>
-                            </DataTable>
+                            <MaterialLogsOrderItemsTable v-if="slotProps.data.order" :items="slotProps.data.order.items" :order_item_index="slotProps.data.order_item_index" />
                             <div v-else>
                                 Loading ...
                             </div>
@@ -166,6 +155,7 @@ import Calendar from 'primevue/calendar';
 import FloatLabel from 'primevue/floatlabel'
 import EditMaterial from '@/components/EditMaterial.vue'
 import ConfirmDialog from 'primevue/confirmdialog'
+import MaterialLogsOrderItemsTable from '@/components/MaterialLogsOrderItemsTable.vue';
 // import Message from 'primevue/message'
   
 import { ref,getCurrentInstance } from "vue";
