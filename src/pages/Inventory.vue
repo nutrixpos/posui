@@ -15,11 +15,11 @@
                             </template>
                             <Column expander style="width: 5rem" />
                             <Column field="name" :header="$t('name')"></Column>
-                            <Column field="totalAmount" :header="$t('quantity')"></Column>
-                            <Column field="unit" :header="$t('unit')"></Column>
+                            <Column field="totalAmount" :header="$t('quantity')" class="text-center"></Column>
+                            <Column field="unit" :header="$t('unit')" class="text-center"></Column>
                             <Column :header="$t('status')">
                                 <template #body="slotProps">
-                                    <Tag :value="slotProps.data.totalAmount > slotProps.data.settings.stock_alert_treshold ? 'INSTOCK' : 'LOWSTOCK'" :severity="slotProps.data.totalAmount > slotProps.data.settings.stock_alert_treshold ? 'success' : 'warning'" />
+                                    <Tag :value="slotProps.data.totalAmount > slotProps.data.settings.stock_alert_treshold ? 'INSTOCK' : 'LOWSTOCK'" :severity="slotProps.data.totalAmount > slotProps.data.settings.stock_alert_treshold ? 'success' : 'danger'" />
                                 </template>
                             </Column>
                             <Column :header="$t('actions')" style="width:30rem">
@@ -453,7 +453,7 @@ const confirmDeleteMaterial = (material_id: string) => {
     .then((result)=>{
 
         result.data.data.forEach(component => {
-            var totalAmount;
+            var totalAmount = 0;
 
             component.entries?.forEach(entry => {
                 if (entry.quantity > 0)
