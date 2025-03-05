@@ -409,9 +409,9 @@ const confirmDeleteMaterial = (material_id: string) => {
     })
     .then((result)=>{
 
-        component_logs.value.forEach((log) => {
-            if (log.id == event.data.id){
-                log.order = result.data.data
+        component_logs.value.forEach((log,index) => {
+            if (log.order_id == result.data.data.id){
+                component_logs.value[index].order = result.data.data
             }
         })
 
