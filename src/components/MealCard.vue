@@ -1,7 +1,7 @@
 <template>
     <div :style="`position:relative;${ props.item.availability < 1 ? 'filter: grayscale(100%);' : ''}'`">
         <div v-if="props.item.availability < 1" class="w-full h-full" style="position:absolute;z-index:99;cursor: not-allowed;"></div>
-        <Card style="overflow: hidden;height:13rem;cursor: pointer;" @click="$emit('add')">
+        <Card style="overflow: hidden;height:12.65rem;cursor: pointer;" @click="$emit('add')">
             <template #header>
                 <div class="flex flex-column" style="position:relative;">
                     <Button icon="pi pi-ellipsis-h" @click.stop="toggle" severity="secondary" aria-label="Save" style="width: 2rem; height: 2rem; position:absolute;top:0;right:0;" size="small" class="m-1" />
