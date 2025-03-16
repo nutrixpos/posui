@@ -25,9 +25,7 @@
                                 </Column>
                             </DataTable>
                             <Dialog v-model:visible="order_details_dialog" modal :header="`Order:  (${orderToDisplay?.display_id}) details`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
-                                <pre>
-                                    {{ orderToDisplay  }}
-                                </pre>
+                                <OrderView @finished="finishOrderDisplayed()" @amount_collected="orderToShowAmountCollected()" :order="orderToDisplay" @order-cancelled="order_details_dialog=false" />
                             </Dialog>
                         </div>
                     </div>
@@ -49,6 +47,7 @@ import Button from 'primevue/button';
 import { useConfirm } from "primevue/useconfirm";
 import Dialog from 'primevue/dialog';
 import { useToast } from "primevue/usetoast";
+import OrderView from '@/components/OrderView.vue';
 
 
 const { proxy } = getCurrentInstance();
@@ -72,6 +71,21 @@ const orderStateSeverity = ref<any>({
 
 const updatOrdersTableRowsPerPage = (event: any) => {
     loadOrders(event.first,event.rows)
+}
+
+const finishOrderDisplayed = () => {
+    if (orderToDisplay.value){
+        orderToDisplay.value.state = "finished"
+    }
+}
+
+const orderToShowAmountCollected = () => {
+
+    if (orderToDisplay.value){
+        orderToDisplay.value.is_paid = true
+    }
+
+    loadOrders()
 }
 
 const cancelOrder = (order_id: string) => {
