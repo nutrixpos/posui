@@ -255,11 +255,11 @@ const newProductImageUpload = ref(null)
 const editProductImageUpload = ref(null)
 
 const beforeNewProductImageUpload = (event:any) => {
-    event.xhr.setRequestHeader("Authorization", "Bearer " + proxy.$zitadel.oidcAuth.accessToken);
+    event.xhr.setRequestHeader("Authorization", "Bearer " + proxy.$zitadel?.oidcAuth.accessToken);
 }
 
 const beforeEditProductImageUpload = (event:any) => {
-    event.xhr.setRequestHeader("Authorization", "Bearer " + proxy.$zitadel.oidcAuth.accessToken);
+    event.xhr.setRequestHeader("Authorization", "Bearer " + proxy.$zitadel?.oidcAuth.accessToken);
 }
 
 const onAdvancedUpload = () => {
@@ -292,7 +292,7 @@ const backendUrl = computed(() => {
 const deleteProduct = (product_id: string) => {
     axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/${product_id}`, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     }).then(() => {
         toast.add({ severity: 'success', summary: 'Success', detail: 'Product deleted successfully',group:'br',life:3000 });
@@ -353,7 +353,7 @@ const updateProduct = () => {
         data : productToEdit.value
     },{
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then(() => {
@@ -387,7 +387,7 @@ const submitProduct = () => {
         data : payload
     } , {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
         .then(async response => {
@@ -451,7 +451,7 @@ const loadProducts = (first=0,rows=productsTableRowsPerPage.value) => {
             "page[size]": rows
         },
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then(response => {

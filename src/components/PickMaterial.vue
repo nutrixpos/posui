@@ -58,7 +58,7 @@ const GetMaterials = () => {
     loading.value = true
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials`,{
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then((response) => {

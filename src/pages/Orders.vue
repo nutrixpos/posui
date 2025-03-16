@@ -78,7 +78,7 @@ const cancelOrder = (order_id: string) => {
 
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${order_id}/cancel`, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then(()=>{
@@ -135,7 +135,7 @@ const loadOrders =  (first=0,rows=100) => {
 
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?page[number]=${page_number}&page[size]=${rows}`, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then((result)=>{

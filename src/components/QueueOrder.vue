@@ -222,7 +222,7 @@ const finishOrder = () => {
         {},
         {
             headers: {
-                Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+                Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
             }
         }
         ).then(() => {
@@ -241,7 +241,7 @@ const startOrder =  () => {
         },
         {
             headers: {
-                Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+                Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
             }
         }
         ).then((response) => {

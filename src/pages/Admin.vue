@@ -14,16 +14,16 @@
 
                     <template #end>
                         <Button  severity="secondary" size="large"  text rounded aria-label="Profile" label="Profile" @click.stop="user_profile_toggle">
-                            <span style="font-size:0.9rem;" class="mr-2">{{ user.name }}</span>
+                            <span style="font-size:0.9rem;" class="mr-2">{{ user?.name }}</span>
                             <span class="p-button-icon pi pi-user"></span>
                         </Button>
                         <OverlayPanel ref="user_profile_op" class="lg:w-2 md:w-3">
                             <div class="flex flex-column">
-                                <span>Welcome <strong>{{ user.name }}</strong></span>
+                                <span>Welcome <strong>{{ user?.name }}</strong></span>
                                 <div class="mt-2">
                                     <Chip v-for="(role,index) in roles" :key="index" :label="role" style="height: 1.5rem;" class="m-1" />
                                 </div>
-                                <Button class="mt-5" icon="pi pi-sign-out" severity="secondary" text aria-label="Signout" :label=" $t('signout')" @click="proxy.$zitadel.oidcAuth.signOut()" />
+                                <Button class="mt-5" icon="pi pi-sign-out" severity="secondary" text aria-label="Signout" :label=" $t('signout')" @click="proxy.$zitadel?.oidcAuth.signOut()" />
                             </div>
                         </OverlayPanel>
                     </template>
@@ -71,7 +71,7 @@ const user_profile_op = ref();
 
 const user : any = computed(() => {
 
-    return proxy.$zitadel.oidcAuth.userProfile
+    return proxy.$zitadel?.oidcAuth.userProfile
 
 })
 
@@ -234,13 +234,13 @@ const loadLanguage = async () => {
 
     await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/settings`, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         },
     })
     .then(async (response)=>{
         await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/languages/${response.data.data.language.code}`, {
             headers: {
-                Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+                Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
             }
         })
         .then(response2 => {

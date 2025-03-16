@@ -97,7 +97,7 @@ const chat_container = useTemplateRef("chat_container")
 
 const user : any = computed(() => {
 
-return proxy.$zitadel.oidcAuth.userProfile
+return proxy.$zitadel?.oidcAuth.userProfile
 
 })
 
@@ -113,13 +113,13 @@ const loadLanguage = async () => {
 
     await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/settings`, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         },
     })
     .then(async (response)=>{
         await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/languages/${response.data.data.language.code}`, {
             headers: {
-                Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+                Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
             }
         })
         .then(response2 => {
@@ -245,7 +245,7 @@ const orderFinished = (index) => {
 const loadOrders =  () => {
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_finished]=false`, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then((result)=>{

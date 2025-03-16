@@ -27,8 +27,50 @@ import { createPinia } from 'pinia'
 import zitadelAuth from "@/services/zitadelAuth";
 import Tooltip from 'primevue/tooltip';
 
+const insecureRoutes = [
+  {
+    path: '/no-access', 
+    component: ()=>{
+        return import('@/pages/NoAccessView.vue')
+    },
+  },
+  { 
+    path: '/', alias:['/home'], 
+    component: () => {
+      return import('@/pages/Home.vue')
+    }
+  },
+  { 
+    path: '/kitchen', component: () => {
+      return import('@/pages/Kitchen.vue')
+    } 
+  },
+  { 
+    path: '/admin', 
+    component: () => {
+      return import('@/pages/Admin.vue')
+    },
+    children: [
+      {
+        path: '',
+        redirect: { path: '/admin/inventory' }
+      },
+      {path: 'inventory', component: () => import('@/pages/Inventory.vue'),},
+      {path: 'sales', component: () => import('@/pages/Sales.vue'),},
+      {path: 'products', component: ()=> import('@/pages/Products.vue'),},
+      {path: 'categories', component: () => import('@/pages/Categories.vue'),},
+      {path: 'orders',
+      children:[
+        {path: '', component: () => import('@/pages/Orders.vue'),},
+      ]},
+      {path: 'settings', component: () => import('@/pages/Settings.vue'),},
+      {path: 'customers', component: () => import('@/pages/Customers.vue'),},
+    ],
+  },
+]
 
-const routes = [
+
+const zitadelRoutes = [
   {
     path: '/no-access', 
     component: ()=>{
@@ -85,9 +127,14 @@ const routes = [
   },
 ]
 
-const router = createRouter({
+const zitadelRouter = createRouter({
   history: createWebHistory(),
-  routes,
+  routes: zitadelRoutes,
+})
+
+const insecureRouter = createRouter({
+  history: createWebHistory(),
+  routes: insecureRoutes,
 })
 
 declare module 'vue' {
@@ -210,35 +257,56 @@ const Noir = definePreset(Aura, {
   }
 });
 
+if (process.env.VUE_APP_ZITADEL_ENABLED === 'true'){
+  zitadelAuth.oidcAuth.useRouter(zitadelRouter)
 
-zitadelAuth.oidcAuth.useRouter(router)
+  zitadelAuth.oidcAuth.startup().then(ok => {
+    if (ok) {
+          const app = createApp(App).use(createPinia())
+          app.config.globalProperties.$zitadel = zitadelAuth
 
-zitadelAuth.oidcAuth.startup().then(ok => {
-  if (ok) {
-        const app = createApp(App).use(createPinia())
-        app.config.globalProperties.$zitadel = zitadelAuth
+          app
+          .use(zitadelRouter)
+          .use(PrimeVue,{
+              // Default theme configuration
+              theme: {
+                  preset: Noir,
+                  options: {
+                      prefix: 'p',
+                      darkModeSelector: 'system',
+                      cssLayer: false
+                  }
+              }
+          })
+          .use(ToastService)
+          .use(ConfirmationService)
+          .use(i18n)
+          .directive('tooltip', Tooltip)
+          .mount('#app')
+    } else {
+        console.error('Zitadel startup was not ok')
+    }
+  })
+} else {
+  const app = createApp(App).use(createPinia())
 
-        app
-        .use(router)
-        .use(PrimeVue,{
-            // Default theme configuration
-            theme: {
-                preset: Noir,
-                options: {
-                    prefix: 'p',
-                    darkModeSelector: 'system',
-                    cssLayer: false
-                }
-            }
-        })
-        .use(ToastService)
-        .use(ConfirmationService)
-        .use(i18n)
-        .directive('tooltip', Tooltip)
-        .mount('#app')
-  } else {
-      console.error('Zitadel startup was not ok')
-  }
-})
-
+  app
+  .use(insecureRouter)
+  .use(PrimeVue,{
+      // Default theme configuration
+      theme: {
+          preset: Noir,
+          options: {
+              prefix: 'p',
+              darkModeSelector: 'system',
+              cssLayer: false
+          }
+      }
+  })
+  .use(ToastService)
+  .use(ConfirmationService)
+  .use(i18n)
+  .directive('tooltip', Tooltip)
+  .mount('#app')
+}
  

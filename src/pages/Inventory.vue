@@ -237,7 +237,7 @@ const confirmDeleteMaterial = (material_id: string) => {
   const deleteMaterial = (material_id: string) => {
     axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${material_id}`, {
     headers: {
-        Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+        Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
     }
     }).then(() => {
         toast.add({ severity: 'success', summary: 'Success', detail: "Material deleted successfully", life: 3000 });
@@ -256,7 +256,7 @@ const confirmDeleteMaterial = (material_id: string) => {
         }
     },{
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     }).then(() => {
       edit_material_dialog.value = false
@@ -278,7 +278,7 @@ const confirmDeleteMaterial = (material_id: string) => {
         data: material_settings.value
     },{
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     }).then(() => {
       toast.add({severity:'success', summary: 'Success', detail: 'Material settings saved', life: 3000,group:'br'});
@@ -313,7 +313,7 @@ const confirmDeleteMaterial = (material_id: string) => {
 
             axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${expanded_component_id.value}/entries/${entry_id}`,{
                 headers: {
-                    Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+                    Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
                 }
             })
             .then(() => {
@@ -347,7 +347,7 @@ const confirmDeleteMaterial = (material_id: string) => {
         ]
       },{
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
       })
       .then(() => {
@@ -390,7 +390,7 @@ const confirmDeleteMaterial = (material_id: string) => {
         }
       },{
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
       })
       .then(() => {
@@ -404,7 +404,7 @@ const confirmDeleteMaterial = (material_id: string) => {
   const onComponentLogRowExpand = (event) => {
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/`+event.data.order_id,{
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then((result)=>{
@@ -431,7 +431,7 @@ const confirmDeleteMaterial = (material_id: string) => {
 
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/`+component_id+`/logs?page[number]=${page_number}&page[size]=${rows}`,{
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then((result)=>{
@@ -447,7 +447,7 @@ const confirmDeleteMaterial = (material_id: string) => {
   const loadInventory = () => {
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials`,{
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then((result)=>{

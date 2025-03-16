@@ -56,7 +56,7 @@ const GetProducts = (page_number=1,page_size=9999999999) => {
     loading.value = true
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products?page[number]=${page_number}&page[number]=${page_size}`,{
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then((response) => {

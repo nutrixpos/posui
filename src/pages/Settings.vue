@@ -127,7 +127,7 @@ const saveSettings = () => {
         },
         {
             headers: {
-                Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+                Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
             }
         }
     )
@@ -143,7 +143,7 @@ const saveSettings = () => {
 const getSettings = () => {
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/settings`, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         },
     })
     .then((response)=>{
@@ -161,7 +161,7 @@ const getSettings = () => {
 const applyLang = () => {
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/languages/${selectedLang.value.code}`, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then(response => {
@@ -179,7 +179,7 @@ const applyLang = () => {
 const getAvailableLanguages = () => {
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/languages`, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then(response => {

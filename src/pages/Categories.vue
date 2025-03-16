@@ -154,7 +154,7 @@ const submitCategory = () => {
         data: new_category.value
     }, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     }).then(() => {
         categoryAddDialog.value = false
@@ -171,7 +171,7 @@ const submitCategory = () => {
 const deleteCategory = (category_id: string) => {
     axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories/${category_id}`, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     }).then(() => {
         
@@ -190,7 +190,7 @@ const updateCategory = () => {
         data: categoryToEdit.value
     }, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     }).then(() => {
         toast.add({ severity: 'success', summary: 'Success', detail: 'Category updated successfully',group:'br' });
@@ -250,7 +250,7 @@ const getCategories = (first=0,rows=categoriesTableRowsPerPage.value) => {
     
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories?page[number]=${page_number}&page[size]=${rows}`, {
         headers: {
-            'Authorization': `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            'Authorization': `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then(response => {

@@ -77,7 +77,7 @@ const submitCustomer = () => {
        data : payload
    } , {
        headers: {
-           Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+           Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
        }
    })
        .then(response => {

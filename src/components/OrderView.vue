@@ -85,7 +85,7 @@ const emit = defineEmits(['order-cancelled','amount_collected','finished'])
 const finishOrder = () => {
     axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/finish`,{}, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`,
         }
     })
     .then(()=>{
@@ -100,7 +100,7 @@ const finishOrder = () => {
 const collectedMoney = () => {
     axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/pay`,{}, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`,
         }
     })
     .then(()=>{
@@ -115,7 +115,7 @@ const collectedMoney = () => {
 const PrintKitchenReceipt = () => {
     axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/printkitchenreceipt`,{}, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`,
             "Accept-Language": proxy.$i18n.locale
         }
     })
@@ -130,7 +130,7 @@ const PrintKitchenReceipt = () => {
 const PrintClientReceipt = () => {
     axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/printclientreceipt`,{}, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`,
             "Accept-Language": proxy.$i18n.locale
         }
     })
@@ -159,7 +159,7 @@ const confirmCancelOrder = (event) => {
             
             axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/cancel`, {
                 headers: {
-                    Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+                    Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
                 }
             })
             .then(()=>{

@@ -112,7 +112,7 @@ const toast = useToast()
 const deleteCustomer = (customer_id: string) => {
    axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/customers/${customer_id}`, {
        headers: {
-           Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+           Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
        }
    }).then(() => {
        toast.add({ severity: 'success', summary: 'Success', detail: 'Customer deleted successfully',group:'br',life:3000 });
@@ -162,7 +162,7 @@ const updateCustomer = () => {
        data : customerToEdit.value
    },{
        headers: {
-           Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+           Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
        }
    })
    .then(() => {
@@ -188,7 +188,7 @@ const submitCustomer = () => {
        data : payload
    } , {
        headers: {
-           Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+           Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
        }
    })
        .then(response => {
@@ -224,7 +224,7 @@ const loadCustomers = (first=0,rows=customersTableRowsPerPage.value) => {
            "page[size]": rows
        },
        headers: {
-           Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+           Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
        }
    })
    .then(response => {

@@ -6,7 +6,7 @@
                     <img src="@/assets/logo.png" alt="logo" style="height:25px">
                 </router-link>
                 <div  v-for="(item,index) in navbar_links" :key="index" >
-                    <router-link v-if="item.authority.some(role => roles.includes(role))" :to="item.link" >
+                    <router-link v-if="item.authority.some(role => roles.includes(role)) || !zitadel_enabled" :to="item.link" >
                         <Button :icon="item.icon" :label="t(`${item.label.title}`,item.label.plural ? 3 : 1)"  text severity="secondary" />
                     </router-link>
                 </div>
@@ -93,16 +93,16 @@
                     </div>
                 </OverlayPanel>
                 <Button  severity="secondary" size="large"  text rounded aria-label="Profile" label="Profile" @click.stop="user_profile_toggle">
-                    <span style="font-size:0.9rem;" class="mr-2">{{ user.name }}</span>
+                    <span style="font-size:0.9rem;" class="mr-2">{{ user?.name }}</span>
                     <span class="p-button-icon pi pi-user"></span>
                 </Button>
                 <OverlayPanel ref="user_profile_op" class="lg:w-2 md:w-3">
                     <div class="flex flex-column">
-                        <span>Welcome <strong>{{ user.name }}</strong></span>
+                        <span>Welcome <strong>{{ user?.name }}</strong></span>
                         <div class="mt-2">
                             <Chip v-for="(role,index) in roles" :key="index" :label="role" style="height: 1.5rem;" class="m-1" />
                         </div>
-                        <Button class="mt-5" icon="pi pi-sign-out" severity="secondary" text aria-label="Signout" :label="t('signout')" @click="proxy.$zitadel.oidcAuth.signOut()" />
+                        <Button class="mt-5" icon="pi pi-sign-out" severity="secondary" text aria-label="Signout" :label="t('signout')" @click="proxy.$zitadel?.oidcAuth.signOut()" />
                     </div>
                 </OverlayPanel>
             </template>
@@ -403,6 +403,7 @@
   import { globalStore } from '@/store';
 
 
+const zitadel_enabled = ref(true)
 
 
 const { t } = useI18n() 
@@ -531,7 +532,7 @@ const toggle_discount_popover = (event) => {
 
 const user : any = computed(() => {
 
-    return proxy.$zitadel.oidcAuth.userProfile
+    return proxy.$zitadel?.oidcAuth.userProfile
 
 })
 
@@ -557,7 +558,7 @@ const mainSearchTextChanged = (event:any) => {
 
         axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[display_id]=${mainSearchText.value}`, {
             headers: {
-                Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+                Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
             }
         })
         .then(response => {
@@ -585,7 +586,7 @@ const getCurrentOrders = () => {
 
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=false&filter[state]=!stashed`,{
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then(response => {
@@ -595,7 +596,7 @@ const getCurrentOrders = () => {
 
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=true&filter[state]=in_progress&filter[state]=pending&filter[state]=!stashed`,{
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     .then(response => {
@@ -661,7 +662,7 @@ const BackStashedOrderToCheckout = async (stashed_order_index:number) => {
     axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${order.id}`,
     {
         headers:{
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         },
     },)
     .then(()=>{
@@ -711,7 +712,7 @@ const notifications = ref<Notification[]>([])
 const getStashedOrders = () => {
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[state]=stashed`,{
         headers:{
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     }).then(async (response) => {
 
@@ -754,7 +755,7 @@ const stashOrder = () => {
         },
     {
         headers:{
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`,
             "Accept-Language": proxy.$i18n.locale
         },
     }).then(async (response) => {
@@ -890,13 +891,13 @@ const loadLanguage = async () => {
 
     await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/settings`, {
         headers: {
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         },
     })
     .then(async (response)=>{
         await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/languages/${response.data.data.language.code}`, {
             headers: {
-                Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+                Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
             }
         })
         .then(response2 => {
@@ -919,7 +920,11 @@ const loadLanguage = async () => {
 
 const init = async () => {
 
-    if (proxy.$zitadel.oidcAuth.isAuthenticated){
+    if (process.env.VUE_APP_ZITADEL_ENABLED === 'false'){
+        zitadel_enabled.value = false
+    }
+
+    if (!zitadel_enabled.value || proxy.$zitadel?.oidcAuth.isAuthenticated){
         await loadLanguage()
     }else {
         proxy.$router.push('/no-access')
@@ -1003,7 +1008,7 @@ const addWithComment = async () => {
 const getCategories = async () => {
     const response = await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories`,{
         headers:{
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     })
     categories.value = categories.value.concat(response.data.data)
@@ -1046,7 +1051,7 @@ const submitOrder = () => {
             },
             {
                 headers:{
-                    Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`,
+                    Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`,
                     'Accept-Language': proxy.$i18n.locale,
                 },
             },
@@ -1079,7 +1084,7 @@ watch(searchtext, (newSearchText) => {
     axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products?filter[search]=${newSearchText}`,
     {
         headers:{
-            Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
     }
     ).then((response) => {
@@ -1159,7 +1164,7 @@ const refreshAvailabilities = () => {
 
         axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/availability?ids=`+product_ids,{
             headers:{
-                Authorization: `Bearer ${proxy.$zitadel.oidcAuth.accessToken}`
+                Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
             }
         })
         .then((response) => {
