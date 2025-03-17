@@ -8,6 +8,14 @@
                         </div>
                         <div class="col-12">
                             <DataTable @page="updatOrdersTableRowsPerPage" :lazy="true" :totalRecords="ordersTableTotalRecords" :loading="isOrdersTableLoading"  paginatorPosition="both"  paginator :rows="ordersTableRowsPerPage" :rowsPerPageOptions="[50, 100, 500]" :value="orders" stripedRows tableStyle="min-width: 50rem;max-height:50vh;" class="w-full pr-2">
+                                <template #header>
+                                    <IconField iconPosition="left">
+                                        <InputIcon>
+                                            <i class="pi pi-search" />
+                                        </InputIcon>
+                                        <InputText :placeholder="$t('search')" v-model="ordersSearchText" @keyup.stop="(event) => loadOrders(0,100)"/>
+                                    </IconField>
+                                </template>
                                 <Column field="display_id" :header="$t('id')"></Column>
                                 <Column :header="$t('status')">
                                     <template #body="slotProps">
@@ -36,6 +44,9 @@
 </template>
 
 <script setup lang="ts">
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
+import InputText from 'primevue/inputtext';
 import ConfirmPopup from 'primevue/confirmpopup';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -58,6 +69,7 @@ const ordersTableTotalRecords = ref(0)
 const isOrdersTableLoading = ref(false)
 const ordersTableRowsPerPage = ref(50)
 const orders = ref<any[]>([])
+const ordersSearchText = ref("")
 
 const orderToDisplay = ref<any>({})
 const order_details_dialog = ref(false)
@@ -147,7 +159,7 @@ const loadOrders =  (first=0,rows=100) => {
     }
 
 
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?page[number]=${page_number}&page[size]=${rows}`, {
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?page[number]=${page_number}&page[size]=${rows}&filter[display_id]=${ordersSearchText.value}`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
