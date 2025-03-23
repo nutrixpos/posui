@@ -50,10 +50,10 @@
                 <h4>Actions</h4>
                 <ButtonGroup class="flex">
                     <Button icon="fa fa-print" severity="secondary" :label="$t('client_receipt')" @click="PrintClientReceipt()" />
-                    <Button class="ml-2" icon="fa fa-print" severity="secondary" :label="$t('kitchen_receipt')" @click="PrintKitchenReceipt()" />
-                    <Button class="ml-2" icon="fa fa-hand-holding-dollar" severity="secondary" :label="$t('collect_money')" @click="collectedMoney()"/>
-                    <Button class="ml-2" icon="fa fa-check" severity="secondary" :label="$t('finish')" @click="finishOrder()"/>
-                    <Button class="mx-2" v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'" severity="secondary" size="small" aria-label="Cancel order" @click.stop="confirmCancelOrder($event)">
+                    <Button icon="fa fa-print" severity="secondary" :label="$t('kitchen_receipt')" @click="PrintKitchenReceipt()" />
+                    <Button v-if="!props.order.is_paid" icon="fa fa-hand-holding-dollar" severity="secondary" :label="$t('collect_money')" @click="collectedMoney()"/>
+                    <Button v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'" icon="fa fa-check" severity="secondary" :label="$t('finish')" @click="finishOrder()"/>
+                    <Button v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'" severity="secondary" size="small" aria-label="Cancel order" @click.stop="confirmCancelOrder($event)">
                         {{$t('cancel')}} {{ $t('order') }}
                     </Button>
                     <ConfirmPopup></ConfirmPopup>
