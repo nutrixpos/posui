@@ -13,7 +13,7 @@
 
             <div class="col-3">{{$t('item',3)}}</div>
             <div class="col-9">
-                <OrderItemsInfo :items="props.order.items" />
+                <OrderItemsInfo :order="order" />
             </div>
 
             <div class="col-6">{{ $t('display_id') }}</div>
@@ -58,13 +58,17 @@
                     </Button>
                     <ConfirmPopup></ConfirmPopup>
                 </ButtonGroup>
+
             </div>
+            <Dialog v-model:visible="refund_dialog" modal :header="`Refunding order #${props.order.display_id}`" class="xs:w-12 md:w-10 lg:w-8">
+                <OrderRefund :order="props.order" />
+            </Dialog>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import {defineProps,getCurrentInstance,computed,defineEmits} from 'vue'
+import {defineProps,getCurrentInstance,computed,defineEmits,ref} from 'vue'
 import Badge from 'primevue/badge';
 import { ButtonGroup } from 'primevue';
 import Button from 'primevue/button';
@@ -74,8 +78,11 @@ import axios from 'axios'
 import { useToast } from "primevue/usetoast";
 import OrderItemsInfo from './OrderItemsInfo.vue';
 import Order from '@/classes/Order';
+import Dialog from 'primevue/dialog'
 
 const toast = useToast()
+
+const refund_dialog = ref(false)
 
 
 const confirm = useConfirm();
