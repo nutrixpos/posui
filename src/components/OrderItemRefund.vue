@@ -32,7 +32,7 @@
         <Textarea v-model="reason" class="w-4" :placeholder="$t('reason')"/>
         <h3 v-if="item_destination == 'custom'">Materials</h3>
         <div  v-if="item_destination == 'custom'" class="flex flex-column">
-            <div v-for="(material,index) in props.item.materials" :key="index" class="flex flex-column gap-2">
+            <div v-for="(material,index) in material_refunds" :key="index" class="flex flex-column gap-2">
                 <div class="flex gap-3 align-items-center">
                     <h4>{{ material.material.name }}</h4>
                     <h4>{{ material.quantity }}</h4>
@@ -40,15 +40,15 @@
                 </div>
                 <div class="flex align-items-center gap-2">
                     <label for="inventory_return_quantity">{{$t('inventory_return')}}</label>
-                    <InputText v-model.number="materials_inventory_returns[index]" type="number" aria-describedby="inventory_return_quantity" />
+                    <InputText v-model.number="material_refunds[index]['inventory_return_qty']" type="number" aria-describedby="inventory_return_qty" />
                 </div>
                 <div class="flex align-items-center gap-2">
                     <label for="dispose">{{$t('dispose')}}</label>
-                    <InputText v-model.number="material_disposals[index]" type="number" aria-describedby="dispose_quantity" />
+                    <InputText v-model.number="material_refunds[index]['dispose_qty']" type="number" aria-describedby="dispose_qty" />
                 </div>
                 <div class="flex align-items-center gap-2">
                     <label for="waste">{{$t('waste')}}</label>
-                    <InputText v-model.number="materials_waste[index]" type="number" aria-describedby="waste_quantity" />
+                    <InputText v-model.number="material_refunds[index]['waste_qty']" type="number" aria-describedby="waste_qty" />
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
         <Divider v-if="item_destination == 'custom'" />
         
         <div class="flex justify-content-end">
-            <Button :label="$t('submit')" class="w-3" />
+            <Button :label="$t('submit')" class="w-3" @click="submitRefund" />
         </div>
     </div>
     <Dialog v-model:visible="pick_product_dialog">
@@ -79,27 +79,27 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps,ref } from 'vue';
+import { defineProps,ref,defineEmits,getCurrentInstance } from 'vue';
 import { OrderItem, Product } from '@/classes/OrderItem';
 import PickProduct from './PickProduct.vue';
 import { Slider,RadioButton,Divider,InputText,Button,Dialog,Textarea } from 'primevue';
+import axios from 'axios';
+import Order from '@/classes/Order.ts'
+import { useToast } from "primevue/usetoast";
+
+const toast = useToast()
+
+const { proxy } = getCurrentInstance();
 
 const refund_value = ref(0)
 
 const reason = ref("")
 
-const materials_inventory_returns = ref([])
-const materials_waste = ref([])
-const material_disposals = ref([])
+const material_refunds = ref([])
 const pick_product_dialog = ref(false)
 
 const products_to_add = ref<Array<Product>>([])
 const added_products_quantities = ref([])
-
-const init = () => {
-    refund_value.value = props.item.price
-}
-
 
 const item_destination = ref("inventory")
 
@@ -107,8 +107,58 @@ const props = defineProps({
     item: {
         type: OrderItem,
         required: true
+    },
+    order: {
+        type: Order,
+        required: true
     }
 })
+
+const emit = defineEmits(['finished'])
+
+const init = () => {
+    refund_value.value = props.item.price
+    props.item.materials.forEach((material) => {
+        material_refunds.value.push({
+            inventory_return_qty:0,
+            waste_qty:0,
+            dispose_qty:0,
+            quantity: material.quantity,
+            material: material.material,
+        })
+    })
+}
+
+const submitRefund = () => {
+
+
+    const payload = {
+        order_id: props.order.id,
+        product_id: props.item.product.id,
+        refund_value: refund_value.value,
+        destination: item_destination.value,
+        material_refunds: material_refunds.value
+    }
+
+    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/items/${props.item.id}/refund?reason=${reason.value}`, 
+    {
+        data : payload
+    }, 
+    {
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
+        }
+    })
+    .then(()=>{
+        toast.add({ severity: 'success', summary: 'Success', detail: 'Item refunded',group:'br' });
+        emit('finished')
+    })
+    .catch((err) => {
+        toast.add({ severity: 'error', summary: 'Error', detail: err.response.data,group:'br' });
+    });
+}
+
+
 
 init()
 </script>

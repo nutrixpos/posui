@@ -33,7 +33,7 @@
                                 </Column>
                             </DataTable>
                             <Dialog v-model:visible="order_details_dialog" modal :header="`Order:  (${orderToDisplay?.display_id}) details`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
-                                <OrderView @finished="finishOrderDisplayed()" @amount_collected="orderToShowAmountCollected()" :order="orderToDisplay" @order-cancelled="order_details_dialog=false" />
+                                <OrderView @updated="loadOrders(); order_details_dialog=false" @finished="finishOrderDisplayed()" @amount_collected="orderToShowAmountCollected()" :order="orderToDisplay" @order-cancelled="order_details_dialog=false" />
                             </Dialog>
                         </div>
                     </div>
