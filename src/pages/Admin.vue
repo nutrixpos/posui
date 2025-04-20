@@ -214,7 +214,7 @@ const items = ref([
               title:'kitchen',
               plural:false
           },
-          icon: 'pi pi-star',
+          icon: 'fa fa-kitchen-set',
           link:'/kitchen'
       },
       {
