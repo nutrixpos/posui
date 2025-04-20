@@ -13,7 +13,7 @@
 
             <div class="col-3">{{$t('item',3)}}</div>
             <div class="col-9">
-                <OrderItemsInfo :order="order" />
+                <OrderItemsInfo :order="order" @updated="emit('updated')" />
             </div>
 
             <div class="col-6">{{ $t('display_id') }}</div>
@@ -51,6 +51,7 @@
                 <ButtonGroup class="flex">
                     <Button icon="fa fa-print" severity="secondary" :label="$t('client_receipt')" @click="PrintClientReceipt()" />
                     <Button icon="fa fa-print" severity="secondary" :label="$t('kitchen_receipt')" @click="PrintKitchenReceipt()" />
+                    <Button icon="fa fa-book" severity="secondary" :label="$t('logs')" @click="getOrderLogs()" />
                     <Button v-if="!props.order.is_paid" icon="fa fa-hand-holding-dollar" severity="secondary" :label="$t('collect_money')" @click="collectedMoney()"/>
                     <Button v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'" icon="fa fa-check" severity="secondary" :label="$t('finish')" @click="finishOrder()"/>
                     <Button v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'" severity="secondary" size="small" aria-label="Cancel order" @click.stop="confirmCancelOrder($event)">
@@ -62,6 +63,11 @@
             </div>
             <Dialog v-model:visible="refund_dialog" modal :header="`Refunding order #${props.order.display_id}`" class="xs:w-12 md:w-10 lg:w-8">
                 <OrderRefund :order="props.order" />
+            </Dialog>
+            <Dialog v-model:visible="order_logs_dialog" modal :header="`#${props.order.display_id} logs`" class="xs:w-12 md:w-10 lg:w-8">
+                <pre>
+                    {{order_logs}}
+                </pre>
             </Dialog>
         </div>
     </div>
@@ -84,10 +90,29 @@ const toast = useToast()
 
 const refund_dialog = ref(false)
 
+const order_logs = ref([])
+const order_logs_dialog = ref(false)
+
 
 const confirm = useConfirm();
 const { proxy } = getCurrentInstance();
-const emit = defineEmits(['order-cancelled','amount_collected','finished'])
+const emit = defineEmits(['order-cancelled','amount_collected','finished','updated'])
+
+
+const getOrderLogs = () => {
+    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/logs`, {
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
+        }
+    })
+    .then((response)=>{
+        order_logs.value = response.data.data
+        order_logs_dialog.value = true
+    })
+    .catch((err) => {
+        toast.add({ severity: 'error', summary: 'Error '+err.response.status, detail: err.response.data,group:'br' });
+    });
+}
 
 const finishOrder = () => {
     axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/finish`,{}, {
