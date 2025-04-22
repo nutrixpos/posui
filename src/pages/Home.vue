@@ -1,6 +1,6 @@
 <template>
     <div v-if="!loading" class="flex flex-column m-0 p-0" style="height: 100vh;">
-        <Toolbar style="border-radius: 0px;" class="py-1 lg:py-2">
+        <Toolbar style="border-radius: 0px;height: 6vh; min-height:3rem; flex-shrink: 0;" class="py-1 lg:py-2">
             <template #start>
                 <router-link to="/">
                     <img src="@/assets/logo.png" alt="logo" style="height:25px">
@@ -107,14 +107,14 @@
                 </OverlayPanel>
             </template>
         </Toolbar>
-        <div class="grid m-0 p-0" style="flex-grow:1;">
+        <div class="grid m-0 p-0" style="height:calc(94vh - 1.5rem);flex-shrink: 0;">
             <div class="col-2 flex flex-column py-3">
                 <div class="w- flex my-1" v-for="(category,index) in categories" :key="index" style="background-color:white;cursor:pointer" @click="selectedCategory = category">
                     <div :style="`width:0.5rem;background-color:${category == selectedCategory? '#FDDB00' : 'silver'}`"></div>
                     <div class="py-3 mx-3" :style="`color:${category == selectedCategory? '#2E4762' : 'black'};font-weight:${category == selectedCategory? 'bold' : '200'}`">{{ category.name }}</div>
                 </div>
             </div>
-            <div class="xl:col-7 col-5 flex px-0 xl:px-2 pt-2 pb-3 overflow-auto">
+            <div class="xl:col-7 col-5 flex px-0 xl:px-2 overflow-auto">
                 <Card style="width:100%;">
                     <template #content>
                         <IconField iconPosition="left" class="mb-3">
@@ -130,10 +130,10 @@
                     </template>
                 </Card>
             </div>
-            <div class="col-5 xl:col-3 flex pt-2 pb-3">
+            <div class="col-5 xl:col-3 flex">
                 <Card class="w-12" :style="`background-color:${is_order_valid ?  'white' : 'var(--red-100)'};border-color: ${is_order_valid ?  '' : 'red'};`">
                     <template #content>
-                        <div class="flex flex-column" style="height: calc(100vh - var(--p-toolbar-padding) * 2 - 0.5rem - 36px - var(--p-card-body-padding))">
+                        <div class="flex flex-column" style="height:calc(94vh - 1.5rem - 36px - var(--p-card-body-padding)); flex-shrink: 0">
                             <div style="height:65%;overflow: auto;">
                                 <div v-for="(item,index) in orderItems" :key="index">
                                     <div class="flex justify-content-between align-items-center">
