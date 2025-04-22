@@ -48,17 +48,21 @@
 
             <div class="col-12 flex flex-column">
                 <h4>Actions</h4>
-                <ButtonGroup class="flex">
-                    <Button icon="fa fa-print" severity="secondary" :label="$t('client_receipt')" @click="PrintClientReceipt()" />
-                    <Button icon="fa fa-print" severity="secondary" :label="$t('kitchen_receipt')" @click="PrintKitchenReceipt()" />
-                    <Button icon="fa fa-book" severity="secondary" :label="$t('logs')" @click="getOrderLogs()" />
-                    <Button v-if="!props.order.is_paid" icon="fa fa-hand-holding-dollar" severity="secondary" :label="$t('collect_money')" @click="collectedMoney()"/>
-                    <Button v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'" icon="fa fa-check" severity="secondary" :label="$t('finish')" @click="finishOrder()"/>
-                    <Button v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'" severity="secondary" size="small" aria-label="Cancel order" @click.stop="confirmCancelOrder($event)">
-                        {{$t('cancel')}} {{ $t('order') }}
-                    </Button>
-                    <ConfirmPopup></ConfirmPopup>
-                </ButtonGroup>
+                <div class="flex gap-3">
+                    <ButtonGroup class="flex">
+                        <Button icon="fa fa-print" severity="secondary" :label="$t('client_receipt')" @click="PrintClientReceipt()" />
+                        <Button icon="fa fa-print" severity="secondary" :label="$t('kitchen_receipt')" @click="PrintKitchenReceipt()" />
+                        <Button v-if="!props.order.is_paid" icon="fa fa-hand-holding-dollar" severity="secondary" :label="$t('collect_money')" @click="collectedMoney()"/>
+                        <Button v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'" icon="fa fa-check" severity="secondary" :label="$t('finish')" @click="finishOrder()"/>
+                        <Button v-if="props.order.state.toUpperCase() != 'CANCELLED' && props.order.state.toUpperCase() != 'FINISHED'" severity="secondary" size="small" aria-label="Cancel order" @click.stop="confirmCancelOrder($event)">
+                            {{$t('cancel')}} {{ $t('order') }}
+                        </Button>
+                        <ConfirmPopup></ConfirmPopup>
+                    </ButtonGroup>
+                    <ButtonGroup class="flex">
+                        <Button icon="fa fa-book" severity="secondary" :label="$t('logs')" @click="getOrderLogs()" />
+                    </ButtonGroup>
+                </div>
 
             </div>
             <Dialog v-model:visible="refund_dialog" modal :header="`Refunding order #${props.order.display_id}`" class="xs:w-12 md:w-10 lg:w-8">
