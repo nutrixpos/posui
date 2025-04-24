@@ -26,7 +26,12 @@
                             </div>
                             <DataTable @page="updatSalesTableRowsPerPage" :lazy="true" :totalRecords="salesTableTotalRecords" :loading="isSalesTableLoading" v-model:expandedRows="expandedSalesLogRows" paginatorPosition="both"  paginator :rows="salesTableRowsPerPage" :rowsPerPageOptions="[7, 14, 30, 90]" :value="sales_log" stripedRows tableStyle="min-width: 50rem;max-height:50vh;" class="w-full pr-2">
                                     <Column expander style="width: 5rem" />
-                                    <Column sortable field="date" :header="$t('date')"></Column>
+                                    <Column sortable field="date" :header="$t('date')">
+                                        <template #body="slotProps">
+                                            <i class="pi pi-exclamation-circle" v-tooltip.top="'has refunds'" v-if="slotProps.data.refunds?.length > 0" style="margin-right:0.5rem;color:red"></i>                                            
+                                            {{ slotProps.data.date }}
+                                        </template>
+                                    </Column>
                                     <Column sortable field="costs" :header="$t('cost')"></Column>
                                     <Column sortable field="total_sales" :header="$t('sales')"></Column>
                                     <Column sortable field="profit" :header="$t('profit')">
@@ -37,7 +42,12 @@
                                     <template #expansion="slotProps">
                                         <DataTable v-model:expandedRows="expandedSalesLogOrderItems" :value="slotProps.data.orders">
                                             <Column expander style="width: 5rem" />
-                                            <Column sortable field="order.display_id" header="Id"></Column>
+                                            <Column sortable field="order.display_id" header="Id">
+                                                <template #body="slotProps">
+                                                    <i class="pi pi-exclamation-circle" v-tooltip.top="'has refunds'" v-if="orders_refunds[slotProps.data.order.id]?.length > 0" style="margin-right:0.5rem;color:red"></i>                                            
+                                                    {{ slotProps.data.order.display_id }}
+                                                </template>
+                                            </Column>
                                             <Column sortable field="order.submitted_at" header="Submitted At"></Column>
                                             <Column sortable field="order.cost" header="Cost"></Column>
                                             <Column sortable field="order.sale_price" header="Sales"></Column>
@@ -47,7 +57,7 @@
                                                 </template>
                                             </Column>
                                             <template #expansion="slotProps">
-                                                <SalesLogTableItems :items="slotProps.data.costs" />
+                                                <SalesLogTableItems :items="slotProps.data.costs" :order_refunds="orders_refunds[slotProps.data.order.id]" />
                                             </template>
                                         </DataTable>
                                     </template>
@@ -78,6 +88,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,
 const {proxy} = getCurrentInstance()
 
 const sales_log = ref([])
+const orders_refunds = ref({})
 const expandedSalesLogRows = ref([])
 const expandedSalesLogOrderItems = ref([])
 const salesTableRowsPerPage = ref(7)
@@ -230,10 +241,8 @@ const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.v
             temp_sales_log.push(response.data.data[i])
             chartSales.value.push(response.data.data[i].total_sales)
             chartCost.value.push(response.data.data[i].costs)
-
+            
             for (let j=0;j<response.data.data[i].orders.length;j++){
-
-
 
                 for (let k=0;k<response.data.data[i].orders[j].order.items.length;k++){
 
@@ -246,7 +255,16 @@ const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.v
                         productPieChartSales.value[index] += response.data.data[i].orders[j].order.items[k].quantity
                     }   
                 }
+
                 
+            }
+
+            for (let j=0;j<response.data.data[i].refunds.length;j++){
+
+                if (orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`])
+                    orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`].push(response.data.data[i].refunds[j])
+                else
+                orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`] = [response.data.data[i].refunds[j]]
             }
         }
 

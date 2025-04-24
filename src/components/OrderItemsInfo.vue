@@ -65,11 +65,20 @@ const order_items_status : any = computed(() => {
 
 let statuses = {}
 
+
 props.order.items.forEach((item) => {
 
     let item_status = {}
 
-    if (item.status == "" || item.status == "pending" ){
+    
+    if (item.status == ""){
+        item_status={
+            title:"NORMAL",
+            severity:"secondary"
+        }
+    }
+
+    if (item.status == "pending" ){
         item_status={
             title:"PENDING",
             severity:"secondary"

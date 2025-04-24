@@ -1,7 +1,12 @@
 <template>
     <DataTable v-model:expandedRows="expandedSalesLogOrderItemComponents" :value="props.items">
         <Column expander style="width: 5rem" />
-        <Column sortable field="ItemName" :header="$t('name')"></Column>
+        <Column sortable field="ItemName" :header="$t('name')">
+            <template #body="slotProps">
+                <Badge value="REFUNDED" v-if="items_refunds[slotProps.data.item_id]" severity="danger"  />
+                {{ slotProps.data.ItemName }}
+            </template>
+        </Column>
         <Column sortable field="Cost" :header="$t('cost')"></Column>
         <Column sortable field="Quantity" :header="$t('quantity')">
             <template #body="slotProps">
@@ -30,7 +35,34 @@
 import {defineProps,ref} from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import {Badge} from 'primevue';
 
-const props = defineProps(['items'])
+const props = defineProps(['items','order_refunds'])
 const expandedSalesLogOrderItemComponents = ref([])
+
+
+const items_refunds = ref({})
+
+const init = () => {
+    props.items.forEach((item) => {
+        props.order_refunds.forEach((order_refund) => {
+
+            if (order_refund.order_item_id == item.item_id){
+                if (!items_refunds.value[item.item_id]) {
+                    items_refunds.value[item.item_id] = {
+                        is_refunded: true,
+                        refund_amount: order_refund.amount,
+                        refund_reason: order_refund.reason
+                    }
+                    return
+                }
+                items_refunds.value[item.item_id].refund_amount += order_refund.amount
+                items_refunds.value[item.item_id].refund_reason = order_refund.reason
+            }
+        })
+    })
+}
+
+init()
+
 </script>
