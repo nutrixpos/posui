@@ -32,11 +32,23 @@
                                             {{ slotProps.data.date }}
                                         </template>
                                     </Column>
-                                    <Column sortable field="costs" :header="$t('cost')"></Column>
+                                    <Column sortable field="costs" :header="$t('cost')">
+                                        <template #body="slotProps">
+                                            <div class="flex gap-2 align-items-center">
+                                                <div>{{ slotProps.data.costs }} </div>
+                                                <Badge v-if="slotProps.data.inventory_refunds > 0 " :value="`-${slotProps.data.inventory_refunds}`" severity="success" class="mr-2" />
+                                            </div>
+                                        </template>
+                                    </Column>
                                     <Column sortable field="total_sales" :header="$t('sales')"></Column>
+                                    <Column sortable field="refunds_value" :header="$t('refunds')">
+                                        <template #body="slotProps">
+                                            <Badge :value="`${slotProps.data.inventory_refunds > 0 ? '-' : ''}${slotProps.data.refunds_value}`" severity="secondary" style="margin-right:0.5rem" />
+                                        </template>
+                                    </Column>
                                     <Column sortable field="profit" :header="$t('profit')">
                                         <template #body="slotProps">
-                                            <div :style="`${ (slotProps.data.total_sales - slotProps.data.costs) > 0 ? 'color:green' : 'color:red' }`">{{ slotProps.data.total_sales - slotProps.data.costs }}</div>
+                                            <div :style="`${ ( slotProps.data.total_sales - slotProps.data.costs - slotProps.data.refunds_value + ( slotProps.data.inventory_refunds || 0 )) > 0 ? 'color:green' : 'color:red' }`">{{ slotProps.data.total_sales - slotProps.data.costs  - slotProps.data.refunds_value + ( slotProps.data.inventory_refunds || 0 ) }}</div>
                                         </template>
                                     </Column>
                                     <template #expansion="slotProps">
@@ -44,16 +56,28 @@
                                             <Column expander style="width: 5rem" />
                                             <Column sortable field="order.display_id" header="Id">
                                                 <template #body="slotProps">
-                                                    <i class="pi pi-exclamation-circle" v-tooltip.top="'has refunds'" v-if="orders_refunds[slotProps.data.order.id]?.length > 0" style="margin-right:0.5rem;color:red"></i>                                            
+                                                    <i class="pi pi-exclamation-circle" v-tooltip.top="'has refunds'" v-if="orders_refunds[slotProps.data.order.id]?.refunds.length > 0" style="margin-right:0.5rem;color:red"></i>                                            
                                                     {{ slotProps.data.order.display_id }}
                                                 </template>
                                             </Column>
                                             <Column sortable field="order.submitted_at" header="Submitted At"></Column>
-                                            <Column sortable field="order.cost" header="Cost"></Column>
+                                            <Column sortable field="order.cost" header="Cost">
+                                                <template #body="slotProps">
+                                                    <div class="flex gap-2 align-items-center">
+                                                        <div>{{ slotProps.data.order.cost }} </div>
+                                                        <Badge v-if="orders_refunds[slotProps.data.order.id]?.inventory_refunds > 0 " :value="`-${orders_refunds[slotProps.data.order.id]?.inventory_refunds}`" severity="success" class="mr-2" />
+                                                    </div>
+                                                </template>
+                                            </Column>
                                             <Column sortable field="order.sale_price" header="Sales"></Column>
+                                            <Column sortable field="order.refunds" header="Refunds">
+                                                <template #body="slotProps">
+                                                    {{ orders_refunds[slotProps.data.order.id]?.total_refunds }}
+                                                </template>
+                                            </Column>
                                             <Column sortable field="profit" header="Profit">
                                                 <template #body="slotProps">
-                                                    <div :style="`${ (slotProps.data.order.sale_price - slotProps.data.order.cost) > 0 ? 'color:green' : 'color:red' }`">{{ slotProps.data.order.sale_price - slotProps.data.order.cost }}</div>
+                                                    <div :style="`${ (slotProps.data.order.sale_price - slotProps.data.order.cost - ( orders_refunds[slotProps.data.order.id]?.total_refunds || 0 ) + (orders_refunds[slotProps.data.order.id]?.inventory_refunds || 0 )) > 0 ? 'color:green' : 'color:red' }`">{{ slotProps.data.order.sale_price - slotProps.data.order.cost - (orders_refunds[slotProps.data.order.id]?.total_refunds || 0) + (orders_refunds[slotProps.data.order.id]?.inventory_refunds || 0 ) }}</div>
                                                 </template>
                                             </Column>
                                             <template #expansion="slotProps">
@@ -70,7 +94,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import DataTable from "primevue/datatable";
 import Column from 'primevue/column'
 import {Line,Pie} from 'vue-chartjs'
@@ -80,6 +104,7 @@ import {getCurrentInstance, ref} from 'vue'
 import axios from 'axios'
 import SalesLogTableItems from '@/components/SalesLogTableItems.vue'
 import { $dt } from '@primevue/themes';
+import {Badge} from 'primevue';
 
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,PointElement,LineElement,ArcElement)
@@ -103,12 +128,14 @@ const chartOptions = ref();
 const chartLabels = ref([])
 const chartSales = ref([])
 const chartCost = ref([])
+const chartRefunds= ref([])
 
 const isSalesTableLoading = ref(true)
 
 
 
 
+const productPieChartColors = ref([])
 const productPiechartData = ref();
 const productPiechartOptions = ref();
 const productPieChartLabels = ref([])
@@ -116,6 +143,10 @@ const productPieChartSales = ref([])
 
 
 const updatSalesTableRowsPerPage = (event) => {
+
+    expandedSalesLogRows.value = []
+    expandedSalesLogOrderItems.value = []
+
     const { first, rows } = event;
     loadSales(first,rows)
 }
@@ -127,8 +158,8 @@ const setProductPieChartData = () => {
         datasets: [
             {
                 data: productPieChartSales.value,
-                backgroundColor: [$dt('teal.500').value, $dt('sky.500').value, $dt('gray.500').value],
-                hoverBackgroundColor: [$dt('teal.500').value, $dt('sky.500').value, $dt('gray.500').value]
+                backgroundColor: productPieChartColors.value,
+                hoverBackgroundColor: productPieChartColors.value
             }
         ]
     };
@@ -169,7 +200,14 @@ const setChartData = () => {
                 data: chartCost.value,
                 fill: false,
                 tension: 0.4,
-                borderColor: $dt('amber.300').value,
+                borderColor: $dt('amber.500').value,
+            },
+            {
+                label: 'Refunds',
+                data: chartRefunds.value,
+                fill: false,
+                tension: 0.4,
+                borderColor: $dt('red.500').value,
             },
         ]
     };
@@ -229,9 +267,11 @@ const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.v
         chartLabels.value = []
         chartCost.value = []
         chartSales.value = []
+        chartRefunds.value = []
         productPieChartLabels.value = []
         productPieChartSales.value = []
         isSalesTableLoading.value = true
+        orders_refunds.value = []
 
         salesTableTotalRecords.value = response.data.meta.total_records
 
@@ -241,6 +281,8 @@ const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.v
             temp_sales_log.push(response.data.data[i])
             chartSales.value.push(response.data.data[i].total_sales)
             chartCost.value.push(response.data.data[i].costs)
+            chartRefunds.value.push(response.data.data[i].refunds_value)
+            let day_inventory_refunds = 0
             
             for (let j=0;j<response.data.data[i].orders.length;j++){
 
@@ -249,6 +291,7 @@ const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.v
                     if (!productPieChartLabels.value.includes(response.data.data[i].orders[j].order.items[k].product.name)){
                         productPieChartLabels.value.push(response.data.data[i].orders[j].order.items[k].product.name)
                         productPieChartSales.value.push(response.data.data[i].orders[j].order.items[k].quantity)
+                        productPieChartColors.value.push('#'+(Math.floor(Math.random()*16777215).toString(16)).padStart(6, '0'));
                     }else {
 
                         let index = productPieChartLabels.value.indexOf(response.data.data[i].orders[j].order.items[k].product.name)
@@ -261,11 +304,40 @@ const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.v
 
             for (let j=0;j<response.data.data[i].refunds.length;j++){
 
-                if (orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`])
-                    orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`].push(response.data.data[i].refunds[j])
-                else
-                orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`] = [response.data.data[i].refunds[j]]
+                let refund = response.data.data[i].refunds[j]
+
+                if (orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`]){
+                    orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`].refunds.push(refund)
+                    orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`].total_refunds += refund.amount
+                    orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`].inventory_refunds = 0
+
+                }
+                else{
+                    orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`] = {
+                        refunds : [refund],
+                        inventory_refunds: 0,
+                        total_refunds : refund.amount
+                    }
+                }
+
+                if (refund.destination == "inventory"){
+                    // inventory_refund = the cost of material consumed not the customer sale price
+                    day_inventory_refunds += refund.item_cost
+                    orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`].inventory_refunds += refund.item_cost
+                }
+
+                if (refund.destination == "custom"){
+                    refund.material_refunds.forEach((material_refund) => {
+                        orders_refunds.value[`${response.data.data[i].refunds[j].order_id}`].inventory_refunds += material_refund.inventory_return_qty * material_refund.cost_per_unit
+                        day_inventory_refunds += material_refund.inventory_return_qty * material_refund.cost_per_unit
+                    })
+                }
+                
+
             }
+
+
+            temp_sales_log[i].inventory_refunds = day_inventory_refunds
         }
 
         sales_log.value = temp_sales_log
