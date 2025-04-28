@@ -129,6 +129,8 @@ const chartLabels = ref([])
 const chartSales = ref([])
 const chartCost = ref([])
 const chartRefunds= ref([])
+const chartInventoryReturns= ref([])
+const chartProfit= ref([])
 
 const isSalesTableLoading = ref(true)
 
@@ -193,7 +195,7 @@ const setChartData = () => {
                 data: chartSales.value,
                 fill: false,
                 tension: 0.4,
-                borderColor: $dt('emerald.500').value,
+                borderColor: $dt('purple.400').value,
             },
             {
                 label: 'Cost',
@@ -208,6 +210,21 @@ const setChartData = () => {
                 fill: false,
                 tension: 0.4,
                 borderColor: $dt('red.500').value,
+            },
+            {
+                label: 'Returns',
+                data: chartInventoryReturns.value,
+                fill: true,
+                tension: 0.5,
+                borderColor: $dt('blue.500').value,
+            },
+            {
+                label: 'Profit',
+                data: chartProfit.value,
+                fill: true,
+                tension: 0.5,
+                borderWidth: 5,
+                borderColor: $dt('emerald.500').value,
             },
         ]
     };
@@ -268,6 +285,8 @@ const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.v
         chartCost.value = []
         chartSales.value = []
         chartRefunds.value = []
+        chartInventoryReturns.value = []
+        chartProfit.value = []
         productPieChartLabels.value = []
         productPieChartSales.value = []
         isSalesTableLoading.value = true
@@ -282,6 +301,7 @@ const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.v
             chartSales.value.push(response.data.data[i].total_sales)
             chartCost.value.push(response.data.data[i].costs)
             chartRefunds.value.push(response.data.data[i].refunds_value)
+
             let day_inventory_refunds = 0
             
             for (let j=0;j<response.data.data[i].orders.length;j++){
@@ -338,6 +358,8 @@ const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.v
 
 
             temp_sales_log[i].inventory_refunds = day_inventory_refunds
+            chartInventoryReturns.value.push(temp_sales_log[i].inventory_refunds)
+            chartProfit.value.push((temp_sales_log[i].total_sales - temp_sales_log[i].costs - temp_sales_log[i].refunds_value + ( temp_sales_log[i].inventory_refunds || 0 )))
         }
 
         sales_log.value = temp_sales_log
