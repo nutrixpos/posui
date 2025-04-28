@@ -81,7 +81,7 @@
                                                 </template>
                                             </Column>
                                             <template #expansion="slotProps">
-                                                <SalesLogTableItems :items="slotProps.data.costs" :order_refunds="orders_refunds[slotProps.data.order.id]" />
+                                                <SalesLogTableItems :items="slotProps.data.costs" :order_refunds="orders_refunds[slotProps.data.order.id] || []" />
                                             </template>
                                         </DataTable>
                                     </template>
@@ -195,6 +195,7 @@ const setChartData = () => {
                 data: chartSales.value,
                 fill: false,
                 tension: 0.4,
+                borderWidth:2,
                 borderColor: $dt('purple.400').value,
             },
             {
@@ -202,6 +203,7 @@ const setChartData = () => {
                 data: chartCost.value,
                 fill: false,
                 tension: 0.4,
+                borderWidth:2,
                 borderColor: $dt('amber.500').value,
             },
             {
@@ -209,10 +211,12 @@ const setChartData = () => {
                 data: chartRefunds.value,
                 fill: false,
                 tension: 0.4,
+                borderWidth:2,
                 borderColor: $dt('red.500').value,
             },
             {
                 label: 'Returns',
+                borderWidth:2,
                 data: chartInventoryReturns.value,
                 fill: true,
                 tension: 0.5,
@@ -223,7 +227,7 @@ const setChartData = () => {
                 data: chartProfit.value,
                 fill: true,
                 tension: 0.5,
-                borderWidth: 5,
+                borderWidth: 4,
                 borderColor: $dt('emerald.500').value,
             },
         ]

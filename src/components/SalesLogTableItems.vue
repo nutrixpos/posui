@@ -55,30 +55,35 @@ const expandedSalesLogOrderItemComponents = ref([])
 const items_refunds = ref({})
 
 const init = () => {
-    props.items.forEach((item) => {
-        props.order_refunds.refunds.forEach((order_refund) => {
 
-            if (order_refund.order_item_id == item.item_id){
-
-
-                items_refunds.value[item.item_id] = {
-                    is_refunded: true,
-                    refund_amount: order_refund.amount,
-                    refund_reason: order_refund.reason,
-                    inventory_refunds: 0,
-                    item_cost: order_refund.item_cost,
-                    destination: order_refund.destination
+    if (props.order_refunds.length > 0){
+        props.items.forEach((item) => {
+    
+            props.order_refunds.refunds.forEach((order_refund) => {
+    
+                if (order_refund.order_item_id == item.item_id){
+    
+    
+                    items_refunds.value[item.item_id] = {
+                        is_refunded: true,
+                        refund_amount: order_refund.amount,
+                        refund_reason: order_refund.reason,
+                        inventory_refunds: 0,
+                        item_cost: order_refund.item_cost,
+                        destination: order_refund.destination
+                    }
+                    
+    
+                    if (order_refund.destination == "inventory")
+                        items_refunds.value[item.item_id].inventory_refunds = order_refund.item_cost
+    
+                    
+    
                 }
-                
-
-                if (order_refund.destination == "inventory")
-                    items_refunds.value[item.item_id].inventory_refunds = order_refund.item_cost
-
-                
-
-            }
+            })
         })
-    })
+    }
+
 }
 
 init()
