@@ -1,5 +1,5 @@
 <template>
-    <DataTable v-model:expandedRows="expandedSalesLogOrderItemComponents" :value="props.items">
+    <DataTable v-model:expandedRows="expandedSalesLogOrderItemComponents" :value="items">
         <Column expander style="width: 5rem" />
         <Column sortable field="ItemName" :header="$t('name')">
             <template #body="slotProps">
@@ -11,7 +11,7 @@
             <template #body="slotProps">
                 <div class="flex gap-2 align-items-center">
                     <div>{{ slotProps.data.Cost }} </div>
-                    <Badge v-if="items_refunds[slotProps.data.item_id]?.destination == 'inventory'" :value="`-${items_refunds[slotProps.data.item_id]?.item_cost}`" severity="success" class="mr-2" />
+                    <Badge v-if="items_refunds[slotProps.data.item_id]?.inventory_refunds > 0" :value="`-${items_refunds[slotProps.data.item_id]?.inventory_refunds}`" severity="success" class="mr-2" />
                 </div>
             </template>
         </Column>
@@ -33,8 +33,22 @@
         <template #expansion="slotProps">
             <DataTable :value="slotProps.data.Components">
                 <Column sortable field="ComponentName" :header="$t('name')"></Column>
-                <Column sortable field="Cost" :header="$t('cost')"></Column>
-                <Column sortable field="Quantity" :header="$t('quantity')"></Column>
+                <Column sortable field="Cost" :header="$t('cost')">
+                    <template #body="slotProps">
+                        <div class="flex gap-2 align-items-center">
+                            {{ slotProps.data.Cost }}
+                            <Badge :value="`-${items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.ComponentId]?.inventory_return_qty * items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.ComponentId]?.cost_per_unit}`" severity="success" v-if="items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.ComponentId]?.inventory_return_qty > 0" />
+                        </div>
+                    </template>
+                </Column>
+                <Column sortable field="Quantity" :header="$t('quantity')">
+                    <template #body="slotProps">
+                        <div class="flex gap-2 align-items-center">
+                            {{ slotProps.data.Quantity }}
+                            <Badge :value="`-${items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.ComponentId]?.inventory_return_qty}`" severity="success" v-if="items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.ComponentId]?.inventory_return_qty > 0" />
+                        </div>
+                    </template>
+                </Column>
                 <Column sortable field="EntryId" :header="$t('entry')"></Column>
             </DataTable>
             <SalesLogTableItems v-if="slotProps.data.DownstreamCost != null" :items="slotProps.data.DownstreamCost" />    
@@ -53,10 +67,19 @@ const props = defineProps(['items','order_refunds'])
 const expandedSalesLogOrderItemComponents = ref([])
 
 const items_refunds = ref({})
+const items = ref([])
 
 const init = () => {
 
-    if (props.order_refunds.length > 0){
+    items.value = props.items
+
+    items.value.forEach((item,itemIndex) => {
+        item.Components.forEach((component,componentIndex) => {
+            items.value[itemIndex].Components[componentIndex].item_id = item.item_id
+        })
+    })
+
+    if (props.order_refunds.refunds?.length > 0){
         props.items.forEach((item) => {
     
             props.order_refunds.refunds.forEach((order_refund) => {
@@ -70,12 +93,20 @@ const init = () => {
                         refund_reason: order_refund.reason,
                         inventory_refunds: 0,
                         item_cost: order_refund.item_cost,
-                        destination: order_refund.destination
+                        destination: order_refund.destination,
+                        material_refunds: {},
                     }
                     
     
                     if (order_refund.destination == "inventory")
                         items_refunds.value[item.item_id].inventory_refunds = order_refund.item_cost
+
+                    if (order_refund.destination == "custom"){
+                        order_refund.material_refunds.forEach((material_refund) => {
+                            items_refunds.value[item.item_id].inventory_refunds += material_refund.inventory_return_qty * material_refund.cost_per_unit
+                            items_refunds.value[item.item_id].material_refunds[material_refund.material_id] = material_refund
+                        })
+                    }
     
                     
     

@@ -120,6 +120,8 @@ const init = () => {
     refund_value.value = props.item.price
     props.item.materials.forEach((material) => {
         material_refunds.value.push({
+            material_id: material.material.id,
+            entry_id: material.entry.id,
             inventory_return_qty:0,
             waste_qty:0,
             dispose_qty:0,
@@ -130,7 +132,6 @@ const init = () => {
 }
 
 const submitRefund = () => {
-
 
     const payload = {
         order_id: props.order.id,
@@ -143,7 +144,7 @@ const submitRefund = () => {
     axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/items/${props.item.id}/refund?reason=${reason.value}`, 
     {
         data : payload
-    }, 
+    },
     {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`

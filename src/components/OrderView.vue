@@ -65,9 +65,6 @@
                 </div>
 
             </div>
-            <Dialog v-model:visible="refund_dialog" modal :header="`Refunding order #${props.order.display_id}`" class="xs:w-12 md:w-10 lg:w-8">
-                <OrderRefund :order="props.order" />
-            </Dialog>
             <Dialog v-model:visible="order_logs_dialog" modal :header="`#${props.order.display_id} logs`" class="xs:w-12 md:w-10 lg:w-8">
                 <pre>
                     {{order_logs}}
@@ -91,8 +88,6 @@ import Order from '@/classes/Order';
 import Dialog from 'primevue/dialog'
 
 const toast = useToast()
-
-const refund_dialog = ref(false)
 
 const order_logs = ref([])
 const order_logs_dialog = ref(false)
