@@ -23,7 +23,7 @@
 <script setup>
 import { computed } from 'vue';
 import Toast from 'primevue/toast';
-import { globalStore } from '@/store';
+import { globalStore } from '@/stores';
 
 
 const store = globalStore()
@@ -32,7 +32,7 @@ const orientation = computed(() => store.currentOrientation)
 </script>
 
 <style lang="scss">
-@import '@/assets/styles.scss';
+@use '@/assets/styles.scss';
 
 
 body {

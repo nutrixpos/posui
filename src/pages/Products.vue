@@ -267,11 +267,11 @@ const onAdvancedUpload = () => {
 };
 
 const backend_host = computed(() => {
-    return `http://${process.env.VUE_APP_BACKEND_HOST}`;
+    return `http://${import.meta.env.VITE_APP_BACKEND_HOST}`;
 });
 
 const backendUrl = computed(() => {
-    return `http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}`;
+    return `http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}`;
 });
 
 
@@ -290,7 +290,7 @@ const backendUrl = computed(() => {
 
 
 const deleteProduct = (product_id: string) => {
-    axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/${product_id}`, {
+    axios.delete(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/products/${product_id}`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
@@ -348,7 +348,7 @@ const prepareProductToEdit = (product: any) => {
 
 const updateProduct = () => {
 
-    axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/${productToEdit.value.id}`, 
+    axios.patch(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/products/${productToEdit.value.id}`, 
     {
         data : productToEdit.value
     },{
@@ -383,7 +383,7 @@ const submitProduct = () => {
         sub_products: sub_products.value,
     };
 
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products`,{
+    axios.post(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/products`,{
         data : payload
     } , {
         headers: {
@@ -445,7 +445,7 @@ const loadProducts = (first=0,rows=productsTableRowsPerPage.value) => {
 
     const page_number = Math.ceil((first/rows))
     
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products`, {
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/products`, {
         params: {
             "page[number]": page_number,
             "page[size]": rows

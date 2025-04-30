@@ -150,7 +150,7 @@ const updatCategoriesTableRowsPerPage = (event: any) => {
 
 const submitCategory = () => {
 
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories`, {
+    axios.post(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/categories`, {
         data: new_category.value
     }, {
         headers: {
@@ -169,7 +169,7 @@ const submitCategory = () => {
 }
 
 const deleteCategory = (category_id: string) => {
-    axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories/${category_id}`, {
+    axios.delete(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/categories/${category_id}`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
@@ -186,7 +186,7 @@ const deleteCategory = (category_id: string) => {
 }
 
 const updateCategory = () => {
-    axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories/${categoryToEdit.value.id}`, {
+    axios.patch(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/categories/${categoryToEdit.value.id}`, {
         data: categoryToEdit.value
     }, {
         headers: {
@@ -248,7 +248,7 @@ const getCategories = (first=0,rows=categoriesTableRowsPerPage.value) => {
 
     const page_number = Math.ceil((first/rows))
     
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories?page[number]=${page_number}&page[size]=${rows}`, {
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/categories?page[number]=${page_number}&page[size]=${rows}`, {
         headers: {
             'Authorization': `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }

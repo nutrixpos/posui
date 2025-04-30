@@ -102,7 +102,7 @@ const orderToShowAmountCollected = () => {
 
 const cancelOrder = (order_id: string) => {
 
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${order_id}/cancel`, {
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders/${order_id}/cancel`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
@@ -159,7 +159,7 @@ const loadOrders =  (first=0,rows=100) => {
     }
 
 
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?page[number]=${page_number}&page[size]=${rows}&filter[display_id]=${ordersSearchText.value}`, {
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders?page[number]=${page_number}&page[size]=${rows}&filter[display_id]=${ordersSearchText.value}`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }

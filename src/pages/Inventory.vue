@@ -235,7 +235,7 @@ const confirmDeleteMaterial = (material_id: string) => {
 };
 
   const deleteMaterial = (material_id: string) => {
-    axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${material_id}`, {
+    axios.delete(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials/${material_id}`, {
     headers: {
         Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
     }
@@ -249,7 +249,7 @@ const confirmDeleteMaterial = (material_id: string) => {
 
   const saveEditedMaterial = (material: Material) => {
 
-    axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${edit_material.value?.id}`, {
+    axios.patch(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials/${edit_material.value?.id}`, {
         data: {
             ...material,
             ...material_settings.value
@@ -274,7 +274,7 @@ const confirmDeleteMaterial = (material_id: string) => {
 
 
   const saveMaterialSettings = () => {
-    axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${material_settings.value?.id}`, {
+    axios.patch(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials/${material_settings.value?.id}`, {
         data: material_settings.value
     },{
         headers: {
@@ -311,7 +311,7 @@ const confirmDeleteMaterial = (material_id: string) => {
 
 
 
-            axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${expanded_component_id.value}/entries/${entry_id}`,{
+            axios.delete(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials/${expanded_component_id.value}/entries/${entry_id}`,{
                 headers: {
                     Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
                 }
@@ -341,7 +341,7 @@ const confirmDeleteMaterial = (material_id: string) => {
                 "expiration_date": new_entry_expiration_date.value
             }
 
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${component_id}/entries`, {
+    axios.post(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials/${component_id}/entries`, {
         data: [
            newEntry
         ]
@@ -382,7 +382,7 @@ const confirmDeleteMaterial = (material_id: string) => {
           })
       })
 
-      axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials`, {
+      axios.post(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials`, {
         data : {
             name: new_component_name.value,
             unit: new_component_unit.value,
@@ -402,7 +402,7 @@ const confirmDeleteMaterial = (material_id: string) => {
 
 
   const onComponentLogRowExpand = (event) => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/`+event.data.order_id,{
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders/`+event.data.order_id,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
@@ -429,7 +429,7 @@ const confirmDeleteMaterial = (material_id: string) => {
     
 
 
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/`+component_id+`/logs?page[number]=${page_number}&page[size]=${rows}`,{
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials/`+component_id+`/logs?page[number]=${page_number}&page[size]=${rows}`,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
@@ -445,7 +445,7 @@ const confirmDeleteMaterial = (material_id: string) => {
 
 
   const loadInventory = () => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials`,{
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials`,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }

@@ -73,7 +73,7 @@ const submitCustomer = () => {
        address: new_customer_address.value
    };
 
-   axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/customers`,{
+   axios.post(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/customers`,{
        data : payload
    } , {
        headers: {

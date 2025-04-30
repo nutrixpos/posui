@@ -110,7 +110,7 @@ const toast = useToast()
 
 
 const deleteCustomer = (customer_id: string) => {
-   axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/customers/${customer_id}`, {
+   axios.delete(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/customers/${customer_id}`, {
        headers: {
            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
        }
@@ -157,7 +157,7 @@ const prepareCustomerToEdit = (customer: any) => {
 
 const updateCustomer = () => {
 
-   axios.patch(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/customers/${customerToEdit.value.id}`, 
+   axios.patch(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/customers/${customerToEdit.value.id}`, 
    {
        data : customerToEdit.value
    },{
@@ -184,7 +184,7 @@ const submitCustomer = () => {
        address: new_customer_address.value
    };
 
-   axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/customers`,{
+   axios.post(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/customers`,{
        data : payload
    } , {
        headers: {
@@ -218,7 +218,7 @@ const loadCustomers = (first=0,rows=customersTableRowsPerPage.value) => {
 
    const page_number = Math.ceil((first/rows))
    
-   axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/customers`, {
+   axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/customers`, {
        params: {
            "page[number]": page_number,
            "page[size]": rows

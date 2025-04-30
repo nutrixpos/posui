@@ -479,7 +479,7 @@
   import AddCustomer from '@/components/AddCustomer.vue';
   import { useI18n } from 'vue-i18n'
   import { ToggleButton,Drawer,Avatar,ButtonGroup } from 'primevue';
-  import { globalStore } from '@/store';
+  import { globalStore } from '@/stores';
 
 
 const zitadel_enabled = ref(true)
@@ -635,7 +635,7 @@ const mainSearchTextChanged = (event:any) => {
     if (mainSearchText.value != ""){
         mainsearch_op.value.show(event)
 
-        axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[display_id]=${mainSearchText.value}`, {
+        axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[display_id]=${mainSearchText.value}`, {
             headers: {
                 Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
             }
@@ -663,7 +663,7 @@ const getCurrentOrders = () => {
 
     payLaterOrders.value = []
 
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=false&filter[state]=!stashed`,{
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=false&filter[state]=!stashed`,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
@@ -673,7 +673,7 @@ const getCurrentOrders = () => {
     })
 
 
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=true&filter[state]=in_progress&filter[state]=pending&filter[state]=!stashed`,{
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=true&filter[state]=in_progress&filter[state]=pending&filter[state]=!stashed`,{
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
@@ -738,7 +738,7 @@ const BackStashedOrderToCheckout = async (stashed_order_index:number) => {
     // discount.value = order.discount == null || order.discount == undefined ? 0 : order.discount
 
 
-    axios.delete(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders/${order.id}`,
+    axios.delete(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders/${order.id}`,
     {
         headers:{
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
@@ -784,7 +784,7 @@ const notifications = ref<Notification[]>([])
 
 
 const getStashedOrders = () => {
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[state]=stashed`,{
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[state]=stashed`,{
         headers:{
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
@@ -823,7 +823,7 @@ const stashOrder = () => {
     order.state = "stashed"
 
 
-    axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders`,
+    axios.post(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders`,
         {
             data: order
         },
@@ -878,7 +878,7 @@ const SendChatMessage = (msg: string) => {
 
 
 const startWebsocket = () => {
-    socket = new WebSocket(`ws://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/ws`);
+    socket = new WebSocket(`ws://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/ws`);
     socket.onopen = () => {
         console.log("Opened ws connection");
         socket.send(`{"type":"subscribe","topic_name":"all"}`);
@@ -963,13 +963,13 @@ const { locale,setLocaleMessage } = useI18n({ useScope: 'global' })
 
 const loadLanguage = async () => {
 
-    await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/settings`, {
+    await axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/settings`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         },
     })
     .then(async (response)=>{
-        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/languages/${response.data.data.language.code}`, {
+        await axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/languages/${response.data.data.language.code}`, {
             headers: {
                 Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
             }
@@ -994,7 +994,7 @@ const loadLanguage = async () => {
 
 const init = async () => {
 
-    if (process.env.VUE_APP_ZITADEL_ENABLED === 'false'){
+    if (import.meta.env.VITE_APP_ZITADEL_ENABLED === 'false'){
         zitadel_enabled.value = false
     }
 
@@ -1080,7 +1080,7 @@ const addWithComment = async () => {
 
 
 const getCategories = async () => {
-    const response = await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/categories`,{
+    const response = await axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/categories`,{
         headers:{
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }
@@ -1115,7 +1115,7 @@ const submitOrder = () => {
 
     if (orderItems.value.length > 0){
 
-        axios.post(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/orders`,
+        axios.post(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders`,
             {
                 meta: {
                     is_print_client_receipt: is_print_receipt_client.value,
@@ -1155,7 +1155,7 @@ watch(searchtext, (newSearchText) => {
 
     isSearchingProduct.value = true
     
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products?filter[search]=${newSearchText}`,
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/products?filter[search]=${newSearchText}`,
     {
         headers:{
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
@@ -1236,7 +1236,7 @@ const refreshAvailabilities = () => {
             product_ids += index > 0 ? "," +product.id : product.id
         })
 
-        axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/availability?ids=`+product_ids,{
+        axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/products/availability?ids=`+product_ids,{
             headers:{
                 Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
             }

@@ -1,17 +1,17 @@
-import { createZITADELAuth } from "zitadel-vue/lib/src";
+import { createZITADELAuth } from "@zitadel/vue";
 import { User } from "oidc-client";
 import { SignInType, type OidcAuth } from 'vue-oidc-client/vue3';
 
 const zitadelAuth: { oidcAuth: OidcAuth; hasRole: (role: string) => any } = createZITADELAuth({
-    project_resource_id: process.env.VUE_APP_ZITADEL_PROJECT_RESOURCE_ID,
-    client_id: process.env.VUE_APP_ZITADEL_CLIENT_ID,
-    issuer: process.env.VUE_APP_ZITADEL_ISSUER,
+    project_resource_id: import.meta.env.VITE_APP_ZITADEL_PROJECT_RESOURCE_ID,
+    client_id: import.meta.env.VITE_APP_ZITADEL_CLIENT_ID,
+    issuer: import.meta.env.VITE_APP_ZITADEL_ISSUER,
 }, 
 "Zitadel",
 SignInType.Window,
 "http://localhost:3000/",
 {
-  post_logout_redirect_uri:process.env.VUE_APP_ZITADEL_ISSUER,
+  post_logout_redirect_uri:import.meta.env.VITE_APP_ZITADEL_ISSUER,
 }
 )
 

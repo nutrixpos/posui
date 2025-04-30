@@ -280,7 +280,7 @@ export class OrderItem {
 
     async RefreshReadyNumber(){
 
-        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/${this.Id}`,
+        await axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/products/${this.Id}`,
             {
                 headers: {
                     'Authorization': `Bearer ${zitadelAuth.oidcAuth.accessToken}`
@@ -295,7 +295,7 @@ export class OrderItem {
 
 
     async RefreshProductData(){
-        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/${this.product.id}/recipetree`,
+        await axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/products/${this.product.id}/recipetree`,
             {
                 headers: {
                     'Authorization': `Bearer ${zitadelAuth.oidcAuth.accessToken}`
@@ -361,7 +361,7 @@ export class OrderItem {
 
     async UpdateMaterialEntryCost(materialIndex: number){
         if (this.materials[materialIndex].entry != undefined){
-            await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/materials/${this.materials[materialIndex].material.id}/entries/${this.materials[materialIndex].entry.id}/cost?quantity=${this.materials[materialIndex].quantity}`, {
+            await axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials/${this.materials[materialIndex].material.id}/entries/${this.materials[materialIndex].entry.id}/cost?quantity=${this.materials[materialIndex].quantity}`, {
                 headers: {
                     'Authorization': `Bearer ${zitadelAuth.oidcAuth.accessToken}`
                 }
@@ -499,7 +499,7 @@ export class OrderItem {
 
 
     async ReloadDefaults() {
-        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/products/${this.product.id}/recipetree`,
+        await axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/products/${this.product.id}/recipetree`,
         {
             headers: {
                 'Authorization': `Bearer ${zitadelAuth.oidcAuth.accessToken}`

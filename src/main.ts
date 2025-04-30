@@ -4,9 +4,9 @@ import App from './App.vue'
 
 import '@/assets/styles.scss'
 import PrimeVue from 'primevue/config';
-import Aura from '@primevue/themes/aura';
+import Aura from '@primeuix/themes/aura';
 import 'primeicons/primeicons.css'
-import { definePreset } from '@primevue/themes';
+import { definePreset } from '@primeuix/themes';
 
 
 
@@ -259,7 +259,7 @@ const Noir = definePreset(Aura, {
   }
 });
 
-if (process.env.VUE_APP_ZITADEL_ENABLED === 'true'){
+if (import.meta.env.VITE_APP_ZITADEL_ENABLED === 'true'){
   zitadelAuth.oidcAuth.useRouter(zitadelRouter)
 
   zitadelAuth.oidcAuth.startup().then(ok => {

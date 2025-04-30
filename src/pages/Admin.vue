@@ -59,7 +59,7 @@ import { Toolbar } from "primevue";
 import Tree from "primevue/tree";
 import Button from "primevue/button";
 import { useI18n } from 'vue-i18n'
-import { globalStore } from '@/store';
+import { globalStore } from '@/stores';
 import axios from "axios";
 import OverlayPanel from "primevue/overlaypanel";
 import ProgressSpinner from "primevue/progressspinner";
@@ -232,13 +232,13 @@ const { locale,setLocaleMessage } = useI18n({ useScope: 'global' })
 
 const loadLanguage = async () => {
 
-    await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/settings`, {
+    await axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/settings`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         },
     })
     .then(async (response)=>{
-        await axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/languages/${response.data.data.language.code}`, {
+        await axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/languages/${response.data.data.language.code}`, {
             headers: {
                 Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
             }

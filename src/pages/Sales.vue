@@ -12,14 +12,14 @@
                                 <div class="col-8">
                                     <Card style="max-width:100%;">
                                         <template #content>
-                                            <Line  v-if="chartData != undefined" style="min-height: 20rem;max-width:100%;" :chartData="chartData" :chartOptions="chartOptions" />
+                                            <Line v-if="chartData != undefined" style="min-height: 20rem;max-width:100%;" :data="chartData" :chartOptions="chartOptions" />
                                         </template>
                                     </Card>
                                 </div>
                                 <div class="col-4 flex justify-content-start align-items-start">
                                     <Card style="max-width:100%;">
                                         <template #content>
-                                            <Pie style="max-width: 100%;" v-if="productPiechartData != undefined" :chartData="productPiechartData" :chartOptions="productPiechartOptions" />
+                                            <Pie style="max-width: 100%;" v-if="productPiechartData != undefined" :data="productPiechartData" :chartOptions="productPiechartOptions" />
                                         </template>
                                     </Card>
                                 </div>
@@ -277,7 +277,7 @@ const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.v
     let page_number = Math.floor(first/rows) + 1
 
 
-    axios.get(`http://${process.env.VUE_APP_BACKEND_HOST}${process.env.VUE_APP_MODULE_CORE_API_PREFIX}/api/logs/salesperday?page[number]=${page_number}&page[size]=${rows}`, {
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/logs/salesperday?page[number]=${page_number}&page[size]=${rows}`, {
         headers: {
             Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
         }

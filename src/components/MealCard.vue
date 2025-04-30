@@ -51,7 +51,7 @@ import InputText from 'primevue/inputtext'
 import OverlayPanel from 'primevue/overlaypanel';
 
 const backend_host = computed(() => {
-    return `http://${process.env.VUE_APP_BACKEND_HOST}`;
+    return `http://${import.meta.env.VITE_APP_BACKEND_HOST}`;
 });
 
 const op = ref();
