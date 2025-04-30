@@ -303,85 +303,136 @@
                     <Chip v-for="(role,index) in roles" :key="index" :label="role" style="height: 1.5rem;" class="m-1" />
                 </div>
                 <Divider />
-                <ul class="list-none p-0 m-0 overflow-hidden">
-                    <li>
-                        <a v-ripple class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
-                            <i class="pi pi-home mr-2"></i>
-                            <span class="font-medium">Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <Button  severity="secondary" size="large"  text rounded :aria-label="t('notifications')" @click.stop="notifications_toggle">
-                            <span class="p-button-icon pi pi-bell"></span>
-                            <Badge :value="notifications_severity_counter[0]" class="p-badge-success"  />
-                            <Badge :value="notifications_severity_counter[1]" class="p-badge-info"  />
-                            <Badge :value="notifications_severity_counter[2]" class="p-badge-warn" />
-                            <Badge :value="notifications_severity_counter[3]" class="p-badge-danger" />
-                        </Button>
-                        <OverlayPanel ref="notifications_op" class="w-3" style="max-height:60vh;overflow-y: auto;">
-                            <h4 class="my-0 mx-2" style="color:#c2c2c2">{{ t('notifications') }}</h4>
-                            <Button text :label="t('clear_all')" severity="secondary" @click="clearNotifications()"/>
-                            <div class="flex flex-column-reverse">
-                                <NotificationView @closed="notifications.splice(index,1)" :notification="notification" v-for="(notification,index) in notifications" :key="notification.id" />
-                            </div>
-                        </OverlayPanel>
-                    </li>
-                    <li>
-                        <Button  severity="secondary" size="large"  text rounded aria-label="Stashed"  @click.stop="chats_toggle">
-                            <span class="p-button-icon pi pi-comments"></span>
-                            <Badge class="p-badge-danger" v-if="has_new_message"  />
-                        </Button>
-                        <OverlayPanel ref="chats_op" class="w-5 lg:w-4" style="max-height:90vh;overflow-y: auto;">
-                            <Panel :header="t('chats')">
-
-                                <div style="height:40vh;overflow-y: auto;" ref="chat_container">                            
-                                    <div v-for="(chat,index) in chats" :key="index" :class="`flex ${chat.user_sub == user.sub ? 'justify-content-end' : ''}`">
-                                        <InlineMessage severity="success" v-if="chat.user_sub != user.sub" class="mt-2">
-                                            <template #default>
-                                                <div class="px-3 flex flex-column">
-                                                    <strong>{{ chat.sender_name }}</strong>
-                                                    <span class="pt-2 px-2">{{ chat.message }}</span>
-                                                </div>
-                                            </template>
-                                        </InlineMessage>
-            
-                                        <InlineMessage severity="info" v-if="chat.user_sub == user.sub" class="mt-2">
-                                            <template #default>
-                                                <div class="px-3 flex flex-column">
-                                                    <strong>{{ chat.sender_name }}</strong>
-                                                    <span class="pt-2 px-2">{{ chat.message }}</span>
-                                                </div>
-                                            </template>
-                                        </InlineMessage>
-                                    </div>
+                <div class="overflow-y-auto">
+                    <ul class="list-none p-4 m-0">
+                        <li>
+                            <Button  severity="secondary" size="large"  text rounded :aria-label="t('notifications')" @click.stop="notifications_toggle">
+                                <span class="p-button-icon pi pi-bell"></span>
+                                <Badge :value="notifications_severity_counter[0]" class="p-badge-success"  />
+                                <Badge :value="notifications_severity_counter[1]" class="p-badge-info"  />
+                                <Badge :value="notifications_severity_counter[2]" class="p-badge-warn" />
+                                <Badge :value="notifications_severity_counter[3]" class="p-badge-danger" />
+                            </Button>
+                            <OverlayPanel ref="notifications_op" class="w-3" style="max-height:60vh;overflow-y: auto;">
+                                <h4 class="my-0 mx-2" style="color:#c2c2c2">{{ t('notifications') }}</h4>
+                                <Button text :label="t('clear_all')" severity="secondary" @click="clearNotifications()"/>
+                                <div class="flex flex-column-reverse">
+                                    <NotificationView @closed="notifications.splice(index,1)" :notification="notification" v-for="(notification,index) in notifications" :key="notification.id" />
                                 </div>
+                            </OverlayPanel>
+                        </li>
+                        <li>
+                            <a
+                                v-ripple
+                                v-styleclass="{
+                                    selector: '@next',
+                                    enterFromClass: 'hidden',
+                                    enterActiveClass: 'animate-slidedown',
+                                    leaveToClass: 'hidden',
+                                    leaveActiveClass: 'animate-slideup'
+                                }"
+                                class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
+                            >
+                                <i class="pi pi-chart-line mr-2"></i>
+                                <span class="font-medium">Reports</span>
+                                <i class="pi pi-chevron-down ml-auto"></i>
+                            </a>
+                            <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
+                                <li>
+                                    <a
+                                        v-ripple
+                                        v-styleclass="{
+                                            selector: '@next',
+                                            enterFromClass: 'hidden',
+                                            enterActiveClass: 'animate-slidedown',
+                                            leaveToClass: 'hidden',
+                                            leaveActiveClass: 'animate-slideup'
+                                        }"
+                                        class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
+                                    >
+                                        <i class="pi pi-chart-line mr-2"></i>
+                                        <span class="font-medium">Revenue</span>
+                                        <i class="pi pi-chevron-down ml-auto"></i>
+                                    </a>
+                                    <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
+                                        <li>
+                                            <a v-ripple class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
+                                                <i class="pi pi-table mr-2"></i>
+                                                <span class="font-medium">View</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a v-ripple class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
+                                                <i class="pi pi-search mr-2"></i>
+                                                <span class="font-medium">Search</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a v-ripple class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
+                                        <i class="pi pi-chart-line mr-2"></i>
+                                        <span class="font-medium">Expenses</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li @click.stop="chats_toggle">
+                            <a v-ripple class="flex items-center align-items-center cursor-pointer px-4 py-3 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
+                                <i class="pi pi-comments mr-2"></i>
+                                <span class="font-medium">Messages</span>
+                                <span class="inline-flex items-center justify-center ml-auto bg-primary text-primary-contrast rounded-full" style="min-width: 1.5rem; height: 1.5rem">
+                                    <Badge class="p-badge-danger" v-if="has_new_message"  />
+                                </span>
+                            </a>
+                            <OverlayPanel ref="chats_op" class="w-5 lg:w-4" style="max-height:90vh;overflow-y: auto;">
+                                <Panel :header="t('chats')">
 
-                            </Panel>
+                                    <div style="height:40vh;overflow-y: auto;" ref="chat_container">                            
+                                        <div v-for="(chat,index) in chats" :key="index" :class="`flex ${chat.user_sub == user.sub ? 'justify-content-end' : ''}`">
+                                            <InlineMessage severity="success" v-if="chat.user_sub != user.sub" class="mt-2">
+                                                <template #default>
+                                                    <div class="px-3 flex flex-column">
+                                                        <strong>{{ chat.sender_name }}</strong>
+                                                        <span class="pt-2 px-2">{{ chat.message }}</span>
+                                                    </div>
+                                                </template>
+                                            </InlineMessage>
+                
+                                            <InlineMessage severity="info" v-if="chat.user_sub == user.sub" class="mt-2">
+                                                <template #default>
+                                                    <div class="px-3 flex flex-column">
+                                                        <strong>{{ chat.sender_name }}</strong>
+                                                        <span class="pt-2 px-2">{{ chat.message }}</span>
+                                                    </div>
+                                                </template>
+                                            </InlineMessage>
+                                        </div>
+                                    </div>
 
-                            <InputGroup class="mt-2">
-                                <InputText v-model="chat_text" :placeholder="t('write_message')+'..'" @keyup.enter="SendChatMessage(chat_text)" />
-                                <Button icon="pi pi-send" severity="info" @click="SendChatMessage(chat_text)" />
-                            </InputGroup>
-                        </OverlayPanel>
-                    </li>
-                    <li>
-                        <a v-ripple class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
-                            <i class="pi pi-comments mr-2"></i>
-                            <span class="font-medium">Messages</span>
-                            <span class="inline-flex items-center justify-center ml-auto bg-primary text-primary-contrast rounded-full" style="min-width: 1.5rem; height: 1.5rem">3</span>
-                        </a>
-                    </li>
-                    <li>
-                        <Button  severity="secondary" size="large"  text rounded aria-label="Stashed" label="Stashed"  @click.stop="stashed_toggle">
-                            <span class="p-button-icon pi pi-bookmark"></span>
-                            <Badge :value="stashedOrders.length" class="p-badge-success"  />
-                        </Button>
-                        <OverlayPanel ref="stashed_orders_op" class="w-5 lg:w-3" style="max-height:60vh;overflow-y: auto;">
-                            <h4 class="m-2" style="color:#c2c2c2">{{ t('stashed_orders') }}</h4>
-                            <StashedOrder :order="order" v-for="(order,index) in stashedOrders" :key="index" @back_to_checkout="BackStashedOrderToCheckout(index)" />
-                        </OverlayPanel>
-                    </li>
-                </ul>
+                                </Panel>
+
+                                <InputGroup class="mt-2">
+                                    <InputText v-model="chat_text" :placeholder="t('write_message')+'..'" @keyup.enter="SendChatMessage(chat_text)" />
+                                    <Button icon="pi pi-send" severity="info" @click="SendChatMessage(chat_text)" />
+                                </InputGroup>
+                            </OverlayPanel>
+                        </li>
+                        <li @click.stop="stashed_toggle">
+                            <a v-ripple class="flex justify-content-center align-items-center cursor-pointer px-4 py-3 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
+                                <i class="pi pi-bookmark mr-2"></i>
+                                <span class="font-medium">Drafts</span>
+                                <span class="inline-flex items-center justify-center ml-auto bg-primary text-primary-contrast rounded-full" style="min-width: 1.5rem; height: 1.5rem">
+                                    <Badge :value="stashedOrders.length" class="p-badge-success"  />
+                                </span>
+                            </a>
+                            <OverlayPanel ref="stashed_orders_op" class="w-5 lg:w-3" style="max-height:60vh;overflow-y: auto;">
+                                <h4 class="m-2" style="color:#c2c2c2">{{ t('stashed_orders') }}</h4>
+                                <StashedOrder :order="order" v-for="(order,index) in stashedOrders" :key="index" @back_to_checkout="BackStashedOrderToCheckout(index)" />
+                            </OverlayPanel>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </template>
     </Drawer>

@@ -26,6 +26,8 @@ import {  createWebHashHistory, createRouter } from 'vue-router'
 import { createPinia } from 'pinia'
 import zitadelAuth from "@/services/zitadelAuth";
 import Tooltip from 'primevue/tooltip';
+import StyleClass from 'primevue/styleclass';
+import Ripple from 'primevue/ripple';
 
 const insecureRoutes = [
   {
@@ -282,6 +284,8 @@ if (process.env.VUE_APP_ZITADEL_ENABLED === 'true'){
           .use(ConfirmationService)
           .use(i18n)
           .directive('tooltip', Tooltip)
+          .directive('styleclass', StyleClass)
+          .directive('ripple', Ripple)
           .mount('#app')
     } else {
         console.error('Zitadel startup was not ok')
@@ -307,6 +311,8 @@ if (process.env.VUE_APP_ZITADEL_ENABLED === 'true'){
   .use(ConfirmationService)
   .use(i18n)
   .directive('tooltip', Tooltip)
+  .directive('styleclass', StyleClass)
+  .directive('ripple', Ripple)
   .mount('#app')
 }
  
