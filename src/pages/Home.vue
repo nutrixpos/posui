@@ -327,14 +327,14 @@
                                 v-styleclass="{
                                     selector: '@next',
                                     enterFromClass: 'hidden',
-                                    enterActiveClass: 'animate-slidedown',
+                                    enterActiveClass: 'slidedown',
                                     leaveToClass: 'hidden',
-                                    leaveActiveClass: 'animate-slideup'
+                                    leaveActiveClass: 'slideup'
                                 }"
-                                class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
+                                class="flex align-items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
                             >
-                                <i class="pi pi-chart-line mr-2"></i>
-                                <span class="font-medium">Reports</span>
+                                <i class="pi pi-bell mr-2"></i>
+                                <span class="font-medium">Notifications</span>
                                 <i class="pi pi-chevron-down ml-auto"></i>
                             </a>
                             <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
@@ -344,9 +344,9 @@
                                         v-styleclass="{
                                             selector: '@next',
                                             enterFromClass: 'hidden',
-                                            enterActiveClass: 'animate-slidedown',
+                                            enterActiveClass: 'slidedown',
                                             leaveToClass: 'hidden',
-                                            leaveActiveClass: 'animate-slideup'
+                                            leaveActiveClass: 'slideup'
                                         }"
                                         class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
                                     >
@@ -381,7 +381,7 @@
                             <a v-ripple class="flex items-center align-items-center cursor-pointer px-4 py-3 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
                                 <i class="pi pi-comments mr-2"></i>
                                 <span class="font-medium">Messages</span>
-                                <span class="inline-flex items-center justify-center ml-auto bg-primary text-primary-contrast rounded-full" style="min-width: 1.5rem; height: 1.5rem">
+                                <span class="inline-flex items-center justify-center ml-auto text-primary-contrast rounded-full" style="min-width: 1.5rem; height: 1.5rem">
                                     <Badge class="p-badge-danger" v-if="has_new_message"  />
                                 </span>
                             </a>
@@ -422,7 +422,7 @@
                             <a v-ripple class="flex justify-content-center align-items-center cursor-pointer px-4 py-3 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
                                 <i class="pi pi-bookmark mr-2"></i>
                                 <span class="font-medium">Drafts</span>
-                                <span class="inline-flex items-center justify-center ml-auto bg-primary text-primary-contrast rounded-full" style="min-width: 1.5rem; height: 1.5rem">
+                                <span class="inline-flex items-center justify-center ml-auto text-primary-contrast rounded-full" style="min-width: 1.5rem; height: 1.5rem">
                                     <Badge :value="stashedOrders.length" class="p-badge-success"  />
                                 </span>
                             </a>
