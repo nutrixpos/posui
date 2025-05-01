@@ -25,7 +25,6 @@
             </template>
 
             <template #end>
-                    
                 <Button  severity="secondary" size="large"  text rounded aria-label="Current" @click.stop="paylater_toggle">
                     <span class="p-button-icon pi pi-hourglass"></span>
                     <Badge :value="payLaterOrders.length" class="p-badge-warn"  />
@@ -306,22 +305,6 @@
                 <div class="overflow-y-auto">
                     <ul class="list-none p-4 m-0">
                         <li>
-                            <Button  severity="secondary" size="large"  text rounded :aria-label="t('notifications')" @click.stop="notifications_toggle">
-                                <span class="p-button-icon pi pi-bell"></span>
-                                <Badge :value="notifications_severity_counter[0]" class="p-badge-success"  />
-                                <Badge :value="notifications_severity_counter[1]" class="p-badge-info"  />
-                                <Badge :value="notifications_severity_counter[2]" class="p-badge-warn" />
-                                <Badge :value="notifications_severity_counter[3]" class="p-badge-danger" />
-                            </Button>
-                            <OverlayPanel ref="notifications_op" class="w-3" style="max-height:60vh;overflow-y: auto;">
-                                <h4 class="my-0 mx-2" style="color:#c2c2c2">{{ t('notifications') }}</h4>
-                                <Button text :label="t('clear_all')" severity="secondary" @click="clearNotifications()"/>
-                                <div class="flex flex-column-reverse">
-                                    <NotificationView @closed="notifications.splice(index,1)" :notification="notification" v-for="(notification,index) in notifications" :key="notification.id" />
-                                </div>
-                            </OverlayPanel>
-                        </li>
-                        <li>
                             <a
                                 v-ripple
                                 v-styleclass="{
@@ -337,45 +320,47 @@
                                 <span class="font-medium">Notifications</span>
                                 <i class="pi pi-chevron-down ml-auto"></i>
                             </a>
-                            <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
-                                <li>
-                                    <a
-                                        v-ripple
-                                        v-styleclass="{
-                                            selector: '@next',
-                                            enterFromClass: 'hidden',
-                                            enterActiveClass: 'slidedown',
-                                            leaveToClass: 'hidden',
-                                            leaveActiveClass: 'slideup'
-                                        }"
-                                        class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple"
-                                    >
-                                        <i class="pi pi-chart-line mr-2"></i>
-                                        <span class="font-medium">Revenue</span>
-                                        <i class="pi pi-chevron-down ml-auto"></i>
+                            <ul class="list-none py-0 pl-4 pr-0 m-0 overflow-y-hidden transition-all duration-[400ms] ease-in-out">
+                                <li @click.stop="notifications_toggle">
+                                    <a v-ripple class="flex justify-content-center align-items-center cursor-pointer px-4 py-3 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
+                                        <span class="font-medium">Success</span>
+                                        <span class="inline-flex items-center justify-center ml-auto text-primary-contrast rounded-full" style="min-width: 1.5rem; height: 1.5rem">
+                                            <Badge :value="notifications_severity_counter[0]" class="p-badge-success"  />
+                                        </span>
                                     </a>
-                                    <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
-                                        <li>
-                                            <a v-ripple class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
-                                                <i class="pi pi-table mr-2"></i>
-                                                <span class="font-medium">View</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a v-ripple class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
-                                                <i class="pi pi-search mr-2"></i>
-                                                <span class="font-medium">Search</span>
-                                            </a>
-                                        </li>
-                                    </ul>
                                 </li>
-                                <li>
-                                    <a v-ripple class="flex items-center cursor-pointer p-4 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
-                                        <i class="pi pi-chart-line mr-2"></i>
-                                        <span class="font-medium">Expenses</span>
+                                <li @click.stop="notifications_toggle">
+                                    <a v-ripple class="flex justify-content-center align-items-center cursor-pointer px-4 py-3 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
+                                        <span class="font-medium">Info</span>
+                                        <span class="inline-flex items-center justify-center ml-auto text-primary-contrast rounded-full" style="min-width: 1.5rem; height: 1.5rem">
+                                            <Badge :value="notifications_severity_counter[1]" class="p-badge-info"  />
+                                        </span>
+                                    </a>
+                                </li>
+                                <li @click.stop="notifications_toggle">
+                                    <a v-ripple class="flex justify-content-center align-items-center cursor-pointer px-4 py-3 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
+                                        <span class="font-medium">Warn</span>
+                                        <span class="inline-flex items-center justify-center ml-auto text-primary-contrast rounded-full" style="min-width: 1.5rem; height: 1.5rem">
+                                            <Badge :value="notifications_severity_counter[2]" class="p-badge-warn"  />
+                                        </span>
+                                    </a>
+                                </li>
+                                <li @click.stop="notifications_toggle">
+                                    <a v-ripple class="flex justify-content-center align-items-center cursor-pointer px-4 py-3 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
+                                        <span class="font-medium">Danger</span>
+                                        <span class="inline-flex items-center justify-center ml-auto text-primary-contrast rounded-full" style="min-width: 1.5rem; height: 1.5rem">
+                                            <Badge :value="notifications_severity_counter[3]" class="p-badge-danger"  />
+                                        </span>
                                     </a>
                                 </li>
                             </ul>
+                            <OverlayPanel ref="notifications_op" class="w-3" style="max-height:60vh;overflow-y: auto;">
+                                <h4 class="my-0 mx-2" style="color:#c2c2c2">{{ t('notifications') }}</h4>
+                                <Button text :label="t('clear_all')" severity="secondary" @click="clearNotifications()"/>
+                                <div class="flex flex-column-reverse">
+                                    <NotificationView @closed="notifications.splice(index,1)" :notification="notification" v-for="(notification,index) in notifications" :key="notification.id" />
+                                </div>
+                            </OverlayPanel>
                         </li>
                         <li @click.stop="chats_toggle">
                             <a v-ripple class="flex items-center align-items-center cursor-pointer px-4 py-3 rounded text-surface-700 hover:bg-surface-100 dark:text-surface-0 dark:hover:bg-surface-800 duration-150 transition-colors p-ripple">
@@ -505,7 +490,7 @@ const add_customer_dialog = ref(false)
 const new_custom_data_value = ref("")
 const new_custom_data_key = ref("")
 const custom_data : any = ref([])
-const drawer_visible = ref(true)
+const drawer_visible = ref(false)
 
 const toast = useToast();
 const itemToEditIndex = ref(0)
