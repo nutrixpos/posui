@@ -34,7 +34,7 @@
                     <div class="col-2">
                         <Tree v-model:expandedKeys="expandedKeys" :value="menu_tree" selectionMode="single" class="w-full">
                             <template #default="slotProps">
-                                <RouterLink style="text-decoration: none;color: inherit;" :to="slotProps.node.link" class="flex align-items-center">
+                                <RouterLink style="text-decoration: none;color: inherit;" :to="slotProps.node.link" class="flex align-items-center w-full">
                                     <div>{{ $t(`${slotProps.node.label.title}`,slotProps.node.label.plural ? 3 : 1) }}</div>
                                 </RouterLink>
                             </template>

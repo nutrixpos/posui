@@ -80,7 +80,7 @@
                     </ButtonGroup>
                 </template>
             </Dialog>
-            <Dialog v-model:visible="add_component_dialog" modal :header="`Add new inventory component`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
+            <Dialog v-model:visible="add_component_dialog" modal :header="`Add new inventory component`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '90vw', '575px': '90vw' }">
                <div class="md:w-full">
                     <div class="flex flex-column gap-2">
                         <label for="name">Name</label>
@@ -91,12 +91,15 @@
                         <label for="unit">Unit</label>
                         <InputText id="unit" v-model="new_component_unit" aria-describedby="unit-help" />
                     </div>
+                    <Divider />
                     <h4>Entries</h4>
-                    <div class="flex justify-content-center align-items-center">
+                    <div class="flex flex-column w-full xl:w-3">
                         <InputText class="m-1" placeholder="Company" v-model="new_component_entry_company" aria-describedby="name-help" />
                         <InputText class="m-1" placeholder="Quantity" v-model="new_component_entry_quantity" aria-describedby="name-help" />
                         <InputText class="m-1" placeholder="Price" v-model="new_component_entry_price" aria-describedby="name-help" />
-                        <Button label="Add" @click="new_component_entries.push({company: new_component_entry_company, quantity: new_component_entry_quantity, unit: new_component_unit, purchase_price: new_component_entry_price})" />
+                        <div>
+                            <Button class="mx-1 my-2" label="Add" @click="new_component_entries.push({company: new_component_entry_company, quantity: new_component_entry_quantity, unit: new_component_unit, purchase_price: new_component_entry_price})" />
+                        </div>
                     </div>
                     <DataTable :value="new_component_entries">
                         <Column field="company" header="Company"></Column>
@@ -156,6 +159,7 @@ import FloatLabel from 'primevue/floatlabel'
 import EditMaterial from '@/components/EditMaterial.vue'
 import ConfirmDialog from 'primevue/confirmdialog'
 import MaterialLogsOrderItemsTable from '@/components/MaterialLogsOrderItemsTable.vue';
+import {Divider} from 'primevue'
 // import Message from 'primevue/message'
   
 import { ref,getCurrentInstance } from "vue";
