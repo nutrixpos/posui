@@ -1,13 +1,13 @@
 <template>
     <div class="w-full">
         <div class="grid m-2">
-            <div class="col-12 flex pt-3">
+            <div class="col-12 flex p-0 pt-3">
                 <div class="gird w-full">
                     <div class="col-12">
                         <h3>{{ $t('inventory') }}</h3>
                     </div>
                     <div class="col-12 flex justify-content-center align-items-center w-full">
-                        <DataTable v-model:expandedRows="expandedRows"  @rowExpand="componentRowExpand" :value="inventory_components" stripedRows tableStyle="min-width: 50rem" class="w-full pr-5">
+                        <DataTable v-model:expandedRows="expandedRows"  @rowExpand="componentRowExpand" :value="inventory_components" stripedRows tableStyle="min-width: 50rem" class="w-full">
                             <template #header>
                                 <div class="flex flex-wrap items-center justify-between align-items-center gap-2">
                                     <Button icon="pi pi-plus" :label="$t('add_component')" @click="add_component_dialog = true" rounded raised />
@@ -33,23 +33,22 @@
                                 </template>
                             </Column>
                             <template #expansion="slotProps">
-                                <div class="p-4">
+                                <div class="p-0">
                                     <h4>Entries for {{ slotProps.data.name }}</h4>
-                                    <div class="flex justify-content-center align-items-center">
+                                    <div class="flex flex-column w-8 xl:w-4">
                                         <InputText class="m-1" :placeholder="$t('company')" v-model="new_entry_company" aria-describedby="name-help" />
                                         <InputText class="m-1" :placeholder="$t('purchase_quantity')" v-model="new_entry_quantity" aria-describedby="name-help" />
                                         <InputText class="m-1" :placeholder="$t('purchase_price')" v-model="new_entry_price" aria-describedby="name-help" />
-                                        <FloatLabel>
+                                        <FloatLabel class="mx-1">
                                             <Calendar inputId="new_entry_expiration_date" v-model="new_entry_expiration_date" showIcon />
                                             <label for="new_entry_expiration_date">Expiration date</label>
                                         </FloatLabel>
-                                        <Button icon="pi pi-plus" label="Add Entry" class="ml-2" @click="addNewEntry(slotProps.data.id)" severity="info" raised />
+                                        <Button icon="pi pi-plus" label="Add Entry" class="my-1" @click="addNewEntry(slotProps.data.id)" severity="info" raised />
                                     </div>
-                                    <DataTable :value="slotProps.data.entries">
+                                    <DataTable :value="slotProps.data.entries" v-model:expandedRows="expandedEntryRows">
+                                        <Column expander style="width: 5rem" />
                                         <Column field="company" :header="$t('company')"></Column>
                                         <Column field="quantity" :header="$t('quantity')" sortable></Column>
-                                        <Column field="purchase_quantity" :header="$t('purchase_quantity')" sortable></Column>
-                                        <Column field="purchase_price" :header="$t('purchase_price')" sortable></Column>
                                         <Column field="expiration_date" :header="$t('expiration_date')" sortable></Column>
                                         <Column header="Actions" style="width:30rem">
                                             <template #body="slotProps">
@@ -58,6 +57,12 @@
                                                 </ButtonGroup>
                                             </template>
                                         </Column>
+                                        <template #expansion="slotProps">
+                                            <DataTable :value="slotProps">
+                                                <Column field="purchase_quantity" :header="$t('purchase_quantity')" sortable></Column>
+                                                <Column field="purchase_price" :header="$t('purchase_price')" sortable></Column>
+                                            </DataTable>
+                                        </template>
                                     </DataTable>
                                 </div>
                             </template>
@@ -185,6 +190,7 @@ const isLogsTableLoading = ref(true)
   const material_settings = ref<Material>()
   
   const expandedRows = ref([]);
+  const expandedEntryRows = ref([]);
   const expandedComponentLogsRows = ref([])
   
   const inventory_components = ref([])

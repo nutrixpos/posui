@@ -11,8 +11,8 @@
                 <Badge :value="payment_status.title" :severity="payment_status.severity" class="mx-1" />
             </div>
 
-            <div class="col-3">{{$t('item',3)}}</div>
-            <div class="col-9">
+            <div class="col-1">{{$t('item',3)}}</div>
+            <div class="col-11">
                 <OrderItemsInfo :order="order" @updated="emit('updated')" />
             </div>
 

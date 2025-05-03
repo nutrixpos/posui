@@ -31,7 +31,7 @@
             </div>
             <div class="col-12">
                 <div class="grid">
-                    <div class="col-2">
+                    <div class="col-3 xl:col-2">
                         <Tree v-model:expandedKeys="expandedKeys" :value="menu_tree" selectionMode="single" class="w-full">
                             <template #default="slotProps">
                                 <RouterLink style="text-decoration: none;color: inherit;" :to="slotProps.node.link" class="flex align-items-center w-full">
@@ -40,7 +40,7 @@
                             </template>
                         </Tree>
                     </div>
-                    <div class="col-10 flex pt-3">
+                    <div class="col-9 xl:col-10 flex pt-3">
                         <RouterView />
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 <template>
     <div v-if="!loading" class="flex flex-column m-0 p-0" style="height: 100vh;">
-        <Toolbar style="border-radius: 0px;height: 6vh; min-height:3rem; flex-shrink: 0;" class="py-1 lg:py-2">
+        <Toolbar style="border-radius: 0px;height: 6vh; min-height:4rem; flex-shrink: 0;" class="py-1 lg:py-2">
             <template #start>
                 <router-link to="/">
                     <img src="@/assets/logo.png" alt="logo" style="height:25px">
@@ -29,7 +29,7 @@
                     <span class="p-button-icon pi pi-hourglass"></span>
                     <Badge :value="payLaterOrders.length" class="p-badge-warn"  />
                 </Button>
-                <OverlayPanel ref="current_orders_op" class="w-5 lg:w-3" style="max-height:60vh;overflow-y: auto;">
+                <OverlayPanel ref="current_orders_op" class="w-8 xl:w-3" style="max-height:60vh;overflow-y: auto;">
                     <h4 class="m-2" style="color:#c2c2c2">{{t('current_orders')}}</h4>
                     <MainSearchResultView class="mt-2" @view-order-pressed="order_to_show = result; order_details_dialog=true" v-for="(result,index) in payLaterOrders" :key="index" :order="result" />
                 </OverlayPanel>
@@ -128,7 +128,7 @@
             <Dialog v-model:visible="edit_item_dialog" modal header="Edit item" class="xs:w-12 md:w-10 lg:w-8">
                 <OrderItemView v-model="orderItems[itemToEditIndex]"  />
             </Dialog>
-            <Dialog v-model:visible="order_details_dialog" modal header="Order details" class="xs:w-12 md:w-10 lg:w-8">
+            <Dialog v-model:visible="order_details_dialog" modal header="Order details" class="w-11 xl:w-8">
                 <OrderView @finished="finishOrderDisplayed()" @amount_collected="orderToShowAmountCollected()" :order="order_to_show" @order-cancelled="order_details_dialog=false" />
             </Dialog>
             <Dialog v-model:visible="visible" modal header="Add Comment" :style="{ width: '25rem' }">
