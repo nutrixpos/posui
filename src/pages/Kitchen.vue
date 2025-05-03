@@ -71,7 +71,7 @@ import InputGroup from 'primevue/inputgroup';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
-import { globalStore } from '@/store';
+import { globalStore } from '@/stores';
 import { useI18n } from 'vue-i18n'
 import ProgressSpinner from "primevue/progressspinner";
 import { $dt } from '@primevue/themes';

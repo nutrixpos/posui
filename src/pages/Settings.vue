@@ -72,7 +72,7 @@ import { useToast } from "primevue/usetoast";
 import {getCurrentInstance,ref} from 'vue'
 import Dropdown from 'primevue/dropdown';
 import { useI18n } from 'vue-i18n'
-import { globalStore } from '../store';
+import { globalStore } from '../stores';
 
 const { proxy } = getCurrentInstance();
 
