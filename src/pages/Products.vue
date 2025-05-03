@@ -31,7 +31,7 @@
                                 </template>
                             </Column>
                         </DataTable>
-                        <Dialog v-model:visible="productAddDialog" modal :header="$t('add_product')" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
+                        <Dialog v-model:visible="productAddDialog" modal :header="$t('add_product')" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '90vw', '575px': '90vw' }">
                             <div class="flex flex-column gap-2 w-5">
                                 <label for="name">{{$t('name')}}</label>
                                 <InputText id="name" v-model="new_product_name" aria-describedby="name" />
@@ -65,7 +65,7 @@
                                     <Column :header="$t('actions')">
                                         <template #body="slotProps">
                                             <ButtonGroup>
-                                                <Button icon="pi pi-times" severity="secondary" aria-label="Remove" @click="materials.splice(slotProps.data.index,1)" />
+                                                <Button icon="pi pi-times" severity="secondary" aria-label="Remove" @click="removeMaterial(slotProps.data.index)" />
                                             </ButtonGroup>
                                         </template>
                                     </Column>
@@ -106,7 +106,7 @@
                                 </ButtonGroup>
                             </template>
                         </Dialog>
-                        <Dialog v-model:visible="productEditDialog" modal :header="`${$t('edit_product')} ${productToEdit.name}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
+                        <Dialog v-model:visible="productEditDialog" modal :header="`${$t('edit_product')} ${productToEdit.name}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '90vw', '575px': '90vw' }">
                             <div class="flex flex-column gap-2 w-5">
                                 <label for="name">{{$t('name')}}</label>
                                 <InputText id="name" v-model="productToEdit.name" aria-describedby="name" />
@@ -143,7 +143,7 @@
                                     <Column :header="$t('actions')">
                                         <template #body="slotProps">
                                             <ButtonGroup>
-                                                <Button icon="pi pi-times" severity="secondary" aria-label="Remove" @click="productToEdit.materials.splice(slotProps.data.index,1)" />
+                                                <Button icon="pi pi-times" severity="secondary" aria-label="Remove" @click="removeEditMaterial(slotProps.data.index)" />
                                             </ButtonGroup>
                                         </template>
                                     </Column>
@@ -404,11 +404,37 @@ const submitProduct = () => {
         });
 }
 
+const removeMaterial = (index) => {
+    materials.value.splice(index,1)
+    materials.value.forEach((m,i) => {
+        m.index = i
+    })
+}
+
+const removeEditMaterial = (index) => {
+    productToEdit.value.materials.splice(index,1)
+    productToEdit.value.materials.forEach((m,i) => {
+        m.index = i
+    })
+}
+
 
 const addMaterial = (material: any) => {
-    material.quantity = 1
-    material.index = materials.value.length
-    materials.value.push(material)
+    add_material_dialog.value = false
+    edit_material_dialog.value = false
+    let exists = false
+
+    materials.value.forEach((m) => {
+        if (m.name == material.name){
+            exists = true
+        }
+    })
+
+    if (!exists){
+        material.quantity = 1
+        material.index = materials.value.length
+        materials.value.push(material)
+    }
 }
 
 const addSubProduct = (product: any) => {
@@ -419,9 +445,20 @@ const addSubProduct = (product: any) => {
 
 
 const addEdittedMaterial = (material: any) => {
-    material.quantity = 1
-    material.index = productToEdit.value.materials.length
-    productToEdit.value.materials.push(material)
+    add_material_dialog.value = false
+    edit_material_dialog.value = false
+    let exists = false
+    productToEdit.value.materials.forEach((m) => {
+        if (m.name == material.name){
+            exists = true
+        }
+    })
+
+    if (!exists){
+        material.quantity = 1
+        material.index = productToEdit.value.materials.length
+        productToEdit.value.materials.push(material)
+    }
 }
 
 const addEdittedSubProduct = (product: any) => {
