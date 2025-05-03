@@ -29,7 +29,7 @@
                                 </template>
                             </Column>
                         </DataTable>
-                        <Dialog v-model:visible="categoryAddDialog" modal :header="`Add new category`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
+                        <Dialog v-model:visible="categoryAddDialog" modal :header="`Add new category`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '90vw', '575px': '90vw' }">
                             <div class="flex flex-column gap-2 w-5">
                                 <label for="name">Name</label>
                                 <InputText id="name" v-model="new_category.name" aria-describedby="name" />
@@ -59,7 +59,7 @@
                                 </ButtonGroup>
                             </template>
                         </Dialog>
-                        <Dialog v-model:visible="categoryEditDialog" modal :header="`Edit product ${categoryToEdit.name}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '50vw', '575px': '90vw' }">
+                        <Dialog v-model:visible="categoryEditDialog" modal :header="`Edit category ${categoryToEdit.name}`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '90vw', '575px': '90vw' }">
                             <div class="flex flex-column gap-2 w-5">
                                 <label for="name">Name</label>
                                 <InputText id="name" v-model="categoryToEdit.name" aria-describedby="name" />
