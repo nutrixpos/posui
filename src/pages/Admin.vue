@@ -8,7 +8,7 @@
                             <img src="@/assets/logo.png" alt="logo" style="height:25px">
                         </router-link>
                         <router-link v-for="(item,index) in items" :key="index" :to="item.link">
-                            <Button :icon="item.icon" :label="$t(`${item.label.title}`,item.label.plural ? 3 : 1)"  text severity="secondary" />
+                            <Button :icon="item.icon" :label="$t(`${item.label.title}`,item.label.plural ? 3 : 1)"  :text="!item.focused" severity="secondary" />
                         </router-link>
                     </template>
 
@@ -106,11 +106,11 @@ const menu_tree =ref([
     {
         key: '0',
         label: {
-            title:'inventory',
-            plural: false,
+            title:'material',
+            plural: true,
         },
-        data: 'Inventory',
-        icon: 'pi pi-fw pi-inbox',
+        data: 'Materials',
+        icon: 'fa fa-carrot',
         link:'/admin/inventory',
     },
     {
@@ -120,7 +120,7 @@ const menu_tree =ref([
             plural: true
         },
         data: 'Products',
-        icon: 'pi pi-fw pi-barcode',
+        icon: 'fa fa-barcode',
         link:'/admin/products',
     },
     {
@@ -130,7 +130,7 @@ const menu_tree =ref([
             plural: true
         },
         data: 'Categories',
-        icon: 'pi pi-fw pi-sitemap',
+        icon: 'fa fa-sitemap',
         link:'/admin/categories',
     },
     {
@@ -206,6 +206,7 @@ const items = ref([
               title:'cashier',
               plural:false
           },
+          focused: false,
           icon: 'pi pi-desktop',
           link: '/home',
       },
@@ -214,6 +215,7 @@ const items = ref([
               title:'kitchen',
               plural:false
           },
+          focused: false,
           icon: 'fa fa-kitchen-set',
           link:'/kitchen'
       },
@@ -222,6 +224,7 @@ const items = ref([
               title:'admin',
               plural:false
           },
+          focused: true,
           icon: 'pi pi-cog',
           link: '/admin',
       }

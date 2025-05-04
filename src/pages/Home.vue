@@ -5,10 +5,12 @@
                 <router-link to="/">
                     <img src="@/assets/logo.png" alt="logo" style="height:25px">
                 </router-link>
-                <div  v-for="(item,index) in navbar_links" :key="index" >
-                    <router-link v-if="item.authority.some(role => roles.includes(role)) || !zitadel_enabled" :to="item.link" >
-                        <Button :icon="item.icon" :label="t(`${item.label.title}`,item.label.plural ? 3 : 1)"  text severity="secondary" />
-                    </router-link>
+                <div class="flex mx-2 gap-2">
+                    <div  v-for="(item,index) in navbar_links" :key="index" >
+                        <router-link v-if="item.authority.some(role => roles.includes(role)) || !zitadel_enabled" :to="item.link" >
+                            <Button :icon="item.icon" :label="t(`${item.label.title}`,item.label.plural ? 3 : 1)"  :text="!item.focused" severity="secondary" />
+                        </router-link>
+                    </div>
                 </div>
             </template>
 
@@ -1259,6 +1261,7 @@ watch(selectedCategory, (category) => {
           },
           icon: 'pi pi-desktop',
           link: '/home',
+          focused: true,
           authority: ['cashier','admin']
       },
       {
@@ -1266,6 +1269,7 @@ watch(selectedCategory, (category) => {
               title:'kitchen',
               plural:false
           },
+          focused: false,
           icon: 'fa fa-kitchen-set',
           link:'/kitchen',
           authority: ['chef','admin']
@@ -1275,6 +1279,7 @@ watch(selectedCategory, (category) => {
               title:'admin',
               plural:false
           },
+          focused: false,
           icon: 'pi pi-cog',
           link: '/admin',
           authority: ['admin']
