@@ -4,13 +4,13 @@
             <div class="col-12 flex p-0 pt-3">
                 <div class="gird w-full">
                     <div class="col-12">
-                        <h3>{{ $t('inventory') }}</h3>
+                        <h3>{{ $t('material',3) }}</h3>
                     </div>
                     <div class="col-12 flex justify-content-center align-items-center w-full">
                         <DataTable v-model:expandedRows="expandedRows"  @rowExpand="componentRowExpand" :value="inventory_components" stripedRows tableStyle="min-width: 50rem" class="w-full">
                             <template #header>
                                 <div class="flex flex-wrap items-center justify-between align-items-center gap-2">
-                                    <Button icon="pi pi-plus" :label="$t('add_component')" @click="add_component_dialog = true" rounded raised />
+                                    <Button icon="pi pi-plus" :label="$t('add_material')" @click="add_component_dialog = true" rounded raised />
                                 </div>
                             </template>
                             <Column expander style="width: 5rem" />
@@ -85,7 +85,7 @@
                     </ButtonGroup>
                 </template>
             </Dialog>
-            <Dialog v-model:visible="add_component_dialog" modal :header="`Add new inventory component`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '90vw', '575px': '90vw' }">
+            <Dialog v-model:visible="add_component_dialog" modal :header="`Add new inventory material`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '90vw', '575px': '90vw' }">
                <div class="md:w-full">
                     <div class="flex flex-column gap-2">
                         <label for="name">Name</label>

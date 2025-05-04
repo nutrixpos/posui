@@ -40,7 +40,7 @@
                             </template>
                         </Tree>
                     </div>
-                    <div class="col-9 xl:col-10 flex pt-3">
+                    <div class="col-9 xl:col-10 flex p-0 pt-3">
                         <RouterView />
                     </div>
                 </div>
