@@ -32,11 +32,11 @@
             <div class="col-12">
                 <div class="grid">
                     <div class="col-3 xl:col-2">
-                        <Tree v-model:expandedKeys="expandedKeys" :value="menu_tree" selectionMode="single" class="w-full">
+                        <Tree v-model:expandedKeys="expandedKeys" :value="menu_tree" selectionMode="single" class="w-full" @node-select="(node) => sidemenuNodeSelect(node)">
                             <template #default="slotProps">
-                                <RouterLink style="text-decoration: none;color: inherit;" :to="slotProps.node.link" class="flex align-items-center w-full">
+                                <div style="text-decoration: none;color: inherit;" class="flex align-items-center w-full">
                                     <div>{{ $t(`${slotProps.node.label.title}`,slotProps.node.label.plural ? 3 : 1) }}</div>
-                                </RouterLink>
+                                </div>
                             </template>
                         </Tree>
                     </div>
@@ -74,6 +74,12 @@ const user : any = computed(() => {
     return proxy.$zitadel?.oidcAuth.userProfile
 
 })
+
+const sidemenuNodeSelect = (node) => {
+    if (node.link) {
+        proxy.$router.push(node.link);
+    }
+}
 
 
 // const selected_list_item = ref ({ name: 'Inventory', icon:'inbox', link:'inventory' })

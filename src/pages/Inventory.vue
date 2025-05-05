@@ -336,7 +336,7 @@ const confirmDeleteMaterial = (material_id: string) => {
             })
         },
         reject: () => {
-            toast.add({ severity: 'error', summary: 'Transaction failed !', detail: event.data.name, life: 3000,group:'br' });
+            
         }
     });
   }
