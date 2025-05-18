@@ -65,6 +65,7 @@ const insecureRoutes = [
       ]},
       {path: 'settings', component: () => import('@/pages/Settings.vue'),},
       {path: 'customers', component: () => import('@/pages/Customers.vue'),},
+      {path: 'hubsync', component: () => import('@/pages/Hubsync.vue'),},
     ],
   },
 ]
@@ -123,6 +124,7 @@ const zitadelRoutes = [
       ]},
       {path: 'settings', component: () => import('@/pages/Settings.vue'),},
       {path: 'customers', component: () => import('@/pages/Customers.vue'),},
+      {path: 'hubsync', component: () => import('@/pages/Hubsync.vue'),},
     ],
   },
 ]

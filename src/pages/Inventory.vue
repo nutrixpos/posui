@@ -1,7 +1,7 @@
 <template>
-    <div class="w-full">
-        <div class="grid m-2">
-            <div class="col-12 flex p-0 pt-3">
+     <div class="w-full">
+        <div class="grid mx-2">
+            <div class="col-12 flex">
                 <div class="gird w-full">
                     <div class="col-12">
                         <h3>{{ $t('material',3) }}</h3>

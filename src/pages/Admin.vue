@@ -40,7 +40,7 @@
                             </template>
                         </Tree>
                     </div>
-                    <div class="col-9 xl:col-10 flex p-0 pt-3">
+                    <div class="col-9 xl:col-10 flex p-0 pt-3 mt-2" style="background-color: white;">
                         <RouterView />
                     </div>
                 </div>
@@ -203,7 +203,16 @@ const menu_tree =ref([
         icon: 'pi pi-users',
         link:'/admin/customers',
     },
-    
+    {
+        key: '7',
+        label: {
+            title:'Hubsync',
+            plural:false
+        },
+        data: 'Hubsync',
+        icon: 'pi pi-sync',
+        link:'/admin/hubsync',
+    },
 ])
 
 const items = ref([

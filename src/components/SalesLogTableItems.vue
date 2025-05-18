@@ -4,22 +4,22 @@
         <Column sortable field="ItemName" :header="$t('name')">
             <template #body="slotProps">
                 <Badge value="REFUNDED" v-if="items_refunds[slotProps.data.item_id]" severity="danger"  />
-                {{ slotProps.data.ItemName }}
+                {{ slotProps.data.item_name }}
             </template>
         </Column>
         <Column sortable field="Cost" :header="$t('cost')">
             <template #body="slotProps">
                 <div class="flex gap-2 align-items-center">
-                    <div>{{ slotProps.data.Cost }} </div>
+                    <div>{{ slotProps.data.cost }} </div>
                     <Badge v-if="items_refunds[slotProps.data.item_id]?.inventory_refunds > 0" :value="`-${items_refunds[slotProps.data.item_id]?.inventory_refunds}`" severity="success" class="mr-2" />
                 </div>
             </template>
         </Column>
         <Column sortable field="Quantity" :header="$t('quantity')">
             <template #body="slotProps">
-                <div>{{ slotProps.data.Quantity != "0" ? slotProps.data.Quantity : "1" }}</div>
+                <div>{{ slotProps.data.quantity != "0" ? slotProps.data.quantity : "1" }}</div>
             </template></Column>
-            <Column sortable field="SalePrice" :header="$t('sale_price')"></Column>
+            <Column sortable field="sale_price" :header="$t('sale_price')"></Column>
             <Column sortable field="refunds" :header="$t('refunds')">
                 <template #body="slotProps">
                     <Badge :value="`${items_refunds[slotProps.data.item_id]?.refund_amount}`" severity="danger" v-if="items_refunds[slotProps.data.item_id]?.is_refunded" />
@@ -27,29 +27,29 @@
             </Column>
         <Column sortable field="profit" :header="$t('profit')">
             <template #body="slotProps">
-                <div :style="`${ (slotProps.data.SalePrice - slotProps.data.Cost - (items_refunds[slotProps.data.item_id]?.refund_amount || 0 ) + (items_refunds[slotProps.data.item_id]?.inventory_refunds || 0 )) > 0 ? 'color:green' : 'color:red' }`">{{ slotProps.data.SalePrice - slotProps.data.Cost - (items_refunds[slotProps.data.item_id]?.refund_amount || 0 ) + (items_refunds[slotProps.data.item_id]?.inventory_refunds || 0 ) }}</div>
+                <div :style="`${ (slotProps.data.sale_price - slotProps.data.Cost - (items_refunds[slotProps.data.item_id]?.refund_amount || 0 ) + (items_refunds[slotProps.data.item_id]?.inventory_refunds || 0 )) > 0 ? 'color:green' : 'color:red' }`">{{ slotProps.data.sale_price - slotProps.data.cost - (items_refunds[slotProps.data.item_id]?.refund_amount || 0 ) + (items_refunds[slotProps.data.item_id]?.inventory_refunds || 0 ) }}</div>
             </template>
         </Column>
         <template #expansion="slotProps">
-            <DataTable :value="slotProps.data.Components">
-                <Column sortable field="ComponentName" :header="$t('name')"></Column>
-                <Column sortable field="Cost" :header="$t('cost')">
+            <DataTable :value="slotProps.data.components">
+                <Column sortable field="component_name" :header="$t('name')"></Column>
+                <Column sortable field="cost" :header="$t('cost')">
                     <template #body="slotProps">
                         <div class="flex gap-2 align-items-center">
-                            {{ slotProps.data.Cost }}
-                            <Badge :value="`-${items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.ComponentId]?.inventory_return_qty * items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.ComponentId]?.cost_per_unit}`" severity="success" v-if="items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.ComponentId]?.inventory_return_qty > 0" />
+                            {{ slotProps.data.cost }}
+                            <Badge :value="`-${items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.component_id]?.inventory_return_qty * items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.component_id]?.cost_per_unit}`" severity="success" v-if="items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.component_id]?.inventory_return_qty > 0" />
                         </div>
                     </template>
                 </Column>
-                <Column sortable field="Quantity" :header="$t('quantity')">
+                <Column sortable field="quantity" :header="$t('quantity')">
                     <template #body="slotProps">
                         <div class="flex gap-2 align-items-center">
-                            {{ slotProps.data.Quantity }}
-                            <Badge :value="`-${items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.ComponentId]?.inventory_return_qty}`" severity="success" v-if="items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.ComponentId]?.inventory_return_qty > 0" />
+                            {{ slotProps.data.quantity }}
+                            <Badge :value="`-${items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.component_id]?.inventory_return_qty}`" severity="success" v-if="items_refunds[slotProps.data.item_id]?.material_refunds[slotProps.data.component_id]?.inventory_return_qty > 0" />
                         </div>
                     </template>
                 </Column>
-                <Column sortable field="EntryId" :header="$t('entry')"></Column>
+                <Column sortable field="entry_id" :header="$t('entry')"></Column>
             </DataTable>
             <SalesLogTableItems v-if="slotProps.data.DownstreamCost != null" :items="slotProps.data.DownstreamCost" />    
         </template>
@@ -74,8 +74,8 @@ const init = () => {
     items.value = props.items
 
     items.value.forEach((item,itemIndex) => {
-        item.Components.forEach((component,componentIndex) => {
-            items.value[itemIndex].Components[componentIndex].item_id = item.item_id
+        item.components.forEach((component,componentIndex) => {
+            items.value[itemIndex].components[componentIndex].item_id = item.item_id
         })
     })
 

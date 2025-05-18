@@ -1,20 +1,20 @@
 <template>
-    <div class="w-full">
-         <div class="grid mx-2">
-             <div class="col-12 flex">
-                 <div class="gird w-full">
-                     <div class="col-12">
+     <div class="w-full">
+        <div class="grid mx-2">
+            <div class="col-12 flex">
+                <div class="gird w-full">
+                    <div class="col-12">
                         <h3>{{$t('settings')}}</h3>
                     </div>
                     <div class="col-12 flex-column flex">
-                        <h4>{{$t('inventory')}}</h4>
+                        <h4><i class="fa fa-carrot"></i> {{$t('material',3)}}</h4>
                         <div class="flex align-items-center">
                             <span>stock_alert_treshold</span>
                             <InputText class="ml-3" v-model.number="stock_alert_treshold" type="number" />
                         </div>
                         
                         <Divider />
-                        <h4 class="mb-2">{{$t('order',3)}}</h4>
+                        <h4 class="mb-2"><i class="pi pi-box"></i> {{$t('order',3)}}</h4>
                         <span class="mt-1">Queues</span>
                         <div class="flex align-items-center">
                             <div class="flex flex-column">
@@ -38,7 +38,7 @@
 
                         <Divider />
                         <div class="flex flex-column">
-                            <h3><span class="pi pi-language"></span> {{ t('printer',1) }}</h3>
+                            <h3><span class="pi pi-print"></span> {{ t('printer',1) }}</h3>
                             <div class="flex align-items-center mt-3">
                                     <span>{{t("host",1)}}:</span>
                                     <InputText v-model="receipt_printer_host"  class="mx-2" />
@@ -51,7 +51,6 @@
                             <Dropdown @change="changedLanguage" v-model="selectedLang" :options="languages" optionLabel="language" placeholder="Select a Language" class="w-full md:w-3" />
                             <Button @click="applyLang" v-if="changedLang" class="mt-2 md:w-3" type="button" label="Apply" severity="secondary"></Button>
                         </div>
-
 
                         <div class="mt-6">
                             <Button label="Save" @click="saveSettings()" />
