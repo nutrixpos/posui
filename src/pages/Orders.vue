@@ -152,7 +152,7 @@ const confirmCancelOrder = (event,display_id,order_id) => {
 
 const loadOrders =  (first=0,rows=100) => {
 
-    let page_number = Math.ceil((first/rows))
+        let page_number = Math.floor(first/rows) + 1
 
     if (page_number == 0) {
         page_number = 1
