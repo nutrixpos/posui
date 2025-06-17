@@ -19,7 +19,7 @@ import '@fortawesome/fontawesome-free/css/all.css';
 
 
 
-import {  createWebHashHistory, createRouter } from 'vue-router'
+import {  createWebHistory, createRouter } from 'vue-router'
 
 import { createPinia } from 'pinia'
 import zitadelAuth from "@/services/zitadelAuth";
@@ -130,12 +130,12 @@ const zitadelRoutes = [
 ]
 
 const zitadelRouter = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes: zitadelRoutes,
 })
 
 const insecureRouter = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes: insecureRoutes,
 })
 
