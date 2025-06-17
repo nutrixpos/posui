@@ -29,11 +29,11 @@
             <template #end>
                 <Button  severity="secondary" size="large"  text rounded aria-label="Current" @click.stop="paylater_toggle">
                     <span class="p-button-icon pi pi-hourglass"></span>
-                    <Badge :value="payLaterOrders.length" class="p-badge-warn"  />
+                    <Badge :value="inProgressOrders.length" class="p-badge-warn"  />
                 </Button>
                 <OverlayPanel ref="current_orders_op" class="w-8 xl:w-3" style="max-height:60vh;overflow-y: auto;">
                     <h4 class="m-2" style="color:#c2c2c2">{{t('current_orders')}}</h4>
-                    <MainSearchResultView class="mt-2" @view-order-pressed="order_to_show = result; order_details_dialog=true" v-for="(result,index) in payLaterOrders" :key="index" :order="result" />
+                    <MainSearchResultView class="mt-2" @view-order-pressed="order_to_show = result; order_details_dialog=true" v-for="(result,index) in inProgressOrders" :key="index" :order="result" />
                 </OverlayPanel>
                 <Button icon="pi pi-bars" severity="secondary" size="large" text rounded aria-label="drawer" @click="drawer_visible=true" />
             </template>
@@ -131,7 +131,7 @@
                 <OrderItemView v-model="orderItems[itemToEditIndex]"  />
             </Dialog>
             <Dialog v-model:visible="order_details_dialog" modal header="Order details" class="w-11 xl:w-8">
-                <OrderView @finished="finishOrderDisplayed()" @amount_collected="orderToShowAmountCollected()" :order="order_to_show" @order-cancelled="order_details_dialog=false" />
+                <OrderView @finished="finishOrderDisplayed()" @cancelled="cancelOrderDisplayed()" @amount_collected="orderToShowAmountCollected()" :order="order_to_show" />
             </Dialog>
             <Dialog v-model:visible="visible" modal header="Add Comment" :style="{ width: '25rem' }">
                 <InputText v-model="comment" placeholder="Comment" class="mb-4" />
@@ -522,7 +522,7 @@ const visible = ref(false)
 const selectedCategory = ref();
 
 const stashedOrders = ref<Order[]>([])
-const payLaterOrders = ref<Order[]>([])
+const inProgressOrders = ref<Order[]>([])
 
 const notifications_op = ref();
 const stashed_orders_op = ref();
@@ -608,6 +608,16 @@ const finishOrderDisplayed = () => {
     }
 }
 
+const cancelOrderDisplayed = () => {
+    if (order_to_show.value){
+        order_to_show.value.state = "cancelled"
+    }
+    
+    order_details_dialog.value=false
+
+    getCurrentOrders()
+}
+
 const orderToShowAmountCollected = () => {
 
     if (order_to_show.value){
@@ -648,7 +658,7 @@ const mainSearchTextChanged = (event:any) => {
 
 const getCurrentOrders = () => {
 
-    payLaterOrders.value = []
+    inProgressOrders.value = []
 
     axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders?filter[is_paid]=false&filter[state]=!stashed`,{
         headers: {
@@ -656,7 +666,7 @@ const getCurrentOrders = () => {
         }
     })
     .then(response => {
-        payLaterOrders.value = payLaterOrders.value.concat(response.data.data)
+        inProgressOrders.value = inProgressOrders.value.concat(response.data.data)
     })
 
 
@@ -666,7 +676,7 @@ const getCurrentOrders = () => {
         }
     })
     .then(response => {
-        payLaterOrders.value = payLaterOrders.value.concat(response.data.data)
+        inProgressOrders.value = inProgressOrders.value.concat(response.data.data)
     })
 
     

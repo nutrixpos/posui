@@ -95,7 +95,7 @@ const order_logs_dialog = ref(false)
 
 const confirm = useConfirm();
 const { proxy } = getCurrentInstance();
-const emit = defineEmits(['order-cancelled','amount_collected','finished','updated'])
+const emit = defineEmits(['amount_collected','finished','updated','cancelled'])
 
 
 const getOrderLogs = () => {
@@ -188,19 +188,18 @@ const confirmCancelOrder = (event) => {
         },
         accept: () => {
             
-            axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/cancel`, {
+            axios.post(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/orders/${props.order.id}/cancel`, {},{
                 headers: {
                     Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
                 }
             })
             .then(()=>{
                 toast.add({ severity: 'success', summary: 'Success', detail: 'Order cancelled successfully',group:'br' });
+                emit('cancelled')
             })
             .catch(() => {
                 toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to cancel order',group:'br' });
             });
-
-            emit('order-cancelled')
 
             
         },
