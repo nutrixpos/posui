@@ -56,7 +56,7 @@
                                             <Column expander style="width: 5rem" />
                                             <Column sortable field="order.display_id" header="Id">
                                                 <template #body="slotProps">
-                                                    <i class="pi pi-exclamation-circle" v-tooltip.top="'has refunds'" v-if="orders_refunds[slotProps.data.order.id]?.refunds.length > 0" style="margin-right:0.5rem;color:red"></i>                                            
+                                                    <i class="pi pi-exclamation-circle" v-tooltip.top="'has refunds'" v-if="orders_refunds[slotProps.data.id]?.refunds.length > 0" style="margin-right:0.5rem;color:red"></i>                                            
                                                     {{ slotProps.data.order.display_id }}
                                                 </template>
                                             </Column>
