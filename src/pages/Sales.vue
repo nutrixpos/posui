@@ -72,7 +72,7 @@
                                             <Column sortable field="order.sale_price" header="Sales"></Column>
                                             <Column sortable field="order.refunds" header="Refunds">
                                                 <template #body="slotProps">
-                                                    {{ orders_refunds[slotProps.data.order.id]?.total_refunds }}
+                                                    {{ orders_refunds[slotProps.data.id]?.total_refunds }}
                                                 </template>
                                             </Column>
                                             <Column sortable field="profit" header="Profit">
@@ -81,7 +81,7 @@
                                                 </template>
                                             </Column>
                                             <template #expansion="slotProps">
-                                                <SalesLogTableItems :items="slotProps.data.costs" :order_refunds="orders_refunds[slotProps.data.order.id] || []" />
+                                                <SalesLogTableItems :items="slotProps.data.costs" :order_refunds="orders_refunds[slotProps.data.id] || []" />
                                             </template>
                                         </DataTable>
                                     </template>
@@ -294,7 +294,7 @@ const loadSales = (first=salesTableFirstIndex.value,rows=salesTableRowsPerPage.v
         productPieChartLabels.value = []
         productPieChartSales.value = []
         isSalesTableLoading.value = true
-        orders_refunds.value = []
+        orders_refunds.value = {}
 
         salesTableTotalRecords.value = response.data.meta.total_records
 
