@@ -98,7 +98,7 @@
 import DataTable from "primevue/datatable";
 import Column from 'primevue/column'
 import {Line,Pie} from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,PointElement,LineElement,ArcElement} from 'chart.js'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,PointElement,LineElement,ArcElement,Filler} from 'chart.js'
 import Card from "primevue/card";
 import {getCurrentInstance, ref} from 'vue'
 import axios from 'axios'
@@ -107,7 +107,7 @@ import { $dt } from '@primevue/themes';
 import {Badge} from 'primevue';
 
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,PointElement,LineElement,ArcElement)
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,PointElement,LineElement,ArcElement, Filler)
 
 
 const {proxy} = getCurrentInstance()
@@ -196,7 +196,7 @@ const setChartData = () => {
                 fill: false,
                 tension: 0.4,
                 borderWidth:2,
-                borderColor: $dt('purple.400').value,
+                borderColor: '#4069ce',
             },
             {
                 label: 'Cost',
@@ -204,7 +204,7 @@ const setChartData = () => {
                 fill: false,
                 tension: 0.4,
                 borderWidth:2,
-                borderColor: $dt('amber.500').value,
+                borderColor: '#8E44AD',
             },
             {
                 label: 'Refunds',
@@ -212,7 +212,7 @@ const setChartData = () => {
                 fill: false,
                 tension: 0.4,
                 borderWidth:2,
-                borderColor: $dt('red.500').value,
+                borderColor: '#C70039',
             },
             {
                 label: 'Returns',
@@ -220,7 +220,7 @@ const setChartData = () => {
                 data: chartInventoryReturns.value,
                 fill: true,
                 tension: 0.5,
-                borderColor: $dt('blue.500').value,
+                borderColor: '#FFBF00',
             },
             {
                 label: 'Profit',
@@ -228,7 +228,7 @@ const setChartData = () => {
                 fill: true,
                 tension: 0.5,
                 borderWidth: 4,
-                borderColor: $dt('emerald.500').value,
+                borderColor: '#40ce52',
             },
         ]
     };
