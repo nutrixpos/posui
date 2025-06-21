@@ -303,10 +303,6 @@
                 <div class="mt-2">
                     <Chip v-for="(role,index) in roles" :key="index" :label="role" style="height: 1.5rem;" class="m-1" />
                 </div>
-                <div class="flex mx-2 mt-2 gap-2 align-items-center">
-                    <span class="text-xl font-bold tracking-wide primary.500 dark:text-sky-400">{{t('cash_float')}} : {{ cash_float }}</span>
-                    <Chip label="5,000" icon="pi pi-money-bill" style="background-color: gold;" />
-                </div>
                 <Divider />
                 <div class="overflow-y-auto">
                     <ul class="list-none p-4 m-0">
