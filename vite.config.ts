@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+import path from 'path'; // Import Node.js path module
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -33,7 +34,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      'vue-oidc-client/vue3': '/home/elmawardy/projects/nutrix/posui/node_modules/vue-oidc-client/vue3/src/vue-oidc-client.ts', // Non-minified path
+      'vue-oidc-client/vue3': path.resolve(__dirname, './node_modules/vue-oidc-client/vue3/src/vue-oidc-client.ts'), // Non-minified path
     },
   },
 })
