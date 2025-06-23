@@ -16,6 +16,14 @@ export default defineConfig({
       }
     }
   },
+  build: {
+    sourcemap: true, // <-- for production builds
+    minify: false,
+    terserOptions: {
+      compress: false,
+      mangle: false,
+    },
+  },
   plugins: [
     vue(),
     vueJsx(),
@@ -24,7 +32,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      'vue-oidc-client/vue3': '/home/elmawardy/projects/nutrix/posui/node_modules/vue-oidc-client/vue3/src/vue-oidc-client.ts', // Non-minified path
     },
   },
 })
