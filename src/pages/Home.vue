@@ -991,6 +991,8 @@ const loadLanguage = async () => {
 
 const init = async () => {
 
+    console.log(import.meta.env)
+
     if (import.meta.env.VITE_APP_ZITADEL_ENABLED === 'false'){
         zitadel_enabled.value = false
     }
@@ -998,7 +1000,7 @@ const init = async () => {
     if (!zitadel_enabled.value || proxy.$zitadel?.oidcAuth.isAuthenticated){
         await loadLanguage()
     }else {
-        proxy.$router.push('/no-access')
+        window.location.href = import.meta.env.VITE_APP_ZITADEL_ISSUER
         loading.value = false
     }
 
