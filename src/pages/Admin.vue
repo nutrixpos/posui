@@ -4,9 +4,9 @@
             <div class="col-12 p-0">
                 <Toolbar style="border-radius: 0px;" class="py-1 lg:py-2">
                     <template #start>
-                        <router-link to="/">
+                        <div @click="version_dialog_visible=true" style="text-decoration: none;color:gray">
                             <img src="@/assets/logo.png" alt="logo" style="height:25px">
-                        </router-link>
+                        </div>
                         <router-link v-for="(item,index) in items" :key="index" :to="item.link">
                             <Button :icon="item.icon" :label="$t(`${item.label.title}`,item.label.plural ? 3 : 1)"  :text="!item.focused" severity="secondary" />
                         </router-link>
@@ -51,11 +51,29 @@
       <ProgressSpinner style="width: 50px; height: 50px" strokeWidth="8" fill="transparent"
       animationDuration=".5s" aria-label="Custom ProgressSpinner" />
     </div>
+    <Dialog v-model:visible="version_dialog_visible" header="Nutrix" :style="{ width: '45rem' }">
+        <p class="text-justify">
+            Nutrix is an open-source restaurant management system
+            designed to make managing your restaurant easy and efficient.
+            It's built with modern web technologies and provides a simple
+            and intuitive interface to manage your menu, orders, customers,
+            and more. Nutrix is completely free and open source under the GPL-2 license, meaning
+            you have complete control over the system and can modify it
+            to suit your needs. With Nutrix, you can focus on what matters
+            most - providing great food and service to your customers.
+        </p>
+        <p>
+            For more support & collaboration visit &nbsp;<a style="font-size:large;" href="https://nutrixpos.com" target="_blank"><i class="pi pi-external-link mr-2"></i>https://nutrixpos.com </a>
+        </p>
+        <p>
+            version / commit hash : {{ app_version }}
+        </p>
+    </Dialog>
 </template>
 
 <script setup lang="ts">
 import {ref,getCurrentInstance,computed} from "vue";
-import { Toolbar } from "primevue";
+import { Toolbar,Dialog } from "primevue";
 import Tree from "primevue/tree";
 import Button from "primevue/button";
 import { useI18n } from 'vue-i18n'
@@ -68,6 +86,11 @@ import ProgressSpinner from "primevue/progressspinner";
 const { proxy } = getCurrentInstance();
 const store = globalStore()
 const user_profile_op = ref();
+
+const app_version = ref("")
+const version_dialog_visible = ref(false)
+
+app_version.value = import.meta.env.VITE_APP_APP_VERSION || ""
 
 const user : any = computed(() => {
 

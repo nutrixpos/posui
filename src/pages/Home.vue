@@ -2,9 +2,9 @@
     <div v-if="!loading" class="flex flex-column m-0 p-0" style="height: 100vh;">
         <Toolbar style="border-radius: 0px;flex-shrink: 0;" class="py-1 lg:py-2">
             <template #start>
-                <router-link to="/">
+                <div @click="version_dialog_visible=true" style="text-decoration: none;color:gray">
                     <img src="@/assets/logo.png" alt="logo" style="height:25px">
-                </router-link>
+                </div>
                 <div class="flex mx-2 gap-2">
                     <div  v-for="(item,index) in navbar_links" :key="index" >
                         <router-link v-if="item.authority.some(role => roles.includes(role)) || !zitadel_enabled" :to="item.link" >
@@ -423,6 +423,24 @@
             </div>
         </template>
     </Drawer>
+    <Dialog v-model:visible="version_dialog_visible" header="Nutrix" :style="{ width: '45rem' }">
+        <p class="text-justify">
+            Nutrix is an open-source restaurant management system
+            designed to make managing your restaurant easy and efficient.
+            It's built with modern web technologies and provides a simple
+            and intuitive interface to manage your menu, orders, customers,
+            and more. Nutrix is completely free and open source under the GPL-2 license, meaning
+            you have complete control over the system and can modify it
+            to suit your needs. With Nutrix, you can focus on what matters
+            most - providing great food and service to your customers.
+        </p>
+        <p>
+            For more support & collaboration visit &nbsp;<a style="font-size:large;" href="https://nutrixpos.com" target="_blank"><i class="pi pi-external-link mr-2"></i>https://nutrixpos.com </a>
+        </p>
+        <p>
+            version / commit hash : {{ app_version }}
+        </p>
+    </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -447,7 +465,7 @@
   import NotificationView from '@/components/NotificationView.vue';
   import OverlayPanel from 'primevue/overlaypanel';
   import { Notification} from '@/classes/Notification';
-  import { ref,watch,computed,getCurrentInstance, nextTick, useTemplateRef  } from "vue";
+  import { ref,watch,computed,getCurrentInstance, nextTick, useTemplateRef, version  } from "vue";
   import StashedOrder from '@/components/StashedOrder.vue'
   import InputGroup from 'primevue/inputgroup';
   import InlineMessage from 'primevue/inlinemessage'
@@ -468,6 +486,9 @@
   import { ToggleButton,Drawer,Avatar,ButtonGroup } from 'primevue';
   import { globalStore } from '@/stores';
 
+
+const app_version = ref("")
+const version_dialog_visible = ref(false)
 
 const zitadel_enabled = ref(true)
 
@@ -992,6 +1013,8 @@ const loadLanguage = async () => {
 const init = async () => {
 
     console.log(import.meta.env)
+
+    app_version.value = import.meta.env.VITE_APP_APP_VERSION || ""
 
     if (import.meta.env.VITE_APP_ZITADEL_ENABLED === 'false'){
         zitadel_enabled.value = false
