@@ -27,7 +27,7 @@
             </Column>
         <Column sortable field="profit" :header="$t('profit')">
             <template #body="slotProps">
-                <div :style="`${ (slotProps.data.sale_price - slotProps.data.Cost - (items_refunds[slotProps.data.item_id]?.refund_amount || 0 ) + (items_refunds[slotProps.data.item_id]?.inventory_refunds || 0 )) > 0 ? 'color:green' : 'color:red' }`">{{ slotProps.data.sale_price - slotProps.data.cost - (items_refunds[slotProps.data.item_id]?.refund_amount || 0 ) + (items_refunds[slotProps.data.item_id]?.inventory_refunds || 0 ) }}</div>
+                <div :style="`${ (slotProps.data.sale_price - slotProps.data.cost - (items_refunds[slotProps.data.item_id]?.refund_amount || 0 ) + (items_refunds[slotProps.data.item_id]?.inventory_refunds || 0 )) > 0 ? 'color:green' : 'color:red' }`">{{ slotProps.data.sale_price - slotProps.data.cost - (items_refunds[slotProps.data.item_id]?.refund_amount || 0 ) + (items_refunds[slotProps.data.item_id]?.inventory_refunds || 0 ) }}</div>
             </template>
         </Column>
         <template #expansion="slotProps">
