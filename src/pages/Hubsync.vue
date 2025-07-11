@@ -16,10 +16,6 @@
                             <InputText v-model="hubSync.settings.server_host" type="text" class="w-full mb-2" />
                         </div>
                         <div class="col-12 lg:col-4 flex flex-column gap-2">
-                            <label for="binary" class="font-bold">Server Port</label>
-                            <InputText v-model.number="hubSync.settings.server_port" mode="decimal" class="w-full mb-2" />
-                        </div>
-                        <div class="col-12 lg:col-4 flex flex-column gap-2">
                             <label for="binary" class="font-bold">Token</label>
                             <InputText v-model="hubSync.settings.token" type="text" class="w-full mb-2" />
                         </div>
@@ -63,7 +59,6 @@ const hubSync = ref({
         settings: {
             enabled: false,
             server_host: "",
-            server_port: 0,
             token: "",
             buffer_size: 0,
             sync_interval: 0,
