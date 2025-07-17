@@ -1,3 +1,5 @@
+![screenshot of the application](https://elmawardy.sirv.com/Images/nutrix_wallpaper2-min.png)
+
 # posui
 
 This template should help get you started developing with Vue 3 in Vite.
