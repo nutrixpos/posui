@@ -32,73 +32,80 @@
                             </Column>
                         </DataTable>
                         <Dialog v-model:visible="productAddDialog" modal :header="$t('add_product')" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '90vw', '575px': '90vw' }">
-                            <div class="flex flex-column gap-2 w-5">
-                                <label for="name">{{$t('name')}}</label>
-                                <InputText id="name" v-model="new_product_name" aria-describedby="name" />
-                            </div>
-                            <div class="flex flex-column gap-2 w-5 mt-2">
-                                <label for="price">{{$t('price')}}</label>
-                                <InputText id="name" v-model.number="new_product_price" aria-describedby="price" />
-                            </div>
-                            <div class="flex flex-column gap-2 mt-2">
-                                <label for="name">{{$t('image')}}</label>
-                                <FileUpload @before-send="beforeNewProductImageUpload" ref="newProductImageUpload" name="image" :fileLimit="1" :showCancelButton="false" :chooseLabel="$t('choose')" :showUploadButton="false"  :url="`${backendUrl}/api/products/${new_product_id}/image`" @upload="onAdvancedUpload($event)" :multiple="false" accept="image/*" :maxFileSize="1000000">
-                                    <template #empty>
-                                        <span>Drag and drop files to here to upload.</span>
-                                    </template>
-                                </FileUpload>
-                            </div>
-                            <div class="flex flex-column gap-2 w-5 mt-2">
-                                <label for="name">{{$t('ready')}}</label>
-                                <InputText v-model.number="new_product_ready" type="number" aria-describedby="ready" />
-                            </div>
-                            <div class="flex flex-column gap-2 w-10 mt-3">
-                                <label for="name">{{$t('material',3)}}</label>
-                                <DataTable :value="materials" stripedRows class="w-full pr-2">
-                                    <Column field="name" :header="$t('name')"></Column>
-                                    <Column field="quantity" :header="$t('quantity')">
-                                        <template #body="slotProps">
-                                            <InputText type="number" v-model.number="materials[slotProps.data.index].quantity" aria-describedby="quantity" />
+                            <Form v-slot="$form" :initialValues="addproduct_initials" :resolver="add_product_resolver" class="flex flex-column gap-4 w-full sm:w-56">
+                                <div class="flex flex-column gap-2 w-5">
+                                    <label for="name">{{$t('name')}}</label>
+                                    <InputText id="name" name="name" aria-describedby="name" />
+                                </div>
+                                <div class="flex flex-column gap-2 w-5 mt-2">
+                                    <label for="price">{{$t('price')}}</label>
+                                    <InputText id="name" name="price" type="number" aria-describedby="price" />
+                                    <Message v-if="$form.price?.invalid" severity="error" size="small" variant="simple">{{ $form.price.error?.message }}</Message>
+                                </div>
+                                <div class="flex flex-column gap-2 mt-2">
+                                    <label for="name">{{$t('image')}}</label>
+                                    <FileUpload @before-send="beforeNewProductImageUpload" ref="newProductImageUpload" name="image" :fileLimit="1" :showCancelButton="false" :chooseLabel="$t('choose')" :showUploadButton="false"  :url="`${backendUrl}/api/products/${new_product_id}/image`" @upload="onAdvancedUpload($event)" :multiple="false" accept="image/*" :maxFileSize="1000000">
+                                        <template #empty>
+                                            <span>Drag and drop files to here to upload.</span>
                                         </template>
-                                    </Column>
-                                    <Column field="unit" :header="$t('unit')"></Column>
-                                    <Column :header="$t('actions')">
-                                        <template #body="slotProps">
-                                            <ButtonGroup>
-                                                <Button icon="pi pi-times" severity="secondary" aria-label="Remove" @click="removeMaterial(slotProps.data.index)" />
-                                            </ButtonGroup>
+                                    </FileUpload>
+                                </div>
+                                <div class="flex flex-column gap-2 w-5 mt-2">
+                                    <label for="name">{{$t('ready')}}</label>
+                                    <InputText name="ready" type="number" aria-describedby="ready" />
+                                    <Message v-if="$form.ready?.invalid" severity="error" size="small" variant="simple">{{ $form.ready.error?.message }}</Message>
+                                </div>
+                                <div class="flex flex-column gap-2 w-10 mt-3">
+                                    <label for="name">{{$t('material',3)}}</label>
+                                    <DataTable :value="materials" stripedRows class="w-full pr-2">
+                                        <Column field="name" :header="$t('name')"></Column>
+                                        <Column field="quantity" :header="$t('quantity')">
+                                            <template #body="slotProps">
+                                                <InputText type="number" v-model.number="materials[slotProps.data.index].quantity" aria-describedby="quantity" />
+                                            </template>
+                                        </Column>
+                                        <Column field="unit" :header="$t('unit')"></Column>
+                                        <Column :header="$t('actions')">
+                                            <template #body="slotProps">
+                                                <ButtonGroup>
+                                                    <Button icon="pi pi-times" severity="secondary" aria-label="Remove" @click="removeMaterial(slotProps.data.index)" />
+                                                </ButtonGroup>
+                                            </template>
+                                        </Column>
+                                        <template #header>
+                                            <div class="flex justify-start">
+                                                <Button icon="pi pi-plus" :label="$t('add_material')"  rounded raised @click="add_material_dialog=true" />
+                                            </div>
                                         </template>
-                                    </Column>
-                                    <template #header>
-                                        <div class="flex justify-start">
-                                            <Button icon="pi pi-plus" :label="$t('add_material')"  rounded raised @click="add_material_dialog=true" />
-                                        </div>
-                                    </template>
-                                </DataTable>
-                            </div>
-                            <div class="flex flex-column gap-2 w-10 mt-3">
-                                <label for="name">{{$t('subproduct',3)}}</label>
-                                <DataTable :value="sub_products" stripedRows class="w-full pr-2">
-                                    <Column field="name" :header="$t('name')"></Column>
-                                    <Column field="quantity" :header="$t('quantity')">
-                                        <template #body="slotProps">
-                                            <InputText type="number" v-model.number="sub_products[slotProps.data.index].quantity" aria-describedby="quantity" />
+                                    </DataTable>
+                                </div>
+                                <div class="flex flex-column gap-2 w-10 mt-3">
+                                    <label for="name">{{$t('subproduct',3)}}</label>
+                                    <DataTable :value="sub_products" stripedRows class="w-full pr-2">
+                                        <Column field="name" :header="$t('name')"></Column>
+                                        <Column field="quantity" :header="$t('quantity')">
+                                            <template #body="slotProps">
+                                                <InputText type="number" v-model.number="sub_products[slotProps.data.index].quantity" aria-describedby="quantity" />
+                                            </template>
+                                        </Column>
+                                        <Column :header="$t('actions')">
+                                            <template #body="slotProps">
+                                                <ButtonGroup>
+                                                    <Button icon="pi pi-times" severity="secondary" aria-label="Remove" @click="sub_products.splice(slotProps.data.index,1)" />
+                                                </ButtonGroup>
+                                            </template>
+                                        </Column>
+                                        <template #header>
+                                            <div class="flex justify-start">
+                                                <Button icon="pi pi-plus" label="Add Subproduct"  rounded raised @click="add_subproduct_dialog=true" />
+                                            </div>
                                         </template>
-                                    </Column>
-                                    <Column :header="$t('actions')">
-                                        <template #body="slotProps">
-                                            <ButtonGroup>
-                                                <Button icon="pi pi-times" severity="secondary" aria-label="Remove" @click="sub_products.splice(slotProps.data.index,1)" />
-                                            </ButtonGroup>
-                                        </template>
-                                    </Column>
-                                    <template #header>
-                                        <div class="flex justify-start">
-                                            <Button icon="pi pi-plus" label="Add Subproduct"  rounded raised @click="add_subproduct_dialog=true" />
-                                        </div>
-                                    </template>
-                                </DataTable>
-                            </div>
+                                    </DataTable>
+                                </div>
+
+                                {{ add_product_form=$form }}
+                            </Form>
+                            
                             <template #footer>
                                 <ButtonGroup>
                                     <Button :label="$t('cancel')"  severity="secondary" aria-label="Cancel"  />
@@ -215,12 +222,13 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import ButtonGroup from 'primevue/buttongroup';
 import axios from 'axios'
-import { ref,getCurrentInstance,computed, nextTick } from "vue";
+import { ref,getCurrentInstance,computed, nextTick,reactive } from "vue";
 import { useToast } from "primevue/usetoast";
 import PickMaterial from '@/components/PickMaterial.vue';
 import PickProduct from '@/components/PickProduct.vue';
 import { useConfirm } from "primevue/useconfirm";
-import { Image } from 'primevue';
+import { Image, Message } from 'primevue';
+import { Form } from '@primevue/forms';
 // import { Material } from '@/classes/OrderItem';
 
 const { proxy } = getCurrentInstance();
@@ -231,11 +239,41 @@ const productEditDialog =  ref(false)
 const edit_material_dialog = ref(false)
 const edit_subproduct_dialog = ref(false)
 
+
+const add_product_form = ref({})
+
 const productAddDialog = ref(false)
-const new_product_name = ref("")
-const new_product_ready = ref(0)
+
+
+const addproduct_initials = reactive({
+    name: '',
+    ready: 0,
+    id: '',
+    price: 0
+});
+
+const add_product_resolver = ({ values }) => {
+    const errors = {};
+
+    if (!values.name) {
+        errors.name = [{ message: 'Name is required.' }];
+    }
+
+    if (!/^\d+(\.\d+)?$/.test(values.ready)) {
+        errors.ready = [{ message: 'Ready is not a valid number.' }];
+    }
+
+    if (!/^\d+(\.\d+)?$/.test(values.price)) {
+        errors.price = [{ message: 'Price is not a valid number.' }];
+    }
+
+    return {
+        values, // (Optional) Used to pass current form values to submit event.
+        errors
+    };
+};
+
 const new_product_id = ref("")
-const new_product_price = ref(0)
 const add_subproduct_dialog = ref(false)
 // const new_product_materials = ref<Material[]>([])
 // const new_product_subproducts = ref([])
@@ -375,10 +413,14 @@ const updateProduct = () => {
 
 
 const submitProduct = () => {
+
+    if (!add_product_form.value.valid)
+        return
+
     const payload = {
-        name: new_product_name.value,
-        ready: new_product_ready.value,
-        price: new_product_price.value,
+        name: add_product_form.value.name.value,
+        ready: Number(add_product_form.value.ready.value),
+        price: Number(add_product_form.value.price.value),
         materials: materials.value,
         sub_products: sub_products.value,
     };
