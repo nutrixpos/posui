@@ -1280,7 +1280,8 @@ watch(selectedCategory, (category) => {
                 id: recipe.id,
                 name:recipe.name,
                 price:recipe.price,
-                image_url: recipe.image_url
+                image_url: recipe.image_url,
+                enable_inventory_consumption: recipe.enable_inventory_consumption
             })
         })
         refreshAvailabilities();

@@ -10,7 +10,8 @@
                 </div>
                 <p class="mx-1 my-1" style="color:green"><strong>{{props.item.price}} {{$t('egp')}}</strong></p>   
 
-                <div class="text-center flex align-items-center justify-content-center" style="background-color:#ffd589;">
+                <div class="text-center gap-1 flex align-items-center justify-content-center" style="background-color:#ffd589;">
+                    <i v-tooltip.top="$t('inventory_consumption_disabled')" v-if="!props.item.enable_inventory_consumption" class="fa fa-unlink" style="font-size:1rem;color:indigo;z-index:99"></i>
                     <p class="m-0" style="font-size:0.9rem;">{{ props.item.availability != undefined ? Math.max(0, props.item.availability) : "..." || "..." }} {{$t('possible')}}</p>
                 </div>
 
