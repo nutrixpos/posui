@@ -102,8 +102,14 @@
                                         </template>
                                     </DataTable>
                                 </div>
+                                <div class="flex flex-column gap-2 w-10 mt-3">
+                                    <label for="name">{{$t('enable_inventory_consumption',1)}}</label>
+                                    <ToggleSwitch v-model="newproduct_enable_inventory_consumption" />
+                                </div>
 
-                                {{ add_product_form=$form }}
+                                <div style="opacity: 0;">
+                                    {{ add_product_form=$form }}
+                                </div>
                             </Form>
                             
                             <template #footer>
@@ -127,7 +133,6 @@
                                 <InputText v-model.number="productToEdit.ready" type="number" aria-describedby="ready" />
                             </div>
                             <div class="flex flex-column gap-2 w-10 mt-3">
-                                <label for="name">{{$t('image',1)}}</label>
                                 <Image :src="backend_host+'/public/'+productToEdit.image_url" alt="Image" width="250" />
                             </div>
                             <div class="flex flex-column gap-2 mt-2">
@@ -184,6 +189,10 @@
                                     </template>
                                 </DataTable>
                             </div>
+                            <div class="flex flex-column gap-2 w-10 mt-3">
+                                <label for="name">{{$t('enable_inventory_consumption',1)}}</label>
+                                <ToggleSwitch v-model="productToEdit.enable_inventory_consumption" />
+                            </div>
                             <template #footer>
                                 <ButtonGroup>
                                     <Button :label="$t('cancel')"  severity="secondary" aria-label="Cancel"  />
@@ -227,7 +236,7 @@ import { useToast } from "primevue/usetoast";
 import PickMaterial from '@/components/PickMaterial.vue';
 import PickProduct from '@/components/PickProduct.vue';
 import { useConfirm } from "primevue/useconfirm";
-import { Image, Message } from 'primevue';
+import { Image, Message, ToggleSwitch } from 'primevue';
 import { Form } from '@primevue/forms';
 // import { Material } from '@/classes/OrderItem';
 
@@ -244,6 +253,8 @@ const add_product_form = ref({})
 
 const productAddDialog = ref(false)
 
+
+const newproduct_enable_inventory_consumption = ref(true)
 
 const addproduct_initials = reactive({
     name: '',
@@ -423,6 +434,7 @@ const submitProduct = () => {
         price: Number(add_product_form.value.price.value),
         materials: materials.value,
         sub_products: sub_products.value,
+        enable_inventory_consumption: newproduct_enable_inventory_consumption.value,
     };
 
     axios.post(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/products`,{
