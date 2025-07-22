@@ -7,13 +7,17 @@
                         <h3>{{ $t('material',3) }}</h3>
                     </div>
                     <div class="col-12 flex justify-content-center align-items-center w-full">
-                        <DataTable v-model:expandedRows="expandedRows"  @rowExpand="componentRowExpand" :value="inventory_components" stripedRows tableStyle="min-width: 50rem" class="w-full">
+                        <DataTable :value="inventory_components" stripedRows tableStyle="min-width: 50rem" class="w-full">
                             <template #header>
                                 <div class="flex flex-wrap items-center justify-between align-items-center gap-2">
                                     <Button icon="pi pi-plus" :label="$t('add_material')" @click="add_component_dialog = true" rounded raised />
                                 </div>
                             </template>
-                            <Column expander style="width: 5rem" />
+                            <Column :header="$t('actions')" style="width:5rem">
+                                <template #body="slotProps">
+                                    <Button icon="fa fa-dolly-flatbed" severity="secondary" aria-label="ShowEntries" @click="entries_dialog_material = slotProps.data; entries_dialog=true"/>
+                                </template>
+                            </Column>
                             <Column field="name" :header="$t('name')"></Column>
                             <Column field="totalAmount" :header="$t('quantity')"></Column>
                             <Column field="unit" :header="$t('unit')"></Column>
@@ -32,40 +36,6 @@
                                     </ButtonGroup>
                                 </template>
                             </Column>
-                            <template #expansion="slotProps">
-                                <div class="p-0">
-                                    <h4>Entries for {{ slotProps.data.name }}</h4>
-                                    <div class="flex flex-column w-8 xl:w-4">
-                                        <InputText class="m-1" :placeholder="$t('company')" v-model="new_entry_company" aria-describedby="name-help" />
-                                        <InputText class="m-1" :placeholder="$t('purchase_quantity')" v-model="new_entry_quantity" aria-describedby="name-help" />
-                                        <InputText class="m-1" :placeholder="$t('purchase_price')" v-model="new_entry_price" aria-describedby="name-help" />
-                                        <FloatLabel class="mx-1">
-                                            <Calendar inputId="new_entry_expiration_date" v-model="new_entry_expiration_date" showIcon />
-                                            <label for="new_entry_expiration_date">Expiration date</label>
-                                        </FloatLabel>
-                                        <Button icon="pi pi-plus" label="Add Entry" class="my-1" @click="addNewEntry(slotProps.data.id)" severity="info" raised />
-                                    </div>
-                                    <DataTable :value="slotProps.data.entries" v-model:expandedRows="expandedEntryRows">
-                                        <Column expander style="width: 5rem" />
-                                        <Column field="company" :header="$t('company')"></Column>
-                                        <Column field="quantity" :header="$t('quantity')" sortable></Column>
-                                        <Column field="expiration_date" :header="$t('expiration_date')" sortable></Column>
-                                        <Column header="Actions" style="width:30rem">
-                                            <template #body="slotProps">
-                                                <ButtonGroup>
-                                                    <Button icon="pi pi-times" :label="$t('delete')" severity="secondary" aria-label="Delete" @click="confirmDeleteEntry($event,slotProps.data.id)" />
-                                                </ButtonGroup>
-                                            </template>
-                                        </Column>
-                                        <template #expansion="slotProps">
-                                            <DataTable :value="slotProps">
-                                                <Column field="purchase_quantity" :header="$t('purchase_quantity')" sortable></Column>
-                                                <Column field="purchase_price" :header="$t('purchase_price')" sortable></Column>
-                                            </DataTable>
-                                        </template>
-                                    </DataTable>
-                                </div>
-                            </template>
                         </DataTable>
                     </div>
                 </div>
@@ -84,6 +54,39 @@
                         <Button class="ml-2" severity="primary" label="Save" aria-label="Save" @click="saveMaterialSettings"/>
                     </ButtonGroup>
                 </template>
+            </Dialog>
+            <Dialog v-if="entries_dialog" :header="`Entries for ${ entries_dialog_material?.name }`" v-model:visible="entries_dialog" :style="{ width: '90rem' }">
+                <div class="p-0">
+                    <div class="flex flex-column w-8 xl:w-4">
+                        <InputText class="m-1" :placeholder="$t('company')" v-model="new_entry_company" aria-describedby="name-help" />
+                        <InputText class="m-1" :placeholder="$t('purchase_quantity')" v-model="new_entry_quantity" aria-describedby="name-help" />
+                        <InputText class="m-1" :placeholder="$t('purchase_price')" v-model="new_entry_price" aria-describedby="name-help" />
+                        <FloatLabel class="mx-1">
+                            <Calendar inputId="new_entry_expiration_date" v-model="new_entry_expiration_date" showIcon />
+                            <label for="new_entry_expiration_date">Expiration date</label>
+                        </FloatLabel>
+                        <Button icon="pi pi-plus" label="Add Entry" class="my-1" @click="addNewEntry(entries_dialog_material.id)" severity="info" raised />
+                    </div>
+                    <DataTable @page="updatEntriesTableRowsPerPage" :lazy="true" :totalRecords="entriesTableTotalRecords" :loading="isEntriesTableLoading"  paginatorPosition="both"  paginator :rows="entriesTableRowsPerPage" :rowsPerPageOptions="[50, 100, 500]"stripedRows :value="entries_dialog_material.entries" v-model:expandedRows="expandedEntryRows">
+                        <Column expander style="width: 5rem" />
+                        <Column field="company" :header="$t('company')"></Column>
+                        <Column field="quantity" :header="$t('quantity')" sortable></Column>
+                        <Column field="expiration_date" :header="$t('expiration_date')" sortable></Column>
+                        <Column header="Actions" style="width:30rem">
+                            <template #body="slotProps">
+                                <ButtonGroup>
+                                    <Button icon="pi pi-times" :label="$t('delete')" severity="secondary" aria-label="Delete" @click="confirmDeleteEntry($event,entries_dialog_material?.id,slotProps.data.id)" />
+                                </ButtonGroup>
+                            </template>
+                        </Column>
+                        <template #expansion="slotProps">
+                            <DataTable :value="slotProps">
+                                <Column field="purchase_quantity" :header="$t('purchase_quantity')" sortable></Column>
+                                <Column field="purchase_price" :header="$t('purchase_price')" sortable></Column>
+                            </DataTable>
+                        </template>
+                    </DataTable>
+                </div>
             </Dialog>
             <Dialog v-model:visible="add_component_dialog" modal :header="`Add new inventory material`" :style="{ width: '75rem' }" :breakpoints="{ '1199px': '90vw', '575px': '90vw' }">
                <div class="md:w-full">
@@ -158,7 +161,7 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import { useConfirm } from "primevue/useconfirm";
 import Tag from 'primevue/tag'
-import { Material } from '@/classes/OrderItem';
+import { Material, MaterialEntry } from '@/classes/OrderItem';
 import Calendar from 'primevue/calendar';
 import FloatLabel from 'primevue/floatlabel'
 import EditMaterial from '@/components/EditMaterial.vue'
@@ -171,6 +174,10 @@ import { ref,getCurrentInstance } from "vue";
 import { useToast } from "primevue/usetoast";
 
 const { proxy } = getCurrentInstance();
+
+
+const entries_dialog = ref(false)
+const entries_dialog_material = ref<Material>()
 
 const confirm = useConfirm();
 
@@ -189,7 +196,6 @@ const isLogsTableLoading = ref(true)
   const material_settings_dialog = ref(false)
   const material_settings = ref<Material>()
   
-  const expandedRows = ref([]);
   const expandedEntryRows = ref([]);
   const expandedComponentLogsRows = ref([])
   
@@ -216,10 +222,44 @@ const isLogsTableLoading = ref(true)
   const new_entry_price = ref("")
   const new_entry_expiration_date = ref("")
 
-  const expanded_component_id = ref("")
-
 
   const material_logs_id = ref("")
+
+
+const updatEntriesTableRowsPerPage = (event: any) => {
+    loadEntries(event.first,event.rows)
+}
+
+const loadEntries = (first=0,rows=entriesTableRowsPerPage.value) => {
+    isEntriesTableLoading.value = true;
+
+    if (first == 0){
+        first = 1
+    }
+
+    const page_number = Math.ceil((first/rows))
+    
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials/${entries_dialog_material.id}/entries`, {
+        params: {
+            "page[number]": page_number,
+            "page[size]": rows
+        },
+        headers: {
+            Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
+        }
+    })
+    .then(response => {
+        entries.value = response.data.data;
+        entriesTableTotalRecords.value = response.data.meta.total_records;
+    })
+    .catch(() => {
+        toast.add({severity:'error', summary: 'Error', detail: 'Failed to load products'});
+    })
+    .finally(() => {
+        isEntriesTableLoading.value = false;
+    });
+}
+
 
 const confirmDeleteMaterial = (material_id: string) => {
     confirm.require({
@@ -298,12 +338,8 @@ const confirmDeleteMaterial = (material_id: string) => {
     })
   }
 
-  const componentRowExpand = (event) => {
-    expanded_component_id.value = event.data.id
-  }
 
-
-  const confirmDeleteEntry = (event,entry_id) => {
+  const confirmDeleteEntry = (event,material_id, entry_id) => {
     confirm.require({
         target: event.currentTarget,
         message: 'Are you sure you want to delete this entry ?',
@@ -321,7 +357,7 @@ const confirmDeleteMaterial = (material_id: string) => {
 
 
 
-            axios.delete(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials/${expanded_component_id.value}/entries/${entry_id}`,{
+            axios.delete(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials/${material_id}/entries/${entry_id}`,{
                 headers: {
                     Authorization: `Bearer ${proxy.$zitadel?.oidcAuth.accessToken}`
                 }
@@ -330,7 +366,7 @@ const confirmDeleteMaterial = (material_id: string) => {
                     toast.add({ severity: 'success', summary: 'Done', detail: "Entry deleted !",life: 3000,group:'br' });
                     inventory_components.value.forEach((component) => {
                         if (component.id == expanded_component_id.value){
-                            component.entries.splice(component.entries.findIndex(el => el.id == entry_id), 1)
+                            component.entries.splice(component.entries.findIndex(el => el.id == data), 1)
                         }
                     })
             })
