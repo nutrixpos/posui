@@ -178,6 +178,9 @@ const { proxy } = getCurrentInstance();
 
 const entries_dialog = ref(false)
 const entries_dialog_material = ref<Material>()
+const entriesTableTotalRecords = ref(0)
+const isEntriesTableLoading = ref(false)
+const entriesTableRowsPerPage = ref(50)
 
 const confirm = useConfirm();
 
