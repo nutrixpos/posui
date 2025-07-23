@@ -15,7 +15,7 @@
                             </template>
                             <Column :header="$t('actions')" style="width:5rem">
                                 <template #body="slotProps">
-                                    <Button icon="fa fa-dolly-flatbed" severity="secondary" aria-label="ShowEntries" @click="entries_dialog_material = slotProps.data; entries_dialog=true"/>
+                                    <Button icon="fa fa-dolly-flatbed" severity="secondary" aria-label="ShowEntries" @click="entries_dialog_material = slotProps.data; entries_dialog=true; loadEntries()"/>
                                 </template>
                             </Column>
                             <Column field="name" :header="$t('name')"></Column>
@@ -236,13 +236,9 @@ const updatEntriesTableRowsPerPage = (event: any) => {
 const loadEntries = (first=0,rows=entriesTableRowsPerPage.value) => {
     isEntriesTableLoading.value = true;
 
-    if (first == 0){
-        first = 1
-    }
-
     const page_number = Math.ceil((first/rows))
     
-    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials/${entries_dialog_material.id}/entries`, {
+    axios.get(`http://${import.meta.env.VITE_APP_BACKEND_HOST}${import.meta.env.VITE_APP_MODULE_CORE_API_PREFIX}/api/materials/${entries_dialog_material.value.id}/entries`, {
         params: {
             "page[number]": page_number,
             "page[size]": rows
@@ -252,7 +248,7 @@ const loadEntries = (first=0,rows=entriesTableRowsPerPage.value) => {
         }
     })
     .then(response => {
-        entries.value = response.data.data;
+        entries_dialog_material.value.entries = response.data.data;
         entriesTableTotalRecords.value = response.data.meta.total_records;
     })
     .catch(() => {
@@ -502,14 +498,7 @@ const confirmDeleteMaterial = (material_id: string) => {
     .then((result)=>{
 
         result.data.data.forEach(component => {
-            var totalAmount = 0;
-
-            component.entries?.forEach(entry => {
-                if (entry.quantity > 0)
-                    totalAmount = totalAmount ? totalAmount + entry.quantity : entry.quantity
-            });
-
-            component.totalAmount = totalAmount
+            component.totalAmount = component.quantity
         });
         
         inventory_components.value = result.data.data
