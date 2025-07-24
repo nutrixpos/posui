@@ -118,7 +118,8 @@
                                     <div class="flex justify-content-center align-items-center mt-2 flex-wrap gap-2">
                                         <ToggleButton size="small" v-model="is_print_receipt_kitchen" onLabel="Kitchen" offLabel="Kitchen" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36" aria-label="Do you confirm" />
                                         <ToggleButton size="small" v-model="is_print_receipt_client" onLabel="Client" offLabel="Client" onIcon="fa fa-print" offIcon="fa fa-print" class="w-36 mx-1" aria-label="Do you confirm" />
-                                        <ToggleButton size="small" v-tooltip.top="'Auto start order and consume components from inventory'" v-model="is_auto_start_order" onLabel="Autostarting" offLabel="Autostart" onIcon="pi pi-check" offIcon="pi pi-play-circle" class="w-36 mx-1" aria-label="Do you confirm" />
+                                        <!-- <ToggleButton size="small" v-tooltip.top="'Auto start order and consume components from inventory'" v-model="is_auto_start_order" onLabel="Autostarting" offLabel="Autostart" onIcon="pi pi-check" offIcon="pi pi-play-circle" class="w-36 mx-1" aria-label="Do you confirm" /> -->
+                                        <ToggleButton size="small" v-tooltip.top="'Auto finish order and consume components from inventory'" v-model="is_auto_finish_order" onLabel="Autofinishing" offLabel="Autofinish" onIcon="pi pi-check" offIcon="pi pi-play-circle" class="w-36 mx-1" aria-label="Do you confirm" />
                                     </div>
                                 </div>
                                 <Button label="Next" icon="pi pi-arrow-right" iconPos="right" :disabled="!is_order_valid || orderItems.length == 0" @click="order_additional_details_dialog=true" />
@@ -500,7 +501,8 @@ const store = globalStore()
 
 const is_print_receipt_client = ref(true)
 const is_print_receipt_kitchen = ref(true)
-const is_auto_start_order = ref(true)
+const is_auto_start_order = ref(false)
+const is_auto_finish_order = ref(true)
 const is_serve_inside = ref(true)
 const is_delivery = ref(false)
 const is_take_away = ref(false)
@@ -1125,6 +1127,7 @@ const submitOrder = () => {
         items:orderItems.value,
         discount:discount.value,
         is_auto_start: is_auto_start_order.value,
+        is_auto_finish: is_auto_finish_order.value,
         is_dine_in: is_serve_inside.value,
         is_take_away: is_take_away.value,
         is_delivery: is_delivery.value,
