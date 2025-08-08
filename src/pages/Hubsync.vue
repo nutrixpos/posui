@@ -35,6 +35,14 @@
                             <label for="binary" class="font-bold">Sync Progress</label>
                             <span>{{ hubSync.sync_progress || "-" }}</span>
                         </div>
+                        <div class="col-12 lg:col-4 flex flex-column gap-2">
+                            <label for="binary" class="font-bold">SyncSales</label>
+                            <ToggleSwitch v-model="hubSync.settings.sync_sales" class="mb-2" />
+                        </div>
+                        <div class="col-12 lg:col-4 flex flex-column gap-2">
+                            <label for="binary" class="font-bold">SyncInventory</label>
+                            <ToggleSwitch v-model="hubSync.settings.sync_inventory" class="mb-2" />
+                        </div>
                         
                         <div class="col-12">
                             <Button label="Save" class="w-5rem" @click="save" />                            
@@ -62,6 +70,8 @@ const hubSync = ref({
             token: "",
             buffer_size: 0,
             sync_interval: 0,
+            sync_sales: true,
+            sync_inventory: false,
         },
         last_synced: "",
         sync_progress: 0,
